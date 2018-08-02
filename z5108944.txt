@@ -4,3 +4,5 @@ This is the work diary for Ethan Xu.
 Group formed.
 I created the team and the project repository in Bitbucket. I created four dev branches for the members in our group.
 I'm going to do the first commit for this diary file and .gitignore file. And then the first pull-request. Good luck!
+
+Initialse the Django project.
