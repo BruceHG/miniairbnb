@@ -3,8 +3,8 @@ from django.shortcuts import render, get_object_or_404
 
 
 def index(request):
-    hello_massage = 'Welcome to miniAirbnb'
+    hello_message = 'Welcome to miniAirbnb'
     context = {
-            'hello_massage': hello_massage
+            'hello_message': hello_message
             }
     return render(request, 'homepage/index.html', context)
