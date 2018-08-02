@@ -1,0 +1,8 @@
+<h1>{{ login_massage }}</h1>
+
+<form action="{% url 'Login:loginVerify' %}" method="post">
+{% csrf_token %}
+  <p>Username: <input type="text" name="username" /></p>
+  <p>Password: <input type="text" name="password" /></p>
+<input type="submit" value="Login" />
+</form>
