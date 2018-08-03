@@ -1,5 +1,7 @@
 {{ message }} <br />
 username : {{ username }} <br />
-first_name : {{ firstname }} <br />
-last_name : {{ lastname }} <br />
-email : {{ email }}
+firstname : {{ firstname }} <br />
+lastname : {{ lastname }} <br />
+email : {{ email }} <br />
+
+<input type="button" value="Logout" onclick="location.href='{% url 'Login:logout' %}'">

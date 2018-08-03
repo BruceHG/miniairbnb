@@ -2,14 +2,19 @@ from django.shortcuts import render
 from user.models import User
 
 def profile(request):
-    message = 'Login successful'
-    current_user = request.session.get('current_user')
-    current_user_info = User.objects.get(username = current_user)
+    if request.session.get('current_user', None):
+        current_user = request.session.get('current_user', None)
+        message = 'Login successful, welcome '
+        current_user_info = User.objects.get(username = current_user)
+        context = {
+                'message': message + current_user_info.firstname,
+                'username': current_user_info.username,
+                'firstname': current_user_info.firstname,
+                'lastname': current_user_info.lastname,
+                'email': current_user_info.email
+                }
+        return render(request, 'user/profile.html', context)
     context = {
-            'message': message,
-            'username': current_user_info.username,
-            'firstname': current_user_info.first_name,
-            'lastname': current_user_info.last_name,
-            'email': current_user_info.email
+            'login_message': 'Login'
             }
-    return render(request, 'user/profile.html', context)
+    return render(request, 'login/login.html', context)
