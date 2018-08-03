@@ -31,6 +31,10 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'homepage.apps.HomepageConfig',
+    'login.apps.LoginConfig',
+    'search.apps.SearchConfig',
+    'user.apps.UserConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,7 +80,7 @@ WSGI_APPLICATION = 'miniAirbnb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testSite_db',
+        'NAME': 'miniAirbnb_db',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',
