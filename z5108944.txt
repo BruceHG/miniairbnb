@@ -6,3 +6,4 @@ I created the team and the project repository in Bitbucket. I created four dev b
 I'm going to do the first commit for this diary file and .gitignore file. And then the first pull-request. Good luck!
 
 Initialse the Django project.
+Make setup.sh file to automatically deploy project on AWS Ubuntu EC2.
