@@ -7,3 +7,4 @@ I'm going to do the first commit for this diary file and .gitignore file. And th
 
 Initialse the Django project.
 Make setup.sh file to automatically deploy project on AWS Ubuntu EC2.
+Write README.
