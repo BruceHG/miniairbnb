@@ -22,6 +22,7 @@ Please **NOTICE** that, the name of database is **non** *case-sensitive*. Howeve
 #####NavigationBar
 There is a NavigationBar at the head of almost all pages.
 The bar includes:
+
 - Search Box
 Basic search box with `Check in/out Date` and `Num of Guest` as optinal.
 - Register/Login
@@ -33,15 +34,15 @@ If click, goto a new screen to validate the user by `Mobile Number`. Maybe we ca
 - Order History
 Orders are displayed chronologically in a Listview. Item can be clicked and goto view (or manipulate depending on the status) the order detail.
 There are totally *5* statuses in the lifecycle of orders:
-  1. Pending
-  The order is placed by guest, waiting for host to confirm. A *Pending* order should be set `Declined` automatically if there is no response from host when less than 24 hours before the order starts.
-  Guest can cancel the order freely during this status.
-  2. Accepted/Declined
-  The order is confirmed by host.
-  `Accepted` order can be cancelled by guest according to the `Cancellation Rules` freely or charged with extra cost.
-  3. Done
-  When it goes pass the `Checkout Date`, a normal status order is `Done`.
-  A `Declined` or `Cancelled` order will always be displayed as the special statused.
+    1. Pending
+    The order is placed by guest, waiting for host to confirm. A *Pending* order should be set `Declined` automatically if there is no response from host when less than 24 hours before the order starts.
+    Guest can cancel the order freely during this status.
+    2. Accepted/Declined
+    The order is confirmed by host.
+    `Accepted` order can be cancelled by guest according to the `Cancellation Rules` freely or charged with extra cost.
+    3. Done
+    When it goes pass the `Checkout Date`, a normal status order is `Done`.
+    A `Declined` or `Cancelled` order will always be displayed as the special statused.
 - Profile and Setting
 Display the avatar of current user.
 Allow user to edit his personal information ***except*** `Username` and `Email`.
@@ -67,7 +68,7 @@ Gridview or Listview. Mapview is optional
 The items shown in the list, displaying `Thumb`, `Type`, `Title`, `Price`, `Rating`, `Distance`
 #####Accommondation Detail
 When click on the item in the list, goto the detail page of this accommondation. It shows the every detail of this accommondation, including:
-`Album`, `Type`, `Num of Guest`, `Num of Bedroom`, `Num of Bed`, `Num of Bathroom`, `Price`, `Rating`, `Title`, `Description`, `Facilities`, `Address`, `Cancellation Rules`, `Avaliable Date`.
+> `Album`, `Type`, `Num of Guest`, `Num of Bedroom`, `Num of Bed`, `Num of Bathroom`, `Price`, `Rating`, `Title`, `Description`, `Facilities`, `Address`, `Cancellation Rules`, `Avaliable Date`.
 Review function is optinal.
 #####Ordering
 1. Should check login status first. If not logged in, goto `Register/Login`.

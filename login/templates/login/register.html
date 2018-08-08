@@ -1,7 +1,7 @@
 <h1>{{ message }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
+<!--
 <form action="{% url 'Login:register' %}" method="post">
 {% csrf_token %}
   <p>Username: <input type="text" name="username" /></p>
@@ -9,5 +9,14 @@
   <p>First Name: <input type="text" name="firstname" /></p>
   <p>Last Name: <input type="text" name="lastname" /></p>
   <p>Email: <input type="text" name="email" /></p>
+<input type="submit" value="Register" />
+</form>
+-->
+
+<form action="{% url 'Login:register' %}" method="post">
+{% csrf_token %}
+
+{{ form.as_p }}
+
 <input type="submit" value="Register" />
 </form>
