@@ -1,0 +1,52 @@
+
+Introduction
+	background
+Nowadays, traveling has become a popular life style, as it make people be relaxed and close to natural. It also a good way to experience and learn new thing from different countries and cultures. 
+While the demands of accommodation increasing, the online service for accommodation booking by website and application has became available and easier, as the software technologies provider convenient and fast development methods and frames. 
+In this way, the traveling accommodation marketing is great-demand, but, fulfilling it, is potential and feasible by quickly and efficiently website development. The website will play a important roll to generate profit for accommodation agencies, but also offers reserving requirement for customers with useful and valuable informations.
+
+	existing system and drawback
+The traveling-accommodation industry generating great potential marketing demands advance the number of relevant websites.
+However, there are a few common drawbacks among these websites, which could effect the customers’ using experience and cause low efficiency when search some destination or target accommodation.
+For example, trivago, as a popular small-size website, however, the complicatedly search function at home page could cause the bad user experience for the new users, as different operations may make people confused and lose the patient.
+In addition, airbnb, as one of the most popular website, the oversample search page without filter options could also make user unsatisfied with it, as users may spend time on waiting jump to a further page to utilise filter functions.
+In conclusion, current websites are overloaded or oversample with information, therefore, more or less opaque and useless.
+
+	problem we have to solve
+If we want to design a high quality website and offer better service for users, it would be necessary to implement theses issues:
+
+• The layout of the portal should be easy
+• The number of information on each page should not be too large
+• Each page should only offer the information that the visitor requests
+
+Epics:
+
+	Aim:
+The main aim of the project is to create a Web application that will allow providers to present their
+holiday units, and searchers to review the offers and reserve or rent a property. The application
+should be limited to properties located in NSW.
+
+1. Accommodation advertising module – for providers of accommodations to advertise
+properties and maintain their advertisements
+2. Visitor request module – for users to:
+a. put their requests and get a simple and useful feedback of the available
+accommodations
+b. select and book preferred accommodation
+3. Accommodation search module - finds properties and filters out inappropriate ones
+4. Accommodation review module – publishes a review about properties (optional)
+
+	Model/Interface :+ description
+1.Database Implement
+2.service for customer/ host
+3. Response for the request
+4. UI
+
+Project methodology:
+	Development environment
+	
+	scrum Master:
+	production owner: scrum team
+	developer: All scrum team
+
+	Schedule(Table):
+
