@@ -14,6 +14,11 @@ if !(python3 -c 'import psycopg2') > /dev/null 2>&1
 then
     pip3 install psycopg2-binary
 fi
+# check djangorestframework
+if !(python3 -c 'import djangorestframework') > /dev/null 2>&1
+then
+    pip3 install djangorestframework
+fi
 # check postgres
 if !(which psql) > /dev/null 2>&1
 then
