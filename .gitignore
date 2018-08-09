@@ -2,4 +2,8 @@
 .vscode
 __pycache__
 !migrations/__init__.py
+<<<<<<< HEAD
 migrations
+=======
+migrations
+>>>>>>> 851e3f4f456a93e7f04162fc22f6670c3ad5dfd4
