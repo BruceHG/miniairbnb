@@ -11,4 +11,4 @@ Write README.
 
 -Week 3
 Group meeting.
-Write the product documentation and draw the workflow for Guest.
+Write the product documentation and draw the workflow of Guest and Host.
