@@ -69,12 +69,15 @@ The items shown in the list, displaying `Thumb`, `Type`, `Title`, `Price`, `Rati
 #####Accommondation Detail
 When click on the item in the list, goto the detail page of this accommondation. It shows the every detail of this accommondation, including:
 > `Album`, `Type`, `Num of Guest`, `Num of Bedroom`, `Num of Bed`, `Num of Bathroom`, `Price`, `Rating`, `Title`, `Description`, `Facilities`, `Address`, `Cancellation Rules`, `Avaliable Date`.
+
 Review function is optinal.
 #####Ordering
 1. Should check login status first. If not logged in, goto `Register/Login`.
 2. Select `Check in/out Date` and `Num of Guest`
 3. Show pre-order detail, including `Title`, `Check in/out Date`, `Num of Guest`, `Total Price`. User can add a `Comment` to this order. Click ***Place Order*** button to place this order.
-4. Show success. After 2s goto `Home Pahe` or `Order History`.
+4. Show success. After 2s goto `Home Page` or `Order History`.
+
+####[Workflow of Guest](https://mermaidjs.github.io/mermaid-live-editor/#/view/eyJjb2RlIjoiZ3JhcGggTFI7XG4gICAgMDBbUmVnaXN0ZXJdLS0-MDFbRnVsZmlsIGJhc2ljIGluZm9dO1xuXG4gICAgMTBbU2VhcmNoXS0tPjExW1NlYXJjaCBSZXN1bHRdO1xuICAgIDExLS0-fGNsaWNrIGl0ZW18MTJbQWNjb21tb25kYXRpb24gRGV0YWlsXTtcbiAgICAxMi0tPjEzW09yZGVyaW5nXTtcblxuICAgIDIwW0JlY29tZSBIb3N0XS0tPjIxW0Z1bGZpbCBtb2JpbGUgbnVtYmVyXTtcbiAgICAyMS0tPnxjYWxsfDIyW0NoZWNrIGlkZW50aXR5XTtcbiAgICAyMi0tPnx5ZXN8MjNbSG9zdF07XG4gICAgMjItLT58bm98MjRbSG9zdF07XG5cbiAgICAzMFtPcmRlciBIaXN0b3J5XS0tPjMxW09yZGVyIGRldGFpbF07XG4gICAgMzEtLT58UGVuZGluZ3wzMltDYW5jZWxdO1xuICAgIDMxLS0-fEFjY2VwdGVkfDMzW0NhbmNlbF07XG4gICAgMzEtLT58RGVjbGluZWR8MzRbIF07XG4gICAgMzEtLT58RG9uZXwzNVsgXTtcblxuICAgIDQwW1Byb2ZpbGUgYW5kIFNldHRpbmddLS0-NDFbU2V0IEF2YXRhcl07XG4gICAgNDAtLT40MlsuLi5dO1xuICAgIDQwLS0-fE9OTFkgcmVhZHw0M1tVc2VybmFtZV07XG4gICAgNDAtLT58T05MWSByZWFkfDQ0W0VtYWlsXTsiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ)
 
 ```mermaid
 graph LR;
@@ -85,19 +88,15 @@ graph LR;
     12-->13[Ordering];
 
     20[Become Host]-->21[Fulfil mobile number];
-    subgraph Validation
     21-->|call|22[Check identity];
     22-->|yes|23[Host];
     22-->|no|24[Host];
-    end
 
     30[Order History]-->31[Order detail];
-    subgraph Order detail
     31-->|Pending|32[Cancel];
     31-->|Accepted|33[Cancel];
     31-->|Declined|34[ ];
     31-->|Done|35[ ];
-    end
 
     40[Profile and Setting]-->41[Set Avatar];
     40-->42[...];
@@ -106,8 +105,43 @@ graph LR;
 ```
 
 ###Host
-- publish ads
-    - allow user to public and edit all the things mentioned in `item_detail`
-- process orders
-    - view all orders
-    - accpet or decline
+#####NavigationBar
+- Become Host
+If user has requested (hasn't been approved), it shows a screen as 'In progress...'.
+If user has became a Host, this button show be `Manage Ads` (or `Publish Ad`).
+- Manage Ads
+It shows all the Ads this Host published. The style is like the Listview in search result.
+Click one item and go into the accommondation detail page. It shows everything like the Guest's, but with editable function.
+It also shows all the order request of this accommondation.
+Host can process. **When the during of one order has been aprroved, the other orders which conflict with this order should be set `Declined` automatically**.
+Host can also modify the price of one order manually.
+- Requests
+It shows the request order from Guest waiting for confirmation chronologically.
+Host can process this particular request by clicking into.
+- Publish Ad
+Allow user to public and edit all the things mentioned in `item_detail`.
+Specifically, the `Available Date` needs more thinking before design.
+Ah, the most important part, we use the `Address` and the 
+`Room Num`? to indentify the accommondation (Ad). This means, **duplicate** post is not allowed.
+
+####[Workflow of Host](https://mermaidjs.github.io/mermaid-live-editor/#/view/eyJjb2RlIjoiZ3JhcGggTFI7XG4gICAgMDBbTWFuYWdlIEFkc10tLT4wMVtBbGwgTXkgQWRzXTtcbiAgICAwMS0tPnxjbGljayBpdGVtfDAyW0FjY29tbW9uZGF0aW9uIERldGFpbF07XG4gICAgMDItLT4wMjFbRWRpdCBEZXRhaWxdO1xuICAgIDAyLS0-MDIyW1NldCBBdmFpbGFibGUgRGF0ZV07XG4gICAgMDItLT58bGlzdHwwMjNbQWxsIFJlcXVlc3Qgb2YgdGhpcyBBZF07XG4gICAgMDIzLS0-fGNsaWNrIG9yZGVyfDAyNFtPcmRlciBEZXRhaWxdO1xuICAgIDAyNC0tPnxBY2NlcHRlZHwwMjVbQXV0byBEZWNsaW5lIG90aGVyIGNvbmZsaWN0IG9yZGVyc107XG4gICAgMDI0LS0-fERlY2xpbmVkfDAyNlsgXTtcbiAgICAwMjQtLT58bW9kaWZ5IHByaWNlIG1hbnVhbGx5fDAyN1sgXTtcblxuICAgIDEwW1JlcXVlc3RzXS0tPjExW0FsbCBSZXF1ZXN0c107XG4gICAgMTEtLT58Y2xpY2sgb3JkZXJ8MDI0O1xuXG4gICAgMjBbUHVibGlzaCBBZF0tLT58ZWRpdHwyMVtEZXRhaWxdO1xuICAgIDIwLS0-fHZhbGlkYXRlfDIyW0FkZHJlc3MgKyBSb29tIE51bV07XG4gICAgMjAtLT58c2V0fDIzW0F2YWlsYWJsZSBEYXRlXTsiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ)
+
+```mermaid
+graph LR;
+    00[Manage Ads]-->01[All My Ads];
+    01-->|click item|02[Accommondation Detail];
+    02-->021[Edit Detail];
+    02-->022[Set Available Date];
+    02-->|list|023[All Request of this Ad];
+    023-->|click order|024[Order Detail];
+    024-->|Accepted|025[Auto Decline other conflict orders];
+    024-->|Declined|026[ ];
+    024-->|modify price manually|027[ ];
+
+    10[Requests]-->11[All Requests];
+    11-->|click order|024;
+
+    20[Publish Ad]-->|edit|21[Detail];
+    20-->|validate|22[Address + Room Num];
+    20-->|set|23[Available Date];
+```
