@@ -24,6 +24,7 @@ SECRET_KEY = '2y_mx&w!*)w)(2m++bnnid(@p8=2@akl$=s6$91lt%p%$thf4_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+#DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'item.apps.ItemConfig',
     'order.apps.OrderConfig',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -130,3 +132,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+

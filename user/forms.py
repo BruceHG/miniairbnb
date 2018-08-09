@@ -6,7 +6,7 @@ class UserCreateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'firstname', 'lastname', 'email',)
+        fields = ('username', 'password', 'firstname', 'lastname', 'birthday', 'email',)
         
 class UserUpdateForm(forms.ModelForm):
 
