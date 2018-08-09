@@ -4,3 +4,4 @@ week3	simplified code by using django.form
 	update user.models
 	create item and order apps
 	build item.models and order.models
+	apply django rest framework
