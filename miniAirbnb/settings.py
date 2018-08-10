@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'item.apps.ItemConfig',
     'order.apps.OrderConfig',
-    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -89,8 +88,8 @@ DATABASES = {
         'PASSWORD': '123321',
         'HOST': 'localhost',
         'PORT': '',
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -132,4 +131,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
