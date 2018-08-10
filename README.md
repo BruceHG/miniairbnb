@@ -1,5 +1,6 @@
 #Setup
 run `setup.sh`
+
 This script is built for Ubuntu 16.04 LTS. Make sure you have the root permission.
 #Database
 We use PostgresSQL instead of the default SQLite. So please read the `setting.py`.
@@ -24,14 +25,18 @@ There is a NavigationBar at the head of almost all pages.
 The bar includes:
 
 - Search Box
+
 Basic search box with `Check in/out Date` and `Num of Guest` as optinal.
 - Register/Login
+
 Goto a new screen or popup a dialog?
 Need `Username`, `Email`, `First Name` `Last Name`, `DoB`, `Password` to register as a guest by default.
 Use `Email` to login.
 - Become Host
+
 If click, goto a new screen to validate the user by `Mobile Number`. Maybe we can make a phone call to achieve it. This means we need a management backend to approve it **manually**.
 - Order History
+
 Orders are displayed chronologically in a Listview. Item can be clicked and goto view (or manipulate depending on the status) the order detail.
 There are totally *5* statuses in the lifecycle of orders:
     1. Pending
@@ -44,16 +49,20 @@ There are totally *5* statuses in the lifecycle of orders:
     When it goes pass the `Checkout Date`, a normal status order is `Done`.
     A `Declined` or `Cancelled` order will always be displayed as the special statused.
 - Profile and Setting
+
 Display the avatar of current user.
 Allow user to edit his personal information ***except*** `Username` and `Email`.
 Reser password (by Email).
 #####Home Page
 - NavigationBar
+
 Which may trigger a big search box like Google.
 - Ads
+
 Some accommondations recommended as ad.
 #####Search Result
 - Search Box
+
 A Taobao like search box at head with these funtions:
     - Basic search fucntion mentioned above, `Check in/out Date`, `Num of Guest`
     - Sorting
@@ -63,8 +72,10 @@ A Taobao like search box at head with these funtions:
         - Variable range, like `Price`, `Distance`, `Rating`
         - Enum type, like `Type` of accommodation (`Flat`, `House`, `Apartment`), `Wi-Fi`, `Parking`, `Non-smoking`, etc
 - Search Result
+
 Gridview or Listview. Mapview is optional
 - Accommondation Item
+
 The items shown in the list, displaying `Thumb`, `Type`, `Title`, `Price`, `Rating`, `Distance`
 #####Accommondation Detail
 When click on the item in the list, goto the detail page of this accommondation. It shows the every detail of this accommondation, including:
@@ -107,18 +118,22 @@ graph LR;
 ###Host
 #####NavigationBar
 - Become Host
+
 If user has requested (hasn't been approved), it shows a screen as 'In progress...'.
 If user has became a Host, this button show be `Manage Ads` (or `Publish Ad`).
 - Manage Ads
+
 It shows all the Ads this Host published. The style is like the Listview in search result.
 Click one item and go into the accommondation detail page. It shows everything like the Guest's, but with editable function.
 It also shows all the order request of this accommondation.
 Host can process. **When the during of one order has been aprroved, the other orders which conflict with this order should be set `Declined` automatically**.
 Host can also modify the price of one order manually.
 - Requests
+
 It shows the request order from Guest waiting for confirmation chronologically.
 Host can process this particular request by clicking into.
 - Publish Ad
+
 Allow user to public and edit all the things mentioned in `item_detail`.
 Specifically, the `Available Date` needs more thinking before design.
 Ah, the most important part, we use the `Address` and the 
