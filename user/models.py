@@ -3,31 +3,23 @@ from django.db import models
 
 class User(models.Model):
     def __str__(self):
-        return self.firstname
+        return self.username
     
-    username = models.CharField(max_length=200, unique=True)
-    password = models.CharField(max_length=200)
-    firstname = models.CharField(max_length=200)
-    lastname = models.CharField(max_length=200)
+    u_id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=20, unique=True)
+    password = models.CharField(max_length=20, default = '123456')
+    firstname = models.CharField(max_length=20, default = 'John')
+    lastname = models.CharField(max_length=20, default = 'Doe')
+    birthday = models.DateField()
     email = models.EmailField(unique=True)
+    
     c_time = models.DateTimeField(auto_now_add=True)
-#    gender = (
-#        ('male'),
-#        ('female'),
-#    )
-#
-#    username = models.CharField(max_length=200)
-#    password = models.CharField(max_length=256)
-#    firstname = models.CharField(max_length=200)
-#    lastname = models.CharField(max_length=200)
-#    email = models.EmailField(unique=True)
-#    sex = models.CharField(max_length=32,choices=gender,default='male')
-#    c_time = models.DateTimeField(auto_now_add=True)
-#
-#    def __str__(self):
-#        return self.name
-#
-#    class Meta:
-#        ordering = ['c_time']
-##        verbose_name = '用户'
-##        verbose_name_plural = '用户'
+
+class Host(models.Model):
+    
+    h_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, unique=True)
+    rating = models.PositiveIntegerField(default = 0)
+    
+    c_time = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,6 @@
+week2	building homepage, login, user and search(empty) apps for the project
+	coding login, register and logout functions
+week3	simplified code by using django.form
+	update user.models
+	create item and order apps
+	build item.models and order.models
