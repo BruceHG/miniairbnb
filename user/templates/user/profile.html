@@ -8,3 +8,6 @@ email : {{ form.email }} <br />
 {{ form.as_p }} <br />
 
 <input type="button" value="Logout" onclick="location.href='{% url 'Login:logout' %}'">
+{% if host == 0 %}
+<input type="button" value="be host" onclick="location.href='{% url 'User:becomeHost' %}'">
+{% endif %}

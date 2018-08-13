@@ -5,3 +5,5 @@ week3	simplified code by using django.form
 	create item and order apps
 	build item.models and order.models
 	apply django rest framework
+	cancel django rest framework
+	add become host function
