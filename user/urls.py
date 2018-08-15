@@ -5,4 +5,5 @@ from . import views
 app_name = 'User'
 urlpatterns = [
     path('profile/', views.profile, name='profile'),
+    path('becomeHost/', views.becomeHost, name='becomeHost'),
 ]

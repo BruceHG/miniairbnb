@@ -11,7 +11,6 @@ def login(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
-        request.session['current_user'] = username
         try:
             loginUser = User.objects.get(username = username)
         except User.DoesNotExist:
@@ -22,6 +21,7 @@ def login(request):
             return render(request, 'login/login.html', context)
         
         if loginUser.password == password:
+            request.session['current_user'] = username
             return HttpResponseRedirect(reverse('User:profile'))
         else:
             context = {
@@ -42,21 +42,6 @@ def register(request):
         if userform.is_valid():
             user = userform.save()
             request.session['current_user'] = user.username
-        
-#        username = request.POST['username']
-#        password = request.POST['password']
-#        firstname = request.POST['firstname']
-#        lastname = request.POST['lastname']
-#        email = request.POST['email']
-#        new_user = User(
-#                username = username,
-#                password = password,
-#                firstname = firstname,
-#                lastname = lastname,
-#                email = email
-#                )
-#        new_user.save()
-#        request.session['current_user'] = username
         
         return HttpResponseRedirect(reverse('User:profile'))
     
