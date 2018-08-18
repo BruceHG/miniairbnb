@@ -12,3 +12,9 @@ Write README.
 -Week 3
 Group meeting.
 Write the product documentation and draw the workflow of Guest and Host.
+We make the decision that we'll use Django without RESTful API implement.
+
+-Week 4
+Setup Trello for this project. Assign tasks to team members for this week. 
+Research the data structure on Airbnb website. Crawl some initial data for item.
+Due to git's stupid rules, fix ignore file by adding manually.
