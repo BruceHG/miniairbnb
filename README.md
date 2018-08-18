@@ -1,3 +1,16 @@
+#NOTICE!!!
+>"Nope! Due to a performance-related quirk in Git, you can not negate a file that is ignored due to a pattern matching a directory"
+
+Because of the fucking stupid reason, these code does not work:
+
+~~!migrations/__init__.py~~
+
+~~!crawler/requirements.txt~~
+
+~~!crawler/crawl_airbnb.py~~
+
+use `git add -f $file` to add these files manually.
+
 #Setup
 run `setup.sh`
 
