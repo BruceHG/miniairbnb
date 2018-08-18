@@ -1,5 +1,10 @@
 .DS_Store
 .vscode
 __pycache__
-!migrations/__init__.py
-migrations/*
+# Nope! Due to a performance-related quirk in Git, you can not negate a file that is ignored due to a pattern matching a directory
+# Stupid!!! So, use git add -f $file
+# !migrations/__init__.py
+migrations/
+# !crawler/requirements.txt
+# !crawler/crawl_airbnb.py
+crawler/
