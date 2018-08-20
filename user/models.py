@@ -23,3 +23,4 @@ class Host(models.Model):
     rating = models.PositiveIntegerField(default = 0)
     
     c_time = models.DateTimeField(auto_now_add=True)
+    
