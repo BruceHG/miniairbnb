@@ -12,9 +12,20 @@ Because of the fucking stupid reason, these code does not work:
 use `git add -f $file` to add these files manually.
 
 #Setup
-run `setup.sh`
+Run `setup.sh`
 
 This script is built for Ubuntu 16.04 LTS. Make sure you have the root permission.
+#Crawl
+In directory `crawler`, run `crawl_airbnb.py`.
+
+It generates a `data.json` file and `album` directory. The structure of `album` is:
+
+    -album
+        |-{user_id}
+            |-{item_id}
+                |-0.jpg
+                |-1.jpg
+                ...
 #Database
 We use PostgresSQL instead of the default SQLite. So please read the `setting.py`.
 ```python
