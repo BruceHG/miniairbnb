@@ -18,3 +18,6 @@ We make the decision that we'll use Django without RESTful API implement.
 Setup Trello for this project. Assign tasks to team members for this week. 
 Research the data structure on Airbnb website. Crawl some initial data for item.
 Due to git's stupid rules, fix ignore file by adding manually.
+
+-Week 5
+Optimise the crawler, to download the albums by users.
