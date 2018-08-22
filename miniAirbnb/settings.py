@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'search.apps.SearchConfig',
     'user.apps.UserConfig',
+    'hostadmin.apps.HostadminConfig',
     'item.apps.ItemConfig',
     'order.apps.OrderConfig',
     'django.contrib.admin',

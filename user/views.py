@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from user.models import User, Host
-from user.forms import UserUpdateForm, HostCreateForm, HostRegisterForm
+from hostadmin.models import HostRequest
+from user.forms import UserUpdateForm
 
 def profile(request):
     if request.session.get('current_user', None):
@@ -33,20 +34,26 @@ def becomeHost(request):
         return HttpResponseRedirect(reverse('Homepage:index'))
     else:
         current_user = request.session.get('current_user', None)
-    if request.method == "POST":
         current_user_info = get_object_or_404(User, username = current_user)
+    if request.method == "POST":
         phone = request.POST['phone']
-        form = HostCreateForm({'user': current_user_info.u_id, 'phone': phone})
-        if form.is_valid():
-            form = form.save()
-        
+        request = HostRequest(user = current_user_info, 
+                                  username = current_user_info.username,
+                                  email = current_user_info.email,
+                                  phone = phone)
+        request.save()
         return HttpResponseRedirect(reverse('User:profile'))
     
     else:
-        form = HostRegisterForm()
-#        form.fields['user'].widget.attrs['disabled'] = True
-        context = {
-                'message': 'Register',
-                'form': form
-                }
-        return render(request, 'user/hostRegister.html', context)
+        try:
+            Host.objects.get(user = current_user_info)
+            return HttpResponseRedirect(reverse('User:profile'))
+        except Host.DoesNotExist:
+            return render(request, 'user/hostRegister.html')
+    
+
+        
+        
+        
+        
+    
