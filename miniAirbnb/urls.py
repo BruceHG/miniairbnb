@@ -16,11 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.conf.urls import url
+
 urlpatterns = [
     path('', include('homepage.urls')),
-    path('login/', include('login.urls')),
+    url(r'^login/', include('login.urls')),
 #    path('search', include('search.urls')),
     # path('user/', include('user.urls')),
     # path('hostadmin/', include('hostadmin.urls')),
     # path('admin/', admin.site.urls),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
+#urlpatterns = [
+#    url(r'^', include(router.urls)),
+#    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+#]
