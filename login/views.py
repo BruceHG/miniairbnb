@@ -17,21 +17,21 @@ def login(request):
         password = data['password']
         try:
             user = User.objects.get(username=username)
+            if user.password == password:
+                result = {
+                    'code': status.HTTP_200_OK,
+                    'msg': 'Success login',
+                    'data': {'user': username},
+                }
+            else:
+                result = {
+                    'code': status.HTTP_400_BAD_REQUEST,
+                    'msg': 'Wrong password',
+                }
         except User.DoesNotExist:
             result = {
                 'code': status.HTTP_400_BAD_REQUEST,
                 'msg': 'User not found',
-            }
-        if user.password == password:
-            result = {
-                'code': status.HTTP_200_OK,
-                'msg': 'Success login',
-                'data': {'user': username},
-            }
-        else:
-            result = {
-                'code': status.HTTP_400_BAD_REQUEST,
-                'msg': 'Wrong password',
             }
     except Exception as e:
         result = {
