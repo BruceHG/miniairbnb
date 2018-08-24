@@ -38,7 +38,7 @@ export default class SignupForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.refs.form.validateAll((errors, values) => {
-      fetch('../login/', {
+      fetch('/login/', {
         method: 'POST',
         body: JSON.stringify({
           username: values['account'],
