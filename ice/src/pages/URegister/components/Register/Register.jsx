@@ -8,6 +8,7 @@ import {
 } from '@icedesign/form-binder';
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
+import Cookies from 'universal-cookie';
 
 const { Row, Col } = Grid;
 
@@ -65,7 +66,7 @@ export default class Register extends Component {
         return;
       }
 
-      fetch('../login/register/', {
+      fetch('/login/register/', {
         method: 'POST',
         body: JSON.stringify({
           username: values['username'],
@@ -79,7 +80,9 @@ export default class Register extends Component {
         return response.json();
       }).then((json) => {
         if (json['code'] == 200) {
-          console.log(json['data']['user']);
+          const cookies = new Cookies();
+          cookies.set('current_user', json['data']['user']);
+          window.location='/';
         } else {
           Feedback.toast.error(json['msg']);
         }
