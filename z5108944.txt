@@ -21,3 +21,8 @@ Due to git's stupid rules, fix ignore file by adding manually.
 
 -Week 5
 Optimise the crawler, to download the albums by users.
+Lear more about Django. Learn how to implement dynamic web.
+Try Ali Ice framework to implement frontend.
+Create the common theme fot the entire website.
+Finish the first page--home page.
+Import Django RESTful framwork.

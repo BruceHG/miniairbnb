@@ -26,6 +26,8 @@ It generates a `data.json` file and `album` directory. The structure of `album` 
                 |-0.jpg
                 |-1.jpg
                 ...
+#Frontend
+[![ice](https://img.shields.io/badge/developing%20with-ICE-2077ff.svg)](https://github.com/alibaba/ice)
 #Database
 We use PostgresSQL instead of the default SQLite. So please read the `setting.py`.
 ```python
