@@ -11,4 +11,18 @@ Write README.
 
 -Week 3
 Group meeting.
-Write the product documentation and draw the workflow for Guest.
+Write the product documentation and draw the workflow of Guest and Host.
+We make the decision that we'll use Django without RESTful API implement.
+
+-Week 4
+Setup Trello for this project. Assign tasks to team members for this week. 
+Research the data structure on Airbnb website. Crawl some initial data for item.
+Due to git's stupid rules, fix ignore file by adding manually.
+
+-Week 5
+Optimise the crawler, to download the albums by users.
+Lear more about Django. Learn how to implement dynamic web.
+Try Ali Ice framework to implement frontend.
+Create the common theme fot the entire website.
+Finish the first page--home page.
+Import Django RESTful framwork.

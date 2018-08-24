@@ -1,0 +1,14 @@
+{% if all_request %}
+{% for request in all_request %}
+<form action="{% url 'Hostadmin:hostAdmin' %}" method="post">
+{% csrf_token %}
+Username: <input type="text" name="username" value={{ request.username }} readonly="true"/>
+Phone: <input type="text" name="phone" value={{ request.phone }} readonly="true"/>
+Email: <input type="text" name="email" value={{ request.email }} readonly="true"/>
+<input type="submit" value="accept" />
+</form>
+<br\>
+{% endfor %}
+{% else %}
+No unprocessed host requests
+{% endif %}

@@ -1,80 +1,82 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-
+import json
+from django.http import HttpResponse
 from user.models import User
-from user.forms import UserCreateForm
+from django.db.models import Q
+
+
+def __dict2reponse(result):
+    return HttpResponse(json.dumps(result), status=result['code'])
+
 
 def login(request):
-    if request.session.get('current_user', None):
-        return HttpResponseRedirect(reverse('User:profile'))
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        request.session['current_user'] = username
+    result = {}
+    try:
+        data = json.loads(request.body)
+        username = data['username']
+        password = data['password']
         try:
-            loginUser = User.objects.get(username = username)
+            user = User.objects.get(username=username)
         except User.DoesNotExist:
-            context = {
-                'login_message': 'Login',
-                'error_message': 'Unsername does not exist!'
-                }
-            return render(request, 'login/login.html', context)
-        
-        if loginUser.password == password:
-            return HttpResponseRedirect(reverse('User:profile'))
-        else:
-            context = {
-                'login_message': 'Login',
-                'error_message': 'Wrong password!'
-                }
-            return render(request, 'login/login.html', context)
-    context = {
-            'login_message': 'Login'
+            result = {
+                'msg': 'User not found',
+                'success': False,
+                'code': 400
             }
-    return render(request, 'login/login.html', context)
-    
-def register(request):
-    if request.session.get('current_user', None):
-        return HttpResponseRedirect(reverse('User:profile'))
-    if request.method == "POST":
-        userform = UserCreateForm(request.POST)
-        if userform.is_valid():
-            user = userform.save()
-            request.session['current_user'] = user.username
-        
-#        username = request.POST['username']
-#        password = request.POST['password']
-#        firstname = request.POST['firstname']
-#        lastname = request.POST['lastname']
-#        email = request.POST['email']
-#        new_user = User(
-#                username = username,
-#                password = password,
-#                firstname = firstname,
-#                lastname = lastname,
-#                email = email
-#                )
-#        new_user.save()
-#        request.session['current_user'] = username
-        
-        return HttpResponseRedirect(reverse('User:profile'))
-    
-    else:
-        userform = UserCreateForm()
-        context = {
-                'message': 'Register',
-                'form': userform
-                }
-        return render(request, 'login/register.html', context)
+            return __dict2reponse(result)
 
-def logout(request):
-    request.session['current_user'] = None
-    hello_message = 'Welcome to miniAirbnb, logout.'
-    context = {
-            'hello_message': hello_message
+        if user.password == password:
+            result = {
+                'msg': 'Success login',
+                'data': {'user': username},
+                'success': True,
+                'code': 200
             }
-    return render(request, 'homepage/index.html', context)
-    
-    
-    
+        else:
+            result = {
+                'msg': 'Wrong password',
+                'success': False,
+                'code': 400
+            }
+    except Exception as e:
+        result = {
+            'msg': str(e),
+            'success': False,
+            'code': 400
+        }
+
+    return __dict2reponse(result)
+
+
+def register(request):
+    result = {}
+    try:
+        data = json.loads(request.body)
+
+        filterResult = User.objects.filter(
+            Q(username=data['username']) | Q(email=data['email']))
+        if len(filterResult) > 0:
+            result = {
+                'msg': 'User exists',
+                'success': False,
+                'code': 400
+            }
+        else:
+            User.objects.create(username=data['username'],
+                                password=data['password'],
+                                firstname=data['firstname'],
+                                lastname=data['lastname'],
+                                birthday=data['birthday'],
+                                email=data['email'])
+            result = {
+                'msg': 'Success register',
+                'data': {'user': data['username']},
+                'success': True,
+                'code': 200
+            }
+    except Exception as e:
+        result = {
+            'msg': str(e),
+            'success': False,
+            'code': 400
+        }
+    return __dict2reponse(result)
