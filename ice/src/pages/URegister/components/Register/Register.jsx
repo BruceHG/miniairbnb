@@ -30,22 +30,10 @@ export default class Register extends Component {
       },
     };
   }
-// my change
+
   onDateChange = (value) => {
     console.log(value);
   };
-
-//   renderTabBarExtraContent = () => {
-//     return (
-//       <div style={styles.extraFilter}>
-//       <DatePicker
-//         locale={{ datePlaceholder: '发布日期' }}
-//         onChange={this.onDateChange}
-//       />
-//     </div>
-//   );
-// };
-// end
 
   checkPasswd = (rule, values, callback) => {
     if (!values) {
