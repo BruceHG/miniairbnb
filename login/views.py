@@ -12,7 +12,8 @@ from rest_framework import status
 @api_view(['POST'])
 def login(request):
     try:
-        data = JSONParser().parse(request)
+#        data = JSONParser().parse(request)
+        data = request.data
         username = data['username']
         password = data['password']
         try:
@@ -44,7 +45,8 @@ def login(request):
 @api_view(['POST'])
 def register(request):
     try:
-        data = JSONParser().parse(request)
+#        data = JSONParser().parse(request)
+        data = request.data
         filterResult = User.objects.filter(
             Q(username=data['username']) | Q(email=data['email']))
         if len(filterResult) > 0:
