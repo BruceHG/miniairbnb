@@ -8,7 +8,7 @@ import {
 } from '@icedesign/form-binder';
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
-import Cookies from 'universal-cookie';
+import { BACKEND_URL, saveUserInfo2Cookie, callCustomMemberFunc } from '../../../../lib/commonUtils';
 
 const { Row, Col } = Grid;
 
@@ -29,6 +29,7 @@ export default class Register extends Component {
         rePasswd: '',
       },
     };
+    this.onRegisterSuccess = props.onRegisterSuccess;
   }
 
   checkPasswd = (rule, values, callback) => {
@@ -66,7 +67,7 @@ export default class Register extends Component {
         return;
       }
 
-      fetch('/login/register/', {
+      fetch(BACKEND_URL + '/login/register/', {
         method: 'POST',
         body: JSON.stringify({
           username: values['username'],
@@ -80,9 +81,8 @@ export default class Register extends Component {
         return response.json();
       }).then((json) => {
         if (json['code'] == 200) {
-          const cookies = new Cookies();
-          cookies.set('current_user', json['data']['user']);
-          window.location='/';
+          saveUserInfo2Cookie(json['data']['user']);
+          callCustomMemberFunc(this.onRegisterSuccess);
         } else {
           Feedback.toast.error(json['msg']);
         }

@@ -9,7 +9,7 @@ import {
 import IceIcon from '@icedesign/icon';
 import './SignupForm.scss';
 import fetch from 'isomorphic-fetch';
-import Cookies from 'universal-cookie';
+import { BACKEND_URL, saveUserInfo2Cookie, callCustomMemberFunc } from '../../../lib/commonUtils';
 
 const { Row, Col } = Grid;
 
@@ -27,6 +27,7 @@ export default class SignupForm extends Component {
         checkbox: false,
       },
     };
+    this.onLogin = props.onLogin;
   }
 
   formChange = (value) => {
@@ -38,7 +39,7 @@ export default class SignupForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.refs.form.validateAll((errors, values) => {
-      fetch('/login/', {
+      fetch(BACKEND_URL + '/login/', {
         method: 'POST',
         body: JSON.stringify({
           username: values['account'],
@@ -48,9 +49,8 @@ export default class SignupForm extends Component {
         return response.json();
       }).then((json) => {
         if (json['code'] == 200) {
-          const cookies = new Cookies();
-          cookies.set('current_user', json['data']['user']);
-          window.location='/';
+          saveUserInfo2Cookie(json['data']['user']);
+          callCustomMemberFunc(this.onLogin);
         } else {
           Feedback.toast.error(json['msg']);
         }
@@ -99,13 +99,13 @@ export default class SignupForm extends Component {
                 </Col>
               </Row>
 
-              <Row style={styles.formItem}>
+              {/* <Row style={styles.formItem}>
                 <Col>
                   <IceFormBinder name="checkbox">
                     <Checkbox>Remember this account</Checkbox>
                   </IceFormBinder>
                 </Col>
-              </Row>
+              </Row> */}
 
               <Row style={styles.formItem}>
                 <Button
