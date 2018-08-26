@@ -232,7 +232,7 @@ graph LR;
 ```
 # API
 ### Register
-```
+```http
 POST /login/register/
 ```
 - **username**
@@ -256,7 +256,7 @@ POST /login/register/
 }
 ```
 ### Login
-```
+```http
 POST /login/
 ```
 - **username**
@@ -273,8 +273,8 @@ POST /login/
         "user": "aabbcc",
         "uid": 1234,
         "avatar": "http://xxx.xxx/avatar.png",
-        "is_host": False,
-        "is_pending_host": False
+        "is_host": false,
+        "is_pending_host": false
         }
 }
 ```
