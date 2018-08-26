@@ -230,3 +230,51 @@ graph LR;
     20-->|validate|22[Address + Room Num];
     20-->|set|23[Available Date];
 ```
+# API
+### Register
+```http
+POST /login/register/
+```
+- **username**
+- **email**
+- **password**
+- **firstname**
+- **lastname**
+- **birthday** format: YYYY-MM-DD
+##### Possible error codes:
+- **100**(400) User exists
+##### Success response:
+```json
+{
+    "code": 200,
+    "msg": "Success register",
+    "data": {
+        "user": "aabbcc",
+        "uid": 1234,
+        "avatar": "http://xxx.xxx/avatar.png"
+        }
+}
+```
+### Login
+```http
+POST /login/
+```
+- **username**
+- **password**
+##### Possible error codes:
+- **101**(400) Wrong password
+- **102**(400) User not found
+##### Success response:
+```json
+{
+    "code": 200,
+    "msg": "Success Login",
+    "data": {
+        "user": "aabbcc",
+        "uid": 1234,
+        "avatar": "http://xxx.xxx/avatar.png",
+        "is_host": false,
+        "is_pending_host": false
+        }
+}
+```
