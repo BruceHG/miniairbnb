@@ -9,6 +9,7 @@ def __dict2reponse(result):
 
 
 def login(request):
+    print('aaaaaaaaaa')
     result = {}
     try:
         data = json.loads(request.body)

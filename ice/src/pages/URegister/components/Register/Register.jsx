@@ -1,6 +1,6 @@
 /* eslint react/no-string-refs:0 */
 import React, { Component } from 'react';
-import { Input, Button, Grid, Feedback } from '@icedesign/base';
+import { Input, Button, Grid, Feedback, DatePicker} from '@icedesign/base';
 import {
   FormBinderWrapper as IceFormBinderWrapper,
   FormBinder as IceFormBinder,
@@ -30,6 +30,22 @@ export default class Register extends Component {
       },
     };
   }
+// my change
+  onDateChange = (value) => {
+    console.log(value);
+  };
+
+//   renderTabBarExtraContent = () => {
+//     return (
+//       <div style={styles.extraFilter}>
+//       <DatePicker
+//         locale={{ datePlaceholder: '发布日期' }}
+//         onChange={this.onDateChange}
+//       />
+//     </div>
+//   );
+// };
+// end
 
   checkPasswd = (rule, values, callback) => {
     if (!values) {
@@ -169,6 +185,18 @@ export default class Register extends Component {
                     name="dob"
                   >
                     <Input size="large" maxLength={20} placeholder="YYYY-MM-DD" />
+                  </IceFormBinder>
+                </Col>
+              </Row>
+
+             
+              <Row style={styles.formItem}>
+                <Col style={styles.formItemCol}>
+                  <IceFormBinder name="birth_day">
+                    <DatePicker 
+                    locale={{ datePlaceholder: 'Day of brith' }}
+                    onChange={this.onDateChange}
+                    />
                   </IceFormBinder>
                 </Col>
               </Row>
