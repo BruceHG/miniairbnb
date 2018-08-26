@@ -5,47 +5,63 @@ import Logo from '../Logo';
 import './Header.scss';
 import { Dialog } from '@icedesign/base';
 import SignupForm from './SignupForm2';
-import Cookies from 'universal-cookie';
+import { getUserInfo2Cookie, logout, callCustomMemberFunc } from '../../lib/commonUtils';
+import Img from '@icedesign/img';
 
 export default class Header extends Component {
 
   constructor(props) {
-    super(props)
-    this.style=props['style']
-    this.cookies = new Cookies();
+    super(props);
+    this.style = props['style'];
     this.state = {
-      c_user: null,
       login_dialog_visible: false,
+      menu_balloon_visible: false,
     }
-  }
-
-  refreshCurrentUser() {
-    this.state.c_user = this.cookies.get('current_user');
+    this.current_user = null;
+    this.onAccountStateChange = props.onAccountStateChange;
   }
 
   onMenuClick = (...args) => {
     console.log(args);
-    switch (args[0]['key']) {
-      case 'Login/Register':
-        this.onLoginDialogOpen();
+    switch (Number(args[0]['key'])) {
+      case 0:
+        console.log('Become Host');
         break;
-    
+      case 1:
+        console.log('Manage Ads');
+        break;
+      case 2:
+        console.log('Requests');
+        break;
+      case 3:
+        console.log('Order History');
+        break;
+      case 4:
+        console.log('Publish Ad');
+        break;
+      case 5:
+        console.log('Profile');
+        this.setState({
+          menu_balloon_visible: false,
+        });
+        break;
+      case 6:
+        logout();
+        this.setState({
+          menu_balloon_visible: false,
+        });
+        callCustomMemberFunc(this.onAccountStateChange)
+        break;
+      case 7:
+        this.setState({
+          login_dialog_visible: true
+        });
+        break;
+
       default:
         break;
     }
   }
-
-  onLoginDialogOpen = () => {
-    this.setState({
-      login_dialog_visible: true
-    });
-  };
-
-  onLoginDialogClose = () => {
-    this.setState({
-      login_dialog_visible: false
-    });
-  };
 
   renderBalloonContent = (menu) => {
     return (
@@ -54,9 +70,15 @@ export default class Header extends Component {
           className="header-balloon-content"
           closable={false}
           triggerType="click"
+          visible={this.state.menu_balloon_visible}
           trigger={
-            <a>
-              {menu.name}{' '}
+            <a display='flex' align-items='center' onClick={() => {
+              this.setState({
+                menu_balloon_visible: !this.state.menu_balloon_visible
+              });
+            }}>
+              <Img shape='circle' width={26} height={26} src='/public/logo.png' />
+              {menu.name}
               <Icon
                 size="xxs"
                 type="arrow-down-filling"
@@ -65,11 +87,11 @@ export default class Header extends Component {
             </a>
           }
         >
-          {menu.children.map((subMenu, index) => {
+          {menu.children.map((subMenu) => {
             return (
-              <a href="#" className="custom-sub-menu" key={index}>
+              <div href="#" className="custom-sub-menu" key={subMenu.id} onClick={() => this.onMenuClick({ 'key': subMenu.id })}>
                 {subMenu.name}
-              </a>
+              </div>
             );
           })}
         </Balloon>
@@ -79,36 +101,38 @@ export default class Header extends Component {
 
   renderMenuItem = () => {
     let MENUS;
-    if (this.state.c_user != null) {
+    if (this.current_user != null) {
       MENUS = [
         {
           name: 'Become Host',
-          path: '/ice/docs/ice-design',
+          id: 0,
         },
         {
           name: 'Manage Ads',
+          id: 1,
         },
         {
           name: 'Requests',
+          id: 2,
         },
         {
           name: 'Order History',
-          path: '/ice/docs',
+          id: 3,
         },
         {
           name: 'Publish Ad',
-          path: '/ice/docs',
+          id: 4,
         },
         {
-          name: this.state.c_user,
+          name: this.current_user,
           children: [
             {
-              name: 'ICEWORKS',
-              path: '/ice/iceworks',
+              name: 'Profile',
+              id: 5,
             },
             {
-              name: 'Playground',
-              path: '/ice/playground',
+              name: 'Logout',
+              id: 6,
             },
           ],
         },
@@ -117,7 +141,7 @@ export default class Header extends Component {
       MENUS = [
         {
           name: 'Login/Register',
-          path: 'Login/Register',
+          id: 7,
         },
       ];
     }
@@ -128,7 +152,7 @@ export default class Header extends Component {
         return this.renderBalloonContent(menu);
       }
       return (
-        <Menu.Item key={menu.path}>
+        <Menu.Item key={menu.id}>
           {menu.name}
         </Menu.Item>
       );
@@ -136,7 +160,7 @@ export default class Header extends Component {
   };
 
   render() {
-    this.refreshCurrentUser();
+    this.current_user = getUserInfo2Cookie();
     return (
       <div className="header-container" style={this.style}>
         <div className="header-content">
@@ -153,9 +177,18 @@ export default class Header extends Component {
         <Dialog
           visible={this.state.login_dialog_visible}
           closable="esc,mask,close"
-          onClose={this.onLoginDialogClose}
+          onClose={() => {
+            this.setState({
+              login_dialog_visible: false
+            });
+          }}
           footer={<div />}>
-          <SignupForm />
+          <SignupForm onLogin={() => {
+            this.setState({
+              login_dialog_visible: false
+            });
+            callCustomMemberFunc(this.onAccountStateChange);
+          }} />
         </Dialog>
       </div>
     );
