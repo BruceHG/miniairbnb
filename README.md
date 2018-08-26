@@ -231,27 +231,63 @@ graph LR;
     20-->|set|23[Available Date];
 ```
 # API
-### Register
+### becomeHost
 ```http
-POST /login/register/
+PUT /user/becomehost/
 ```
 - **username**
-- **email**
-- **password**
-- **firstname**
-- **lastname**
-- **birthday** format: YYYY-MM-DD
+- **phone**
 ##### Possible error codes:
-- **100**(400) User exists
+- **400** you already are a host
+- **400** user not found
+- **400** this user is waiting authentication
+- **400** this phone number has been used
+- **400** other Exceptions
 ##### Success response:
 ```json
 {
     "code": 200,
-    "msg": "Success register",
+    "msg": "request has been sent",
     "data": {
-        "user": "aabbcc",
-        "uid": 1234,
-        "avatar": "http://xxx.xxx/avatar.png"
+        "username": "test",
+        }
+}
+```
+### hostAdmin
+```http
+GET /hostadmin/
+```
+##### Possible error codes:
+- **400** other Exceptions
+##### Success response:
+```json
+{
+    "code": 200,
+    "msg": "host request list",
+    "data": {
+        "username": "test",
+        "email": "123456@xx.com",
+        "phone": "123456"
+        }
+}
+```
+### hostRequestApprove
+```http
+POST /hostadmin/approve/
+```
+- **username**
+- **phone**
+##### Possible error codes:
+- **400** user not found
+- **400** host request mismatch
+- **400** other Exceptions
+##### Success response:
+```json
+{
+    "code": 200,
+    "msg": "host request list",
+    "data": {
+        "username": "test"
         }
 }
 ```
@@ -262,19 +298,54 @@ POST /login/
 - **username**
 - **password**
 ##### Possible error codes:
-- **101**(400) Wrong password
-- **102**(400) User not found
+- **400** Wrong password
+- **400** User not found
+- **400** other Exceptions
 ##### Success response:
 ```json
 {
     "code": 200,
-    "msg": "Success Login",
+    "msg": "Successful Login",
     "data": {
-        "user": "aabbcc",
-        "uid": 1234,
         "avatar": "http://xxx.xxx/avatar.png",
-        "is_host": false,
-        "is_pending_host": false
+        "username": "test",
+        "firstname": "john",
+        "lastname": "doe",
+        "birthday": "YYYY-MM-DD",
+        "email": "123456@xx.com"
+        "host_status": 0/1/2
+        }
+}
+```
+### Register
+```http
+POST /login/
+```
+- **avatar**
+- **username**
+- **password**
+- **firstname**
+- **lastname**
+- **birthday**
+- **email**
+##### Possible error codes:
+- **400** username has been registered
+- **400** email has been registered
+- **400** User not found
+- **400** other Exceptions
+##### Success response:
+```json
+{
+    "code": 200,
+    "msg": "Successful register",
+    "data": {
+        "avatar": "http://xxx.xxx/avatar.png",
+        "username": "test",
+        "firstname": "john",
+        "lastname": "doe",
+        "birthday": "YYYY-MM-DD",
+        "email": "123456@xx.com"
+        "host_status": 0/1/2
         }
 }
 ```
