@@ -3,11 +3,13 @@ from django.http import HttpResponse
 from user.models import User
 from django.db.models import Q
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
+from rest_framework import status
 
-def __dict2reponse(result):
-    return HttpResponse(json.dumps(result), status=result['code'])
 
-
+@api_view(['POST'])
 def login(request):
     try:
         data = JSONParser().parse(request)
@@ -15,49 +17,40 @@ def login(request):
         password = data['password']
         try:
             user = User.objects.get(username=username)
+            if user.password == password:
+                result = {
+                    'code': status.HTTP_200_OK,
+                    'msg': 'Success login',
+                    'data': {'user': username},
+                }
+            else:
+                result = {
+                    'code': status.HTTP_400_BAD_REQUEST,
+                    'msg': 'Wrong password',
+                }
         except User.DoesNotExist:
             result = {
+                'code': status.HTTP_400_BAD_REQUEST,
                 'msg': 'User not found',
-                'success': False,
-                'code': 400
-            }
-            return __dict2reponse(result)
-
-        if user.password == password:
-            result = {
-                'msg': 'Success login',
-                'data': {'user': username},
-                'success': True,
-                'code': 200
-            }
-        else:
-            result = {
-                'msg': 'Wrong password',
-                'success': False,
-                'code': 400
             }
     except Exception as e:
         result = {
+            'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
-            'success': False,
-            'code': 400
         }
+    return Response(result, status=result['code'])
 
-    return __dict2reponse(result)
 
-
+@api_view(['POST'])
 def register(request):
-    result = {}
     try:
-        data = json.loads(request.body)
-
+        data = JSONParser().parse(request)
         filterResult = User.objects.filter(
             Q(username=data['username']) | Q(email=data['email']))
         if len(filterResult) > 0:
             result = {
+                'code': status.HTTP_400_BAD_REQUEST,
                 'msg': 'User exists',
-                'success': False,
-                'code': 400
             }
         else:
             User.objects.create(username=data['username'],
@@ -67,15 +60,13 @@ def register(request):
                                 birthday=data['birthday'],
                                 email=data['email'])
             result = {
+                'code': status.HTTP_200_OK,
                 'msg': 'Success register',
                 'data': {'user': data['username']},
-                'success': True,
-                'code': 200
             }
     except Exception as e:
         result = {
+            'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
-            'success': False,
-            'code': 400
         }
-    return __dict2reponse(result)
+    return Response(result, status=result['code'])

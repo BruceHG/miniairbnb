@@ -72,12 +72,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'miniairbnb',
-        # 'USER': 'admin',
-        # 'PASSWORD': '123321',
-        # 'HOST': 'localhost',
-        # 'PORT': '',
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'miniairbnb',
+#         'USER': 'admin',
+#         'PASSWORD': '123321',
+#         'HOST': 'localhost',
+#         'PORT': '',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
