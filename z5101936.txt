@@ -1,1 +1,10 @@
+command for lunach:
+    source venv/bin/activate
+    deactivate 
+    python3 manage.py runserver 127.0.0.1:8888
+
+######################################
 09/Aug/2018: Write the proposal draft version 1
+
+26/Aug/2018: date extend for the register page
+
