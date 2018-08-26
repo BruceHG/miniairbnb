@@ -1,14 +1,13 @@
-from django.shortcuts import render, get_object_or_404
 from hostadmin.models import HostRequest
 from user.models import Host, User
-from hostadmin.serializers import hostRequestSerializer
+from hostadmin.serializers import hostRequestSerializer, newRequestSerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 
-@api_view(['POST'])
+@api_view(['GET'])
 def hostAdmin(request):
     try:
 #        data = request.data
@@ -29,20 +28,32 @@ def hostAdmin(request):
 @api_view(['POST'])
 def approve(request):
     try:
-        data = request.data
-        username = data['username']
-        phone = data['phone']
-        target = get_object_or_404(User, username = username)
+        approve_request = newRequestSerializer(data = request.data)
+        approve_request.is_valid()
+        data = approve_request.data
+        target = User.objects.get(username = data['username'])
+        HostRequest.objects.get(user = target, username = data['username'], phone = data['phone']).delete()
         new_host = Host(user = target,
-                        phone = phone)
+                        phone = data['phone'])
         new_host.save()
-        HostRequest.objects.get(user = target).delete()
+        target.host_status = 1
+        target.save()
+        
         result = {
                 'code': status.HTTP_200_OK,
                 'msg': 'host request approved',
-                'data': {'user': data['username']},
+                'data': {'username': data['username']},
                 }
-    
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except HostRequest.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'host request mismatch',
+        }
     except Exception as e:
         result = {
             'code': status.HTTP_400_BAD_REQUEST,

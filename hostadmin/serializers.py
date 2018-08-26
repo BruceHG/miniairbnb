@@ -6,3 +6,8 @@ class hostRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = HostRequest
         fields = ('username', 'email', 'phone',)
+        
+class newRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HostRequest
+        fields = ('username', 'phone',)
