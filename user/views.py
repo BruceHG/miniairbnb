@@ -17,15 +17,17 @@ def becomeHost(request):
         newRequest.is_valid()
         data = newRequest.data
         current_user_info = User.objects.get(username = data['username'])
-        filterResult = HostRequest.objects.filter(Q(username=data['username']) | Q(phone=data['phone']))
-        for r in filterResult:
-            if r.username == data['username']:
-                raise Exception('this user is waiting for authentication')
-            if r.phone == data['phone']:
-                raise Exception('this phone number has been used')
         if current_user_info.host_status == 1:
             raise Exception('you already are a host')
+        elif current_user_info.host_status == 2:
+            raise Exception('this user is waiting for authentication')
         else:
+            hostfilter = Host.objects.filter(phone=data['phone'])
+            if len(hostfilter) > 0:
+                raise Exception('this phone number has been used')
+            requestfilter = HostRequest.objects.filter(phone=data['phone'])
+            if len(requestfilter) > 0:
+                raise Exception('this phone number has been used')
             request = HostRequest(user = current_user_info, 
                                   username = current_user_info.username,
                                   email = current_user_info.email,
