@@ -11,6 +11,7 @@ def __dict2reponse(result):
 def login(request):
     try:
         data = JSONParser().parse(request)
+        username = data['username']
         password = data['password']
         try:
             user = User.objects.get(username=username)
