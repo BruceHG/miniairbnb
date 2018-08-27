@@ -8,7 +8,7 @@ class User(models.Model):
     u_id = models.AutoField(primary_key=True)
     avatar = models.CharField(max_length=200)
     username = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=20, default = '123456')
+    password = models.CharField(max_length=20)
     firstname = models.CharField(max_length=20, default = 'John')
     lastname = models.CharField(max_length=20, default = 'Doe')
     birthday = models.DateField()

@@ -349,3 +349,25 @@ POST /login/
         }
 }
 ```
+### adminlogin
+```http
+POST /hostadmin/adminlogin/
+```
+- **username**
+- **password**
+##### Possible error codes:
+- **400** invalid login info
+- **400** inactive admin
+- **400** other Exceptions
+##### Success response:
+```json
+{
+    "code": 200,
+    "msg": "admin login successful",
+    "data": {
+        "username": "admin"
+    }
+}
+```
+### adminregister
+type command: python3 manage.py createsuperuser

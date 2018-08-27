@@ -2,6 +2,8 @@ from hostadmin.models import HostRequest
 from user.models import Host, User
 from hostadmin.serializers import hostRequestSerializer, newRequestSerializer
 
+from django.contrib.auth import authenticate
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
@@ -54,6 +56,32 @@ def approve(request):
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': 'host request mismatch',
         }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def adminLogin(request):
+    try:
+        data = request.data
+        username = data['username']
+        password = data['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+#                login(request, user)
+                result = {
+                    'code': status.HTTP_200_OK,
+                    'msg': 'admin login successful',
+                    'data': {'username': username},
+                }
+            else:
+                raise Exception('inactive admin')
+        else:
+            raise Exception('invalid login info')
     except Exception as e:
         result = {
             'code': status.HTTP_400_BAD_REQUEST,
