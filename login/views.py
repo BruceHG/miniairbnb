@@ -14,12 +14,9 @@ def login(request):
     try:
 #        data = JSONParser().parse(request)
         data = request.data
-        login_user = loginSerializer(data = request.data)
-        login_user.is_valid()
-        data = login_user.data
         user = User.objects.get(username = data['username'])
         if user.password == data['password']:
-            profile = profileSerializer(user)
+            profile = loginSerializer(user)
             result = {
                 'code': status.HTTP_200_OK,
                 'msg': 'Successful login',
@@ -55,7 +52,6 @@ def register(request):
                 raise Exception('email has been registered')
         new_user.is_valid()
         new_user.save()
-        print(new_user.validated_data)
         profile = profileSerializer(User.objects.get(username = data['username']))
         result = {
             'code': status.HTTP_200_OK,
