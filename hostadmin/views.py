@@ -1,8 +1,8 @@
 from hostadmin.models import HostRequest
 from user.models import Host, User
-from hostadmin.serializers import hostRequestSerializer, newRequestSerializer
+from hostadmin.serializers import hostRequestSerializer
+from user.serializers import loginSerializer
 
-from django.contrib.auth import authenticate
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,6 +13,8 @@ from rest_framework import status
 def hostAdmin(request):
     try:
 #        data = request.data
+        admin = request.META.get("HTTP_USERNAME")
+        User.objects.get(username = admin, status = 3)
         all_request = hostRequestSerializer(HostRequest.objects.all(), many=True)
         result = {
                 'code': status.HTTP_200_OK,
@@ -30,21 +32,22 @@ def hostAdmin(request):
 @api_view(['POST'])
 def approve(request):
     try:
-        approve_request = newRequestSerializer(data = request.data)
-        approve_request.is_valid()
-        data = approve_request.data
-        target = User.objects.get(username = data['username'])
-        HostRequest.objects.get(user = target, username = data['username'], phone = data['phone']).delete()
+        admin = request.META.get("HTTP_USERNAME")
+        User.objects.get(username = admin, status = 3)
+        username = (request.data['username'])
+        target = User.objects.get(username = username)
+        applicant = HostRequest.objects.get(user = target)
         new_host = Host(user = target,
-                        phone = data['phone'])
+                        phone = applicant.phone)
         new_host.save()
-        target.host_status = 1
+        applicant.delete()
+        target.status = 1
         target.save()
-        
+        all_request = hostRequestSerializer(HostRequest.objects.all(), many=True)
         result = {
                 'code': status.HTTP_200_OK,
                 'msg': 'host request approved',
-                'data': {'username': data['username']},
+                'data': all_request.data,
                 }
     except User.DoesNotExist:
         result = {
@@ -63,28 +66,30 @@ def approve(request):
         }
     return Response(result, status=result['code'])
 
-@api_view(['POST'])
-def adminLogin(request):
-    try:
-        data = request.data
-        username = data['username']
-        password = data['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-#                login(request, user)
-                result = {
-                    'code': status.HTTP_200_OK,
-                    'msg': 'admin login successful',
-                    'data': {'username': username},
-                }
-            else:
-                raise Exception('inactive admin')
-        else:
-            raise Exception('invalid login info')
-    except Exception as e:
-        result = {
-            'code': status.HTTP_400_BAD_REQUEST,
-            'msg': str(e),
-        }
-    return Response(result, status=result['code'])
+#@api_view(['POST'])
+#def adminLogin(request):
+#    try:
+#        data = request.data
+#        username = data['username']
+#        password = data['password']
+#        user = User.objects.get(username = username, status = 3)
+#        if user.password == password:
+#            profile = loginSerializer(user)
+#            result = {
+#                'code': status.HTTP_200_OK,
+#                'msg': 'Successful login',
+#                'data': profile.data,
+#            }
+#        else:
+#            raise Exception('Wrong password')
+#    except User.DoesNotExist:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': 'User not found',
+#        }
+#    except Exception as e:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': str(e),
+#        }
+#    return Response(result, status=result['code'])
