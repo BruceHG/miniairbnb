@@ -3,11 +3,8 @@ from hostadmin.models import HostRequest
 
 
 class hostRequestSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    avatar = serializers.CharField(source='user.avatar')
     class Meta:
         model = HostRequest
-        fields = ('username', 'email', 'phone',)
-        
-class newRequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HostRequest
-        fields = ('username', 'phone',)
+        fields = ('username', 'avatar', 'phone',)

@@ -5,14 +5,14 @@ from user.models import User
 class profileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('avatar', 'username', 'firstname', 'lastname', 'birthday', 'email', 'host_status')
+        fields = ('username', 'avatar', 'status')
         
 class loginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password',)
+        fields = ('username', 'avatar', 'status')
         
 class registerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('avatar', 'username', 'password', 'firstname', 'lastname', 'birthday', 'email',)
+        fields = ('username', 'email', 'password', 'avatar','firstname', 'lastname', 'birthday',)
