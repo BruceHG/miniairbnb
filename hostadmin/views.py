@@ -14,7 +14,7 @@ def hostAdmin(request):
     try:
 #        data = request.data
         admin = request.META.get("HTTP_USERNAME")
-        User.objects.get(username = admin, status = 3)
+        User.objects.get(username = admin, status = User.ADMIN)
         all_request = hostRequestSerializer(HostRequest.objects.all(), many=True)
         result = {
                 'code': status.HTTP_200_OK,
@@ -33,7 +33,7 @@ def hostAdmin(request):
 def approve(request):
     try:
         admin = request.META.get("HTTP_USERNAME")
-        User.objects.get(username = admin, status = 3)
+        User.objects.get(username = admin, status = User.ADMIN)
         username = (request.data['username'])
         target = User.objects.get(username = username)
         applicant = HostRequest.objects.get(user = target)
@@ -41,7 +41,7 @@ def approve(request):
                         phone = applicant.phone)
         new_host.save()
         applicant.delete()
-        target.status = 1
+        target.status = User.HOST
         target.save()
         all_request = hostRequestSerializer(HostRequest.objects.all(), many=True)
         result = {
@@ -72,7 +72,7 @@ def approve(request):
 #        data = request.data
 #        username = data['username']
 #        password = data['password']
-#        user = User.objects.get(username = username, status = 3)
+#        user = User.objects.get(username = username, status = User.ADMIN)
 #        if user.password == password:
 #            profile = loginSerializer(user)
 #            result = {
