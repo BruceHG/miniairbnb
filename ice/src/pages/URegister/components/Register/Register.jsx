@@ -1,6 +1,6 @@
 /* eslint react/no-string-refs:0 */
 import React, { Component } from 'react';
-import { Input, Button, Grid, Feedback, DatePicker, Icon} from '@icedesign/base';
+import { Input, Button, Grid, Feedback, DatePicker} from '@icedesign/base';
 import {
   FormBinderWrapper as IceFormBinderWrapper,
   FormBinder as IceFormBinder,
@@ -8,8 +8,9 @@ import {
 } from '@icedesign/form-binder';
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
-import { BACKEND_URL, saveUserInfo2Cookie, callCustomMemberFunc } from '../../../../lib/commonUtils';
+import * as CommonUtils from '../../../../lib/commonUtils';
 import Moment from 'moment';
+
 
 const { Row, Col } = Grid;
 
