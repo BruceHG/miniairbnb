@@ -16,9 +16,9 @@ def becomeHost(request):
         username = request.META.get("HTTP_USERNAME")
         phone = request.data['phone']
         current_user_info = User.objects.get(username = username)
-        if current_user_info.status == 1:
+        if current_user_info.status == User.HOST:
             raise Exception('you already are a host')
-        elif current_user_info.status == 2:
+        elif current_user_info.status == User.HOST_PENDING:
             raise Exception('this user is waiting for authentication')
         else:
             hostfilter = Host.objects.filter(phone=phone)
@@ -30,7 +30,7 @@ def becomeHost(request):
             request = HostRequest(user = current_user_info, 
                                   phone = phone)
             request.save()
-            current_user_info.status = 2
+            current_user_info.status = User.HOST_PENDING
             current_user_info.save()
             profile = profileSerializer(current_user_info)
             result = {
