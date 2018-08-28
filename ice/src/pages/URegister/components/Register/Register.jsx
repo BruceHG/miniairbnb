@@ -330,11 +330,6 @@ const styles = {
     transform: 'translateY(-50%)',
     color: '#999',
   },
-  inputIcon2: {
-    position: 'absolute',
-    left: '12px',
-    color: '#999',
-  },
   submitBtn: {
     fontSize: '16px',
     height: '40px',
