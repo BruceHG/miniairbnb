@@ -9,11 +9,7 @@ import {
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
 import * as CommonUtils from '../../../../lib/commonUtils';
-<<<<<<< HEAD
 import Moment from 'moment';
-
-=======
->>>>>>> fb267e291c04c3afb72f09b18a217187f6eb3b11
 
 const { Row, Col } = Grid;
 
@@ -94,11 +90,7 @@ export default class Register extends Component {
           'password': values['passwd'],
           'firstname': values['firstname'],
           'lastname': values['lastname'],
-<<<<<<< HEAD
           'birthday': Moment(values['dob']).format('YYYY-MM-DD'),
-=======
-          'birthday': values['dob'],
->>>>>>> fb267e291c04c3afb72f09b18a217187f6eb3b11
           'email': values['email'],
         })
       }).then((response) => {
@@ -188,7 +180,6 @@ export default class Register extends Component {
 
               <Row style={styles.formItem}>
                 <Col style={styles.formItemCol}>
-<<<<<<< HEAD
                 <IceIcon type="clock" size="small" style={styles.inputIcon} />
                 <IceFormBinder name="dob">
                     <DatePicker 
@@ -196,25 +187,7 @@ export default class Register extends Component {
                     formater={['YYYY-MM-DD']}
                     value={this.state.value.dob}
                     locale={{ datePlaceholder: 'Birthday' }}
-                    onChange={this.onDateChange}
-=======
-                  <IceIcon type="clock" size="small" style={styles.inputIcon} />
-                  <IceFormBinder
-                    name="dob"
-                  >
-                    <Input size="large" maxLength={20} placeholder="YYYY-MM-DD" />
-                  </IceFormBinder>
-                </Col>
-              </Row>
-
-
-              <Row style={styles.formItem}>
-                <Col style={styles.formItemCol}>
-                  <IceFormBinder name="birth_day">
-                    <DatePicker
-                      locale={{ datePlaceholder: 'Day of brith' }}
-                      onChange={this.onDateChange}
->>>>>>> fb267e291c04c3afb72f09b18a217187f6eb3b11
+                    onChange={this.onDateChange}                  
                     />
                     </IceFormBinder>
                 </Col>

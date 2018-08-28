@@ -13,10 +13,7 @@
     "@icedesign/layout": "^0.1.2",
     "@icedesign/menu": "^0.1.0",
     "@icedesign/skin": "^0.1.0",
-<<<<<<< HEAD
     "moment": "^2.22.2",
-=======
->>>>>>> fb267e291c04c3afb72f09b18a217187f6eb3b11
     "axios": "^0.17.1",
     "enquire-js": "^0.2.1",
     "prop-types": "^15.6.2",
