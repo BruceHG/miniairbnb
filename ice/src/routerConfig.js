@@ -5,6 +5,8 @@
 import BlankLayout from './layouts/BlankLayout';
 import Home from './pages/Home';
 import URegister from './pages/URegister';
+
+import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -17,6 +19,11 @@ const routerConfig = [
     path: '/register',
     layout: BlankLayout,
     component: URegister,
+  },
+  {
+    path: '/admin',
+    layout: BlankLayout,
+    component: Admin,
   },
   {
     path: '*',

@@ -1,6 +1,6 @@
 /* eslint react/no-string-refs:0 */
 import React, { Component } from 'react';
-import { Input, Button, Grid, Feedback, DatePicker} from '@icedesign/base';
+import { Input, Button, Grid, Feedback, DatePicker } from '@icedesign/base';
 import {
   FormBinderWrapper as IceFormBinderWrapper,
   FormBinder as IceFormBinder,
@@ -8,7 +8,7 @@ import {
 } from '@icedesign/form-binder';
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
-import { BACKEND_URL, saveUserInfo2Cookie, callCustomMemberFunc } from '../../../../lib/commonUtils';
+import * as CommonUtils from '../../../../lib/commonUtils';
 
 const { Row, Col } = Grid;
 
@@ -71,22 +71,25 @@ export default class Register extends Component {
         return;
       }
 
-      fetch(BACKEND_URL + '/login/register/', {
+      fetch(CommonUtils.BACKEND_URL + '/login/register/', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
         body: JSON.stringify({
-          username: values['username'],
-          password: values['passwd'],
-          firstname: values['firstname'],
-          lastname: values['lastname'],
-          birthday: values['dob'],
-          email: values['email'],
+          'username': values['username'],
+          'password': values['passwd'],
+          'firstname': values['firstname'],
+          'lastname': values['lastname'],
+          'birthday': values['dob'],
+          'email': values['email'],
         })
       }).then((response) => {
         return response.json();
       }).then((json) => {
         if (json['code'] == 200) {
-          saveUserInfo2Cookie(json['data']['user']);
-          callCustomMemberFunc(this.onRegisterSuccess);
+          CommonUtils.saveUserInfo2Cookie(json['data']);
+          CommonUtils.callCustomMemberFunc(this.onRegisterSuccess);
         } else {
           Feedback.toast.error(json['msg']);
         }
@@ -177,13 +180,13 @@ export default class Register extends Component {
                 </Col>
               </Row>
 
-             
+
               <Row style={styles.formItem}>
                 <Col style={styles.formItemCol}>
                   <IceFormBinder name="birth_day">
-                    <DatePicker 
-                    locale={{ datePlaceholder: 'Day of brith' }}
-                    onChange={this.onDateChange}
+                    <DatePicker
+                      locale={{ datePlaceholder: 'Day of brith' }}
+                      onChange={this.onDateChange}
                     />
                   </IceFormBinder>
                 </Col>
