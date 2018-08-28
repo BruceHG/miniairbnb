@@ -4,12 +4,6 @@
 
 const headerMenuConfig = [];
 
-const asideMenuConfig = [
-  {
-    name: 'register',
-    path: '/register',
-    icon: 'home',
-  },
-];
+const asideMenuConfig = [];
 
 export { headerMenuConfig, asideMenuConfig };

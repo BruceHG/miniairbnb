@@ -1,6 +1,6 @@
 /* eslint react/no-string-refs:0 */
 import React, { Component } from 'react';
-import { Input, Button, Grid, Feedback, DatePicker} from '@icedesign/base';
+import { Input, Button, Grid, Feedback, DatePicker } from '@icedesign/base';
 import {
   FormBinderWrapper as IceFormBinderWrapper,
   FormBinder as IceFormBinder,
@@ -9,8 +9,11 @@ import {
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
 import * as CommonUtils from '../../../../lib/commonUtils';
+<<<<<<< HEAD
 import Moment from 'moment';
 
+=======
+>>>>>>> fb267e291c04c3afb72f09b18a217187f6eb3b11
 
 const { Row, Col } = Grid;
 
@@ -81,22 +84,29 @@ export default class Register extends Component {
         return;
       }
 
-      fetch(BACKEND_URL + '/login/register/', {
+      fetch(CommonUtils.BACKEND_URL + '/login/register/', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
         body: JSON.stringify({
           'username': values['username'],
           'password': values['passwd'],
           'firstname': values['firstname'],
           'lastname': values['lastname'],
+<<<<<<< HEAD
           'birthday': Moment(values['dob']).format('YYYY-MM-DD'),
+=======
+          'birthday': values['dob'],
+>>>>>>> fb267e291c04c3afb72f09b18a217187f6eb3b11
           'email': values['email'],
         })
       }).then((response) => {
         return response.json();
       }).then((json) => {
         if (json['code'] == 200) {
-          saveUserInfo2Cookie(json['data']['user']);
-          callCustomMemberFunc(this.onRegisterSuccess);
+          CommonUtils.saveUserInfo2Cookie(json['data']);
+          CommonUtils.callCustomMemberFunc(this.onRegisterSuccess);
         } else {
           Feedback.toast.error(json['msg']);
         }
@@ -178,6 +188,7 @@ export default class Register extends Component {
 
               <Row style={styles.formItem}>
                 <Col style={styles.formItemCol}>
+<<<<<<< HEAD
                 <IceIcon type="clock" size="small" style={styles.inputIcon} />
                 <IceFormBinder name="dob">
                     <DatePicker 
@@ -186,6 +197,24 @@ export default class Register extends Component {
                     value={this.state.value.dob}
                     locale={{ datePlaceholder: 'Birthday' }}
                     onChange={this.onDateChange}
+=======
+                  <IceIcon type="clock" size="small" style={styles.inputIcon} />
+                  <IceFormBinder
+                    name="dob"
+                  >
+                    <Input size="large" maxLength={20} placeholder="YYYY-MM-DD" />
+                  </IceFormBinder>
+                </Col>
+              </Row>
+
+
+              <Row style={styles.formItem}>
+                <Col style={styles.formItemCol}>
+                  <IceFormBinder name="birth_day">
+                    <DatePicker
+                      locale={{ datePlaceholder: 'Day of brith' }}
+                      onChange={this.onDateChange}
+>>>>>>> fb267e291c04c3afb72f09b18a217187f6eb3b11
                     />
                     </IceFormBinder>
                 </Col>

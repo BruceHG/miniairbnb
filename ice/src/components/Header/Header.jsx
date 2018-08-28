@@ -1,14 +1,29 @@
 import React, { Component } from 'react';
-import { Input, Balloon, Icon } from '@icedesign/base';
+import { Input, Balloon, Icon, Feedback } from '@icedesign/base';
 import Menu from '@icedesign/menu';
 import Logo from '../Logo';
 import './Header.scss';
 import { Dialog } from '@icedesign/base';
 import SignupForm from './SignupForm2';
-import { getUserInfo2Cookie, logout, callCustomMemberFunc } from '../../lib/commonUtils';
+import BecomeHostForm from './BecomeHostForm';
+import * as CommonUtils from '../../lib/commonUtils';
 import Img from '@icedesign/img';
 
+var MENU = {
+  'BECOME_HOST': 0,
+  'HOST_PENDING': 1,
+  'MANAGE_ADS': 2,
+  'REQUESTS': 3,
+  'ORDER_HISTORY': 4,
+  'PUBLISH_AD': 5,
+  'PROFILE': 6,
+  'LOGOUT': 7,
+  'LOGIN': 8,
+};
+Object.freeze(MENU);
+
 export default class Header extends Component {
+
 
   constructor(props) {
     super(props);
@@ -16,46 +31,52 @@ export default class Header extends Component {
     this.state = {
       login_dialog_visible: false,
       menu_balloon_visible: false,
+      become_host_dialog_visible: false,
     }
     this.current_user = null;
     this.onAccountStateChange = props.onAccountStateChange;
   }
 
   onMenuClick = (...args) => {
-    console.log(args);
     switch (Number(args[0]['key'])) {
-      case 0:
-        console.log('Become Host');
+      case MENU.BECOME_HOST:
+        this.setState({
+          become_host_dialog_visible: true
+        });
         break;
-      case 1:
+      case MENU.HOST_PENDING:
+        Feedback.toast.success("We're assessing your request...");
+        break;
+      case MENU.MANAGE_ADS:
         console.log('Manage Ads');
         break;
-      case 2:
+      case MENU.REQUESTS:
         console.log('Requests');
         break;
-      case 3:
+      case MENU.ORDER_HISTORY:
         console.log('Order History');
         break;
-      case 4:
+      case MENU.PUBLISH_AD:
         console.log('Publish Ad');
         break;
-      case 5:
+      case MENU.PROFILE:
         console.log('Profile');
         this.setState({
           menu_balloon_visible: false,
         });
         break;
-      case 6:
-        logout();
+      case MENU.LOGOUT:
+        CommonUtils.logout();
         this.setState({
           menu_balloon_visible: false,
         });
-        callCustomMemberFunc(this.onAccountStateChange)
+        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
         break;
-      case 7:
+      case MENU.LOGIN:
         this.setState({
           login_dialog_visible: true
         });
+        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
         break;
 
       default:
@@ -77,7 +98,7 @@ export default class Header extends Component {
                 menu_balloon_visible: !this.state.menu_balloon_visible
               });
             }}>
-              <Img shape='circle' width={26} height={26} src='/public/logo.png' />
+              <Img shape='circle' width={26} height={26} src={this.current_user['avatar'] ? this.current_user['avatar'] : ''} />
               {menu.name}
               <Icon
                 size="xxs"
@@ -100,54 +121,115 @@ export default class Header extends Component {
   };
 
   renderMenuItem = () => {
-    let MENUS;
+    let menus;
     if (this.current_user != null) {
-      MENUS = [
-        {
-          name: 'Become Host',
-          id: 0,
-        },
-        {
-          name: 'Manage Ads',
-          id: 1,
-        },
-        {
-          name: 'Requests',
-          id: 2,
-        },
-        {
-          name: 'Order History',
-          id: 3,
-        },
-        {
-          name: 'Publish Ad',
-          id: 4,
-        },
-        {
-          name: this.current_user,
-          children: [
+      switch (this.current_user['status']) {
+        case CommonUtils.UserStatus.GUEST:
+          menus = [
             {
-              name: 'Profile',
-              id: 5,
+              name: 'Become Host',
+              id: MENU.BECOME_HOST
             },
+            {
+              name: 'Order History',
+              id: MENU.ORDER_HISTORY,
+            },
+            {
+              name: this.current_user['username'],
+              children: [
+                {
+                  name: 'Profile',
+                  id: MENU.PROFILE,
+                },
+                {
+                  name: 'Logout',
+                  id: MENU.LOGOUT,
+                },
+              ],
+            },
+          ];
+          break;
+        case CommonUtils.UserStatus.HOST_PENDING:
+          menus = [
+            {
+              name: 'Become Host...',
+              id: MENU.HOST_PENDING
+            },
+            {
+              name: 'Order History',
+              id: MENU.ORDER_HISTORY,
+            },
+            {
+              name: this.current_user['username'],
+              children: [
+                {
+                  name: 'Profile',
+                  id: MENU.PROFILE,
+                },
+                {
+                  name: 'Logout',
+                  id: MENU.LOGOUT,
+                },
+              ],
+            },
+          ];
+          break;
+        case CommonUtils.UserStatus.HOST:
+          menus = [
+            {
+              name: 'Manage Ads',
+              id: MENU.MANAGE_ADS,
+            },
+            {
+              name: 'Requests',
+              id: MENU.REQUESTS,
+            },
+            {
+              name: 'Order History',
+              id: MENU.ORDER_HISTORY,
+            },
+            {
+              name: 'Publish Ad',
+              id: MENU.PUBLISH_AD,
+            },
+            {
+              name: this.current_user['username'],
+              children: [
+                {
+                  name: 'Profile',
+                  id: MENU.PROFILE,
+                },
+                {
+                  name: 'Logout',
+                  id: MENU.LOGOUT,
+                },
+              ],
+            },
+          ];
+          break;
+        case CommonUtils.UserStatus.ADMIN:
+          menus = [
             {
               name: 'Logout',
-              id: 6,
+              id: MENU.LOGOUT,
             },
-          ],
-        },
-      ];
+          ];
+          break;
+
+        default:
+          break;
+      }
     } else {
-      MENUS = [
+      menus = [
         {
           name: 'Login/Register',
-          id: 7,
+          id: MENU.LOGIN,
         },
       ];
     }
 
 
-    return MENUS.map((menu) => {
+    return menus.map((menu) => {
       if (menu.children) {
         return this.renderBalloonContent(menu);
       }
@@ -160,7 +242,11 @@ export default class Header extends Component {
   };
 
   render() {
-    this.current_user = getUserInfo2Cookie();
+    this.current_user = CommonUtils.getUserInfo2Cookie();
+    if (this.current_user != null
+      && CommonUtils.UserStatus.ADMIN == this.current_user['status']) {
+      window.location = '#/admin';
+    }
     return (
       <div className="header-container" style={this.style}>
         <div className="header-content">
@@ -187,9 +273,37 @@ export default class Header extends Component {
             this.setState({
               login_dialog_visible: false
             });
-            callCustomMemberFunc(this.onAccountStateChange);
+            if (CommonUtils.UserStatus.ADMIN == this.current_user['status']) {
+              window.location = '#/admin';
+            }
+            CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
           }} />
         </Dialog>
+        {
+          (() => {
+            if (this.current_user != null
+              && CommonUtils.UserStatus.GUEST == this.current_user['status']) {
+              return (
+                <Dialog
+                  visible={this.state.become_host_dialog_visible}
+                  closable="esc,mask,close"
+                  onClose={() => {
+                    this.setState({
+                      become_host_dialog_visible: false
+                    });
+                  }}
+                  footer={<div />}>
+                  <BecomeHostForm onSubmitted={() => {
+                    this.setState({
+                      become_host_dialog_visible: false
+                    });
+                    CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
+                  }} />
+                </Dialog>
+              );
+            }
+          })()
+        }
       </div>
     );
   }
