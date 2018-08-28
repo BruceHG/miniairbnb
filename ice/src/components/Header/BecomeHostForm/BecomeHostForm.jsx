@@ -48,8 +48,8 @@ export default class BecomeHostForm extends Component {
       fetch(CommonUtils.BACKEND_URL + '/user/becomehost/', {
         method: 'PUT',
         headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "username": CommonUtils.getUserInfo2Cookie()['username'],
+          'Content-Type': 'application/json; charset=utf-8',
+          'username': CommonUtils.getUserInfo2Cookie()['username'],
         },
         body: JSON.stringify({
           'phone': values['mobile'],
