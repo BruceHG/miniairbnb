@@ -46,9 +46,8 @@ export default class CustomTable extends Component {
   };
 
   render() {
-    return <Table
-      style={this.style}
-      {...this.props}>{this.renderColumns()}
+    return <Table style={this.style} language='en-us' {...this.props}>
+      {this.renderColumns()}
     </Table>;
   }
 }

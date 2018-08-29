@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
+import { Button, Feedback } from '@icedesign/base';
+import Img from '@icedesign/img';
 import Header from '../../components/Header';
 import CustomTable from './components/CustomTable';
-import EditDialog from './components/EditDialog';
-import DeleteBalloon from './components/DeleteBalloon';
 import * as CommonUtils from '../../lib/commonUtils';
-import axios from 'axios';
 
 export default class Admin extends Component {
   static displayName = 'Admin';
@@ -12,43 +11,95 @@ export default class Admin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: {},
+      dataSource: [],
     };
     this.columns = [
       {
         title: 'User',
-        dataIndex: 'title',
-        key: 'title',
-      },
-      {
-        title: '作者',
-        dataIndex: 'author',
-        key: 'author',
-      },
-      {
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
-      },
-      {
-        title: '发布时间',
-        dataIndex: 'date',
-        key: 'date',
-      },
-      {
-        title: '操作',
-        key: 'action',
+        key: 'User',
         render: (value, index, record) => {
           return (
             <span>
-              <EditDialog
-                index={index}
-                record={record}
-                getFormValues={this.getFormValues}
-              />
-              <DeleteBalloon
-                handleRemove={() => this.handleRemove(value, index, record)}
-              />
+              <Img
+                shape='circle'
+                width={26}
+                height={26}
+                src={record['avatar'] ? record['avatar'] : ''} />
+              {record['username']}
+            </span>
+          );
+        },
+      },
+      {
+        title: 'Mobile number',
+        key: 'mobile',
+        dataIndex: 'phone',
+      },
+      {
+        title: 'Option',
+        key: 'option',
+        render: (value, index, record) => {
+          return (
+            <span>
+              <Button
+                size="small"
+                type="primary"
+                style={{ 'marginRight': '5px' }}
+                onClick={() => {
+                  fetch(CommonUtils.BACKEND_URL + '/hostadmin/approve/', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json; charset=utf-8',
+                      'username': CommonUtils.getUserInfo2Cookie()['username'],
+                    },
+                    body: JSON.stringify({
+                      'username': record['username'],
+                    }),
+                  }).then((response) => {
+                    return response.json();
+                  }).then((json) => {
+                    if (json['code'] == 200) {
+                      Feedback.toast.success(json['msg']);
+                      this.fetchHostRequests();
+                    } else {
+                      Feedback.toast.error(json['msg']);
+                    }
+                  }).catch(() => {
+                    Feedback.toast.error('Opps! Unknow error happens...');
+                  });
+                }}>
+                Approve
+              </Button>
+              <Button
+                size="small"
+                type="primary"
+                style={{ 'marginLeft': '5px' }}
+                shape="warning"
+                onClick={() => {
+                  fetch(CommonUtils.BACKEND_URL + '/hostadmin/decline/', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json; charset=utf-8',
+                      'username': CommonUtils.getUserInfo2Cookie()['username'],
+                    },
+                    body: JSON.stringify({
+                      'username': record['username'],
+                    }),
+                  }).then((response) => {
+                    return response.json();
+                  }).then((json) => {
+                    if (json['code'] == 200) {
+                      Feedback.toast.success(json['msg']);
+                      this.fetchHostRequests();
+                    } else {
+                      Feedback.toast.error(json['msg']);
+                    }
+                  }).catch(() => {
+                    Feedback.toast.error('Opps! Unknow error happens...');
+                  });
+                }}>
+                Decline
+              </Button>
             </span>
           );
         },
@@ -66,35 +117,29 @@ export default class Admin extends Component {
     return true;
   }
 
-  componentDidMount() {
-    axios
-      .get('/mock/tab-table.json')
-      .then((response) => {
-        console.log(response.data.data);
-        this.setState({
-          dataSource: response.data.data,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  fetchHostRequests() {
+    fetch(CommonUtils.BACKEND_URL + '/hostadmin/requests/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'username': CommonUtils.getUserInfo2Cookie()['username'],
+      },
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      if (json['code'] == 200) {
+        this.setState({ dataSource: json['data'] });
+      } else {
+        Feedback.toast.error(json['msg']);
+      }
+    }).catch(() => {
+      Feedback.toast.error('Opps! Unknow error happens...');
+    });
   }
 
-  getFormValues = (dataIndex, values) => {
-    const { dataSource, tabKey } = this.state;
-    dataSource[tabKey][dataIndex] = values;
-    this.setState({
-      dataSource,
-    });
-  };
-
-  handleRemove = (value, index) => {
-    const { dataSource, tabKey } = this.state;
-    dataSource[tabKey].splice(index, 1);
-    this.setState({
-      dataSource,
-    });
-  };
+  componentDidMount() {
+    this.fetchHostRequests();
+  }
 
   render() {
     const { dataSource } = this.state;
@@ -105,7 +150,7 @@ export default class Admin extends Component {
             style={{ background: CommonUtils.THEME_COLOR }}
             onAccountStateChange={() => this.checkPermission()} />
           <CustomTable
-            dataSource={dataSource['all']}
+            dataSource={dataSource}
             columns={this.columns}
             hasBorder={false}
             style={{

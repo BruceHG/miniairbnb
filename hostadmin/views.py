@@ -43,11 +43,9 @@ def approve(request):
         applicant.delete()
         target.status = User.HOST
         target.save()
-        all_request = hostRequestSerializer(HostRequest.objects.all(), many=True)
         result = {
                 'code': status.HTTP_200_OK,
                 'msg': 'host request approved',
-                'data': all_request.data,
                 }
     except User.DoesNotExist:
         result = {
@@ -66,30 +64,34 @@ def approve(request):
         }
     return Response(result, status=result['code'])
 
-#@api_view(['POST'])
-#def adminLogin(request):
-#    try:
-#        data = request.data
-#        username = data['username']
-#        password = data['password']
-#        user = User.objects.get(username = username, status = User.ADMIN)
-#        if user.password == password:
-#            profile = loginSerializer(user)
-#            result = {
-#                'code': status.HTTP_200_OK,
-#                'msg': 'Successful login',
-#                'data': profile.data,
-#            }
-#        else:
-#            raise Exception('Wrong password')
-#    except User.DoesNotExist:
-#        result = {
-#            'code': status.HTTP_400_BAD_REQUEST,
-#            'msg': 'User not found',
-#        }
-#    except Exception as e:
-#        result = {
-#            'code': status.HTTP_400_BAD_REQUEST,
-#            'msg': str(e),
-#        }
-#    return Response(result, status=result['code'])
+@api_view(['POST'])
+def decline(request):
+    try:
+        admin = request.META.get("HTTP_USERNAME")
+        User.objects.get(username = admin, status = User.ADMIN)
+        username = (request.data['username'])
+        target = User.objects.get(username = username)
+        applicant = HostRequest.objects.get(user = target)
+        applicant.delete()
+        target.status = User.GUEST
+        target.save()
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'request has been declined',
+                }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except HostRequest.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'host request mismatch',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
