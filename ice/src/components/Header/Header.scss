@@ -4,14 +4,16 @@
   right: 0;
   z-index: 999;
   .header-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
     max-width: 1200px;
-    min-width: 760px;
+    min-width: 300px;
     width: 100%;
     margin: 20px auto;
     display: flex;
     align-items: center;
     justify-content: start;
-  }   
+  }
 
   .header-search-input {
     display: flex;
@@ -43,6 +45,9 @@
   }
 
   .header-navbar {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
     display: flex;
     align-self: flex-start;
     flex-direction: row;
@@ -69,6 +74,9 @@
 }
 
 .header-balloon-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
   width: 120px;
   padding: 10px;
   .custom-sub-menu {
@@ -85,7 +93,7 @@
   }
 }
 
-@media (max-width: 750px) {
+@media (max-width: 100px) {
   .header-container {
     .header-search-input {
       display: none;
