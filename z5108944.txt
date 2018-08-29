@@ -26,3 +26,12 @@ Try Ali Ice framework to implement frontend.
 Create the common theme fot the entire website.
 Finish the first page--home page.
 Import Django RESTful framwork.
+Modify common Header to right function.
+Write all the task list in Trello.
+Finish common Header and the callback mechanism.
+Optimise the Admin API and database.
+
+-Week 6
+Add API documentation.
+Write Become Host screen and function.
+Write Admin screen and function.

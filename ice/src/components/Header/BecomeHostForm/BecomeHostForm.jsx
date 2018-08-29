@@ -1,20 +1,20 @@
 /* eslint react/no-string-refs:0 */
 import React, { Component } from 'react';
-import { Input, Button, Checkbox, Grid, Feedback } from '@icedesign/base';
+import { Input, Button, Grid, Feedback } from '@icedesign/base';
 import {
   FormBinderWrapper as IceFormBinderWrapper,
   FormBinder as IceFormBinder,
   FormError as IceFormError,
 } from '@icedesign/form-binder';
 import IceIcon from '@icedesign/icon';
-import './SignupForm.scss';
+import './BecomeHostForm.scss';
 import fetch from 'isomorphic-fetch';
 import * as CommonUtils from '../../../lib/commonUtils';
 
 const { Row, Col } = Grid;
 
-export default class SignupForm extends Component {
-  static displayName = 'SignupForm';
+export default class BecomeHostForm extends Component {
+  static displayName = 'BecomeHostForm';
 
   static defaultProps = {};
 
@@ -22,12 +22,10 @@ export default class SignupForm extends Component {
     super(props);
     this.state = {
       value: {
-        account: undefined,
-        password: undefined,
-        checkbox: false,
+        mobile: undefined,
       },
     };
-    this.onLogin = props.onLogin;
+    this.onSubmitted = props.onSubmitted;
   }
 
   formChange = (value) => {
@@ -36,24 +34,32 @@ export default class SignupForm extends Component {
     });
   };
 
+  checkMobile = (values, callback) => {
+    if (/^04\d{8}$/.test(values)) {
+      callback();
+    } else {
+      callback('Please check password');
+    }
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     this.refs.form.validateAll((errors, values) => {
-      fetch(CommonUtils.BACKEND_URL + '/login/', {
-        method: 'POST',
+      fetch(CommonUtils.BACKEND_URL + '/user/becomehost/', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
+          'username': CommonUtils.getUserInfo2Cookie()['username'],
         },
         body: JSON.stringify({
-          'username': values['account'],
-          'password': values['password']
+          'phone': values['mobile'],
         })
       }).then((response) => {
         return response.json();
       }).then((json) => {
         if (json['code'] == 200) {
           CommonUtils.saveUserInfo2Cookie(json['data']);
-          CommonUtils.callCustomMemberFunc(this.onLogin);
+          CommonUtils.callCustomMemberFunc(this.onSubmitted);
         } else {
           Feedback.toast.error(json['msg']);
         }
@@ -65,9 +71,9 @@ export default class SignupForm extends Component {
 
   render() {
     return (
-      <div className="signup-form" style={styles.signupForm}>
+      <div className="becomehost-form" >
         <div style={styles.formContainer}>
-          <h4 style={styles.formTitle}>Login</h4>
+          <h4 style={styles.formTitle}>Become Host</h4>
           <IceFormBinderWrapper
             value={this.state.value}
             onChange={this.formChange}
@@ -77,38 +83,22 @@ export default class SignupForm extends Component {
               <Row style={styles.formItem}>
                 <Col>
                   <IceIcon
-                    type="person"
+                    type="phone"
                     size="small"
                     style={styles.inputIcon}
                   />
-                  <IceFormBinder name="account" required message="Required">
-                    <Input maxLength={20} placeholder="username" />
+                  <IceFormBinder
+                    name="mobile" required message="Required"
+                    validator={(rule, values, callback) =>
+                      this.checkMobile(values, callback)
+                    }>
+                    <Input maxLength={20} placeholder="mobile phone" />
                   </IceFormBinder>
                 </Col>
                 <Col>
-                  <IceFormError name="account" />
+                  <IceFormError name="mobile" />
                 </Col>
               </Row>
-
-              <Row style={styles.formItem}>
-                <Col>
-                  <IceIcon type="lock" size="small" style={styles.inputIcon} />
-                  <IceFormBinder name="password">
-                    <Input htmlType="password" placeholder="password" />
-                  </IceFormBinder>
-                </Col>
-                <Col>
-                  <IceFormError name="account" />
-                </Col>
-              </Row>
-
-              {/* <Row style={styles.formItem}>
-                <Col>
-                  <IceFormBinder name="checkbox">
-                    <Checkbox>Remember this account</Checkbox>
-                  </IceFormBinder>
-                </Col>
-              </Row> */}
 
               <Row style={styles.formItem}>
                 <Button
@@ -116,18 +106,8 @@ export default class SignupForm extends Component {
                   onClick={this.handleSubmit}
                   style={styles.submitBtn}
                 >
-                  Login
+                  Apply
                 </Button>
-              </Row>
-
-              <Row className="tips" style={styles.tips}>
-                <a href="#/register" style={styles.link}>
-                  Register
-                </a>
-                <span style={styles.line}>|</span>
-                <a href="/" style={styles.link}>
-                  Forgot password
-                </a>
               </Row>
             </div>
           </IceFormBinderWrapper>
@@ -168,14 +148,6 @@ const styles = {
     width: '240px',
     background: '#3080fe',
     borderRadius: '28px',
-  },
-  tips: {
-    textAlign: 'center',
-  },
-  link: {
-    color: '#999',
-    textDecoration: 'none',
-    fontSize: '13px',
   },
   line: {
     color: '#dcd6d6',

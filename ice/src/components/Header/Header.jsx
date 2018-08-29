@@ -1,51 +1,88 @@
 import React, { Component } from 'react';
-import { Input, Balloon, Icon } from '@icedesign/base';
+import { Input, Balloon, Icon, Feedback } from '@icedesign/base';
 import Menu from '@icedesign/menu';
 import Logo from '../Logo';
 import './Header.scss';
 import { Dialog } from '@icedesign/base';
 import SignupForm from './SignupForm2';
-import Cookies from 'universal-cookie';
+import BecomeHostForm from './BecomeHostForm';
+import * as CommonUtils from '../../lib/commonUtils';
+import Img from '@icedesign/img';
+
+var MENU = {
+  'BECOME_HOST': 0,
+  'HOST_PENDING': 1,
+  'MANAGE_ADS': 2,
+  'REQUESTS': 3,
+  'ORDER_HISTORY': 4,
+  'PUBLISH_AD': 5,
+  'PROFILE': 6,
+  'LOGOUT': 7,
+  'LOGIN': 8,
+};
+Object.freeze(MENU);
 
 export default class Header extends Component {
 
-  constructor(props) {
-    super(props)
-    this.style=props['style']
-    this.cookies = new Cookies();
-    this.state = {
-      c_user: null,
-      login_dialog_visible: false,
-    }
-  }
 
-  refreshCurrentUser() {
-    this.state.c_user = this.cookies.get('current_user');
+  constructor(props) {
+    super(props);
+    this.style = props['style'];
+    this.state = {
+      login_dialog_visible: false,
+      menu_balloon_visible: false,
+      become_host_dialog_visible: false,
+    }
+    this.current_user = null;
+    this.onAccountStateChange = props.onAccountStateChange;
   }
 
   onMenuClick = (...args) => {
-    console.log(args);
-    switch (args[0]['key']) {
-      case 'Login/Register':
-        this.onLoginDialogOpen();
+    switch (Number(args[0]['key'])) {
+      case MENU.BECOME_HOST:
+        this.setState({
+          become_host_dialog_visible: true
+        });
         break;
-    
+      case MENU.HOST_PENDING:
+        Feedback.toast.success("We're assessing your request...");
+        break;
+      case MENU.MANAGE_ADS:
+        console.log('Manage Ads');
+        break;
+      case MENU.REQUESTS:
+        console.log('Requests');
+        break;
+      case MENU.ORDER_HISTORY:
+        console.log('Order History');
+        break;
+      case MENU.PUBLISH_AD:
+        console.log('Publish Ad');
+        break;
+      case MENU.PROFILE:
+        console.log('Profile');
+        this.setState({
+          menu_balloon_visible: false,
+        });
+        break;
+      case MENU.LOGOUT:
+        CommonUtils.logout();
+        this.setState({
+          menu_balloon_visible: false,
+        });
+        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
+        break;
+      case MENU.LOGIN:
+        this.setState({
+          login_dialog_visible: true
+        });
+        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
+        break;
+
       default:
         break;
     }
   }
-
-  onLoginDialogOpen = () => {
-    this.setState({
-      login_dialog_visible: true
-    });
-  };
-
-  onLoginDialogClose = () => {
-    this.setState({
-      login_dialog_visible: false
-    });
-  };
 
   renderBalloonContent = (menu) => {
     return (
@@ -54,9 +91,15 @@ export default class Header extends Component {
           className="header-balloon-content"
           closable={false}
           triggerType="click"
+          visible={this.state.menu_balloon_visible}
           trigger={
-            <a>
-              {menu.name}{' '}
+            <a display='flex' align-items='center' onClick={() => {
+              this.setState({
+                menu_balloon_visible: !this.state.menu_balloon_visible
+              });
+            }}>
+              <Img shape='circle' width={26} height={26} src={this.current_user['avatar'] ? this.current_user['avatar'] : ''} />
+              {menu.name}
               <Icon
                 size="xxs"
                 type="arrow-down-filling"
@@ -65,11 +108,11 @@ export default class Header extends Component {
             </a>
           }
         >
-          {menu.children.map((subMenu, index) => {
+          {menu.children.map((subMenu) => {
             return (
-              <a href="#" className="custom-sub-menu" key={index}>
+              <div href="#" className="custom-sub-menu" key={subMenu.id} onClick={() => this.onMenuClick({ 'key': subMenu.id })}>
                 {subMenu.name}
-              </a>
+              </div>
             );
           })}
         </Balloon>
@@ -78,57 +121,120 @@ export default class Header extends Component {
   };
 
   renderMenuItem = () => {
-    let MENUS;
-    if (this.state.c_user != null) {
-      MENUS = [
-        {
-          name: 'Become Host',
-          path: '/ice/docs/ice-design',
-        },
-        {
-          name: 'Manage Ads',
-        },
-        {
-          name: 'Requests',
-        },
-        {
-          name: 'Order History',
-          path: '/ice/docs',
-        },
-        {
-          name: 'Publish Ad',
-          path: '/ice/docs',
-        },
-        {
-          name: this.state.c_user,
-          children: [
+    let menus;
+    if (this.current_user != null) {
+      switch (this.current_user['status']) {
+        case CommonUtils.UserStatus.GUEST:
+          menus = [
             {
-              name: 'ICEWORKS',
-              path: '/ice/iceworks',
+              name: 'Become Host',
+              id: MENU.BECOME_HOST
             },
             {
-              name: 'Playground',
-              path: '/ice/playground',
+              name: 'Order History',
+              id: MENU.ORDER_HISTORY,
             },
-          ],
-        },
-      ];
+            {
+              name: this.current_user['username'],
+              children: [
+                {
+                  name: 'Profile',
+                  id: MENU.PROFILE,
+                },
+                {
+                  name: 'Logout',
+                  id: MENU.LOGOUT,
+                },
+              ],
+            },
+          ];
+          break;
+        case CommonUtils.UserStatus.HOST_PENDING:
+          menus = [
+            {
+              name: 'Become Host...',
+              id: MENU.HOST_PENDING
+            },
+            {
+              name: 'Order History',
+              id: MENU.ORDER_HISTORY,
+            },
+            {
+              name: this.current_user['username'],
+              children: [
+                {
+                  name: 'Profile',
+                  id: MENU.PROFILE,
+                },
+                {
+                  name: 'Logout',
+                  id: MENU.LOGOUT,
+                },
+              ],
+            },
+          ];
+          break;
+        case CommonUtils.UserStatus.HOST:
+          menus = [
+            {
+              name: 'Manage Ads',
+              id: MENU.MANAGE_ADS,
+            },
+            {
+              name: 'Requests',
+              id: MENU.REQUESTS,
+            },
+            {
+              name: 'Order History',
+              id: MENU.ORDER_HISTORY,
+            },
+            {
+              name: 'Publish Ad',
+              id: MENU.PUBLISH_AD,
+            },
+            {
+              name: this.current_user['username'],
+              children: [
+                {
+                  name: 'Profile',
+                  id: MENU.PROFILE,
+                },
+                {
+                  name: 'Logout',
+                  id: MENU.LOGOUT,
+                },
+              ],
+            },
+          ];
+          break;
+        case CommonUtils.UserStatus.ADMIN:
+          menus = [
+            {
+              name: 'Logout',
+              id: MENU.LOGOUT,
+            },
+          ];
+          break;
+
+        default:
+          break;
+      }
     } else {
-      MENUS = [
+      menus = [
         {
           name: 'Login/Register',
-          path: 'Login/Register',
+          id: MENU.LOGIN,
         },
       ];
     }
 
 
-    return MENUS.map((menu) => {
+    return menus.map((menu) => {
       if (menu.children) {
         return this.renderBalloonContent(menu);
       }
       return (
-        <Menu.Item key={menu.path}>
+        <Menu.Item key={menu.id}>
           {menu.name}
         </Menu.Item>
       );
@@ -136,7 +242,11 @@ export default class Header extends Component {
   };
 
   render() {
-    this.refreshCurrentUser();
+    this.current_user = CommonUtils.getUserInfo2Cookie();
+    if (this.current_user != null
+      && CommonUtils.UserStatus.ADMIN == this.current_user['status']) {
+      window.location = '#/admin';
+    }
     return (
       <div className="header-container" style={this.style}>
         <div className="header-content">
@@ -153,10 +263,47 @@ export default class Header extends Component {
         <Dialog
           visible={this.state.login_dialog_visible}
           closable="esc,mask,close"
-          onClose={this.onLoginDialogClose}
+          onClose={() => {
+            this.setState({
+              login_dialog_visible: false
+            });
+          }}
           footer={<div />}>
-          <SignupForm />
+          <SignupForm onLogin={() => {
+            this.setState({
+              login_dialog_visible: false
+            });
+            if (CommonUtils.UserStatus.ADMIN == this.current_user['status']) {
+              window.location = '#/admin';
+            }
+            CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
+          }} />
         </Dialog>
+        {
+          (() => {
+            if (this.current_user != null
+              && CommonUtils.UserStatus.GUEST == this.current_user['status']) {
+              return (
+                <Dialog
+                  visible={this.state.become_host_dialog_visible}
+                  closable="esc,mask,close"
+                  onClose={() => {
+                    this.setState({
+                      become_host_dialog_visible: false
+                    });
+                  }}
+                  footer={<div />}>
+                  <BecomeHostForm onSubmitted={() => {
+                    this.setState({
+                      become_host_dialog_visible: false
+                    });
+                    CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
+                  }} />
+                </Dialog>
+              );
+            }
+          })()
+        }
       </div>
     );
   }

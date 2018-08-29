@@ -1,82 +1,71 @@
-import json
-from django.http import HttpResponse
-from user.models import User
 from django.db.models import Q
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
+from rest_framework import status
 
-def __dict2reponse(result):
-    return HttpResponse(json.dumps(result), status=result['code'])
+from user.models import User
+from user.serializers import loginSerializer, profileSerializer, registerSerializer
 
 
+@api_view(['POST'])
 def login(request):
-    result = {}
     try:
-        data = json.loads(request.body)
-        username = data['username']
-        password = data['password']
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
+#        data = JSONParser().parse(request)
+        data = request.data
+        user = User.objects.get(username = data['username'])
+        if user.password == data['password']:
+            profile = loginSerializer(user)
             result = {
-                'msg': 'User not found',
-                'success': False,
-                'code': 400
-            }
-            return __dict2reponse(result)
-
-        if user.password == password:
-            result = {
-                'msg': 'Success login',
-                'data': {'user': username},
-                'success': True,
-                'code': 200
+                'code': status.HTTP_200_OK,
+                'msg': 'Successful login',
+                'data': profile.data,
             }
         else:
-            result = {
-                'msg': 'Wrong password',
-                'success': False,
-                'code': 400
-            }
+            raise Exception('Wrong password')
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'User not found',
+        }
     except Exception as e:
         result = {
+            'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
-            'success': False,
-            'code': 400
         }
+    return Response(result, status=result['code'])
 
-    return __dict2reponse(result)
 
-
+@api_view(['POST'])
 def register(request):
-    result = {}
     try:
-        data = json.loads(request.body)
-
+#        data = JSONParser().parse(request)
+        new_user = registerSerializer(data = request.data)
+        data = new_user.initial_data
         filterResult = User.objects.filter(
             Q(username=data['username']) | Q(email=data['email']))
-        if len(filterResult) > 0:
-            result = {
-                'msg': 'User exists',
-                'success': False,
-                'code': 400
-            }
-        else:
-            User.objects.create(username=data['username'],
-                                password=data['password'],
-                                firstname=data['firstname'],
-                                lastname=data['lastname'],
-                                birthday=data['birthday'],
-                                email=data['email'])
-            result = {
-                'msg': 'Success register',
-                'data': {'user': data['username']},
-                'success': True,
-                'code': 200
-            }
+        for u in filterResult:
+            if u.username == data['username']:
+                raise Exception('username has been registered')
+            if u.email == data['email']:
+                raise Exception('email has been registered')
+        new_user.is_valid()
+        new_user.save()
+        profile = profileSerializer(User.objects.get(username = data['username']))
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'Successful register',
+            'data': profile.data,
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'User not found',
+        }
     except Exception as e:
         result = {
+            'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
-            'success': False,
-            'code': 400
         }
-    return __dict2reponse(result)
+    return Response(result, status=result['code'])

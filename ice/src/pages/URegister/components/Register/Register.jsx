@@ -1,6 +1,6 @@
 /* eslint react/no-string-refs:0 */
 import React, { Component } from 'react';
-import { Input, Button, Grid, Feedback } from '@icedesign/base';
+import { Input, Button, Grid, Feedback, DatePicker } from '@icedesign/base';
 import {
   FormBinderWrapper as IceFormBinderWrapper,
   FormBinder as IceFormBinder,
@@ -8,7 +8,8 @@ import {
 } from '@icedesign/form-binder';
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
-import Cookies from 'universal-cookie';
+import * as CommonUtils from '../../../../lib/commonUtils';
+import Moment from 'moment';
 
 const { Row, Col } = Grid;
 
@@ -27,10 +28,23 @@ export default class Register extends Component {
         email: '',
         passwd: '',
         rePasswd: '',
+        dob: '',
       },
     };
+    this.onRegisterSuccess = props.onRegisterSuccess;
   }
 
+  onDateChange = (date) => {
+    var my_input = date + '';
+    var d1 = Date.parse(my_input);
+    var today = new Date();
+    var d2 = Date.parse(today);
+    if (d1 >= d2){
+      Feedback.toast.error('Birthday is illegal, please reset it!');
+      this.setState({value:{...this.state.value, dob: ''}});
+    }
+  };
+  
   checkPasswd = (rule, values, callback) => {
     if (!values) {
       callback('Please check password');
@@ -66,23 +80,25 @@ export default class Register extends Component {
         return;
       }
 
-      fetch('/login/register/', {
+      fetch(CommonUtils.BACKEND_URL + '/login/register/', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
         body: JSON.stringify({
-          username: values['username'],
-          password: values['passwd'],
-          firstname: values['firstname'],
-          lastname: values['lastname'],
-          birthday: values['dob'],
-          email: values['email'],
+          'username': values['username'],
+          'password': values['passwd'],
+          'firstname': values['firstname'],
+          'lastname': values['lastname'],
+          'birthday': Moment(values['dob']).format('YYYY-MM-DD'),
+          'email': values['email'],
         })
       }).then((response) => {
         return response.json();
       }).then((json) => {
         if (json['code'] == 200) {
-          const cookies = new Cookies();
-          cookies.set('current_user', json['data']['user']);
-          window.location='/';
+          CommonUtils.saveUserInfo2Cookie(json['data']);
+          CommonUtils.callCustomMemberFunc(this.onRegisterSuccess);
         } else {
           Feedback.toast.error(json['msg']);
         }
@@ -164,12 +180,16 @@ export default class Register extends Component {
 
               <Row style={styles.formItem}>
                 <Col style={styles.formItemCol}>
-                  <IceIcon type="clock" size="small" style={styles.inputIcon} />
-                  <IceFormBinder
-                    name="dob"
-                  >
-                    <Input size="large" maxLength={20} placeholder="YYYY-MM-DD" />
-                  </IceFormBinder>
+                <IceIcon type="clock" size="small" style={styles.inputIcon} />
+                <IceFormBinder name="dob">
+                    <DatePicker 
+                    language="en-us"
+                    formater={['YYYY-MM-DD']}
+                    value={this.state.value.dob}
+                    locale={{ datePlaceholder: 'Birthday' }}
+                    onChange={this.onDateChange}                  
+                    />
+                    </IceFormBinder>
                 </Col>
               </Row>
 
