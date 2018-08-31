@@ -12,25 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-class new_Item:
-    def __init__(self, item_json=None):
-        if item_json is not None:
-            listing = item_json
-            self.id = listing['id']
-            self.user_id = listing['user_id']
-            self.type = listing['type']
-            self.title = listing['title']
-            self.album = listing['album']
-            self.address = listing['address']
-            self.latitude = listing['latitude']
-            self.longitude = listing['longitude']
-            self.price = item_json['price']
-            self.guest_num = listing['guest_num']
-            self.bedroom_num = listing['bedroom_num']
-            self.bed_num = listing['bed_num']
-            self.bathroom_num = listing['bathroom_num']
-        else:
-            pass
+from item.crawler import crawl_airbnb
 
 def add_new_user(user_id):
     users = User.objects.filter(u_id = user_id)
@@ -83,7 +65,7 @@ def add_item(target):
     item.save()
     
 def albums(user_id, item_id):
-    path = 'item/album/{}/{}'.format(user_id, item_id)
+    path = 'item/crawler/album/{}/{}'.format(user_id, item_id)
     result = ''
     pictures = os.listdir(path)
     for p in pictures:
@@ -103,12 +85,12 @@ def avai_date():
 def import_real_data(request):
     try:
         admin = request.META.get("HTTP_USERNAME")
-        filename = request.data['filename']
+        filename = 'item/crawler/data.json'
         User.objects.get(username = admin, status = User.ADMIN)
         with open(filename, 'r') as file:
             item_data = json.load(file)
             for i in item_data:
-                item = new_Item(i)
+                item = crawl_airbnb.Item(i)
                 add_new_user(item.user_id)
                 add_new_host(item.user_id)
                 add_item(item)

@@ -105,7 +105,7 @@ The bar includes:
 
     Display the avatar of current user.
     Allow user to edit his personal information ***except*** `Username` and `Email`.
-    Reser password (by Email).
+    Reset password (by Email).
 
 ##### Home Page
 - NavigationBar

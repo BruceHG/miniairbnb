@@ -33,5 +33,8 @@ Optimise the Admin API and database.
 
 -Week 6
 Add API documentation.
-Write Become Host screen and function.
-Write Admin screen and function.
+Write API documentation for 'register and login', 'become host', 'host requests' and 'approve/decline'.
+Implement Become Host screen and function.
+Implement Admin screen and function.
+Write API documentation for 'search'.
+Write API documentation for 'accom detail'.
