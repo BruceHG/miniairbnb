@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     # 'search.apps.SearchConfig',
     'hostadmin.apps.HostadminConfig',
-    # 'item.apps.ItemConfig',
+    'item.apps.ItemConfig',
     # 'order.apps.OrderConfig',
 ]
 
