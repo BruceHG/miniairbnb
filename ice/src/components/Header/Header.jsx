@@ -29,6 +29,7 @@ export default class Header extends Component {
     super(props);
     this.style = props['style'];
     this.state = {
+      search_box_visible: props['searchBox'] != undefined ? props['searchBox'] : true,
       login_dialog_visible: false,
       menu_balloon_visible: false,
       become_host_dialog_visible: false,
@@ -252,9 +253,17 @@ export default class Header extends Component {
         <div className="header-content">
           <Logo />
           <div className="header-navbar">
-            <div className="header-search-input">
-              <Input placeholder="Anywhere" />
-            </div>
+            {
+              (() => {
+                if (this.state.search_box_visible) {
+                  return (
+                    <div className="header-search-input">
+                      <Input placeholder="Anywhere" />
+                    </div>
+                  );
+                }
+              })()
+            }
             <Menu className="header-navbar-menu" mode="horizontal" onClick={this.onMenuClick}>
               {this.renderMenuItem()}
             </Menu>
