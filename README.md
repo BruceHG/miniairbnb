@@ -15,7 +15,7 @@ Run `setup.sh`
 
 This script is built for Ubuntu 16.04 LTS. Make sure you have the root permission.
 # Crawl
-In directory `crawler`, run `crawl_airbnb.py`.
+In directory `item/crawler`, run `crawl_airbnb.py`.
 
 It generates a `data.json` file and `album` directory. The structure of `album` is:
 
@@ -25,6 +25,12 @@ It generates a `data.json` file and `album` directory. The structure of `album` 
                 |-0.jpg
                 |-1.jpg
                 ...
+
+Then run the server(maybe you need to run `setup.sh`), send this http request to import the crawled data into database:
+```http
+    PUT /item/import_real_data/
+    username: {the username of an admin account}
+```
 # Frontend
 [![ice](https://img.shields.io/badge/developing%20with-ICE-2077ff.svg)](https://github.com/alibaba/ice)
 
@@ -105,7 +111,7 @@ The bar includes:
 
     Display the avatar of current user.
     Allow user to edit his personal information ***except*** `Username` and `Email`.
-    Reser password (by Email).
+    Reset password (by Email).
 
 ##### Home Page
 - NavigationBar
