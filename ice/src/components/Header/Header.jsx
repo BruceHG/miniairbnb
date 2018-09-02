@@ -99,10 +99,10 @@ export default class Header extends Component {
                 menu_balloon_visible: !this.state.menu_balloon_visible
               });
             }}>
-              <Img shape='circle' width={26} height={26} src={this.current_user['avatar'] ? this.current_user['avatar'] : ''} />
-              {menu.name}
+              <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Libai_touxiang.jpg'} />
+              &nbsp;
               <Icon
-                size="xxs"
+                size="50"
                 type="arrow-down-filling"
                 className="arrow-down-filling-icon"
               />
