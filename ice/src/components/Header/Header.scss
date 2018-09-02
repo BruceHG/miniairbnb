@@ -29,7 +29,8 @@
         color: #fff;
         &::placeholder {
           color: rgba(255, 255, 255, 0.7);
-          font-size: 12px;
+          font-size: 20px;
+          font-family:"Times New Roman", Times, serif;
         }
         &:focus,
         &:hover {
@@ -47,7 +48,6 @@
   .header-navbar {
     overflow: hidden;
     text-overflow: ellipsis;
-    position: relative;
     display: flex;
     align-self: flex-start;
     flex-direction: row;
@@ -61,6 +61,8 @@
         line-height: 26px;
         padding: 0 10px;
         color: #fff;
+        font-size: 20px;
+        font-family:"Times New Roman", Times, serif;
         a:hover {
           color: #bfbfbf;
         }
@@ -84,7 +86,10 @@
     padding: 0 10px;
     height: 28px;
     line-height: 28px;
-    font-size: 13px;
+    position: absolute;
+    right:0px;
+    font-size: 10px;
+    font-family:"Times New Roman", Times, serif;
     color: #666;
     text-decoration: none;
     &:hover {
@@ -100,6 +105,7 @@
     }
     .header-navbar {
       .ice-menu .ice-menu-item {
+        position: absolute;
         padding: 0 5px;
       }
     }
