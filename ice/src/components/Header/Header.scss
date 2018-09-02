@@ -3,6 +3,7 @@
   left: 0;
   right: 0;
   z-index: 999;
+  opacity: 5.5;
   .header-content {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -19,8 +20,9 @@
     display: flex;
     align-items: center;
     margin-left: 10px;
+    opacity: 5.5;
     .next-input {
-      background-color: transparent;
+      background-color: grey;
       border-color: #dcdee3;
       width: auto;
       input {
@@ -101,11 +103,13 @@
 @media (max-width: 100px) {
   .header-container {
     .header-search-input {
+      position: absolute;
       display: none;
     }
     .header-navbar {
       .ice-menu .ice-menu-item {
         position: absolute;
+        right:0px;
         padding: 0 5px;
       }
     }

@@ -253,17 +253,27 @@ export default class Header extends Component {
         <div className="header-content">
           <Logo />
           <div className="header-navbar">
-            {
-              (() => {
-                if (this.state.search_box_visible) {
-                  return (
-                    <div className="header-search-input">
-                      <Input placeholder="Anywhere" />
-                    </div>
-                  );
-                }
-              })()
-            }
+            <div className="header-search-input" >
+              {
+                (
+                  ()=>{
+                    if (this.state.search_box_visible) {
+                      return(<Input placeholder="Anywhere"
+                        style={{
+                          visibility:"visible"
+                        }}
+                        />);
+                    } else {
+                      return(<Input placeholder="Anywhere"
+                        style={{
+                          visibility:"hidden"
+                        }}
+                        />);
+                    }
+                  }
+                )()
+              }
+            </div>
             <Menu className="header-navbar-menu" mode="horizontal" onClick={this.onMenuClick}>
               {this.renderMenuItem()}
             </Menu>
