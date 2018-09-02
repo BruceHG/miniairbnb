@@ -3,6 +3,7 @@
   left: 0;
   right: 0;
   z-index: 999;
+  opacity: 5.5;
   .header-content {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -19,8 +20,9 @@
     display: flex;
     align-items: center;
     margin-left: 10px;
+    opacity: 5.5;
     .next-input {
-      background-color: transparent;
+      background-color: grey;
       border-color: #dcdee3;
       width: auto;
       input {
@@ -29,7 +31,8 @@
         color: #fff;
         &::placeholder {
           color: rgba(255, 255, 255, 0.7);
-          font-size: 12px;
+          font-size: 20px;
+          font-family:"Times New Roman", Times, serif;
         }
         &:focus,
         &:hover {
@@ -47,7 +50,6 @@
   .header-navbar {
     overflow: hidden;
     text-overflow: ellipsis;
-    position: relative;
     display: flex;
     align-self: flex-start;
     flex-direction: row;
@@ -61,6 +63,8 @@
         line-height: 26px;
         padding: 0 10px;
         color: #fff;
+        font-size: 20px;
+        font-family:"Times New Roman", Times, serif;
         a:hover {
           color: #bfbfbf;
         }
@@ -84,7 +88,10 @@
     padding: 0 10px;
     height: 28px;
     line-height: 28px;
-    font-size: 13px;
+    //position: absolute;
+    //right:0px;
+    font-size: 20px;
+    font-family:"Times New Roman", Times, serif;
     color: #666;
     text-decoration: none;
     &:hover {
@@ -96,10 +103,13 @@
 @media (max-width: 100px) {
   .header-container {
     .header-search-input {
+      position: absolute;
       display: none;
     }
     .header-navbar {
       .ice-menu .ice-menu-item {
+        position: absolute;
+        //right:0px;
         padding: 0 5px;
       }
     }

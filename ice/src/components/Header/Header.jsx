@@ -99,10 +99,10 @@ export default class Header extends Component {
                 menu_balloon_visible: !this.state.menu_balloon_visible
               });
             }}>
-              <Img shape='circle' width={26} height={26} src={this.current_user['avatar'] ? this.current_user['avatar'] : ''} />
-              {menu.name}
+              <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Libai_touxiang.jpg'} />
+              &nbsp;
               <Icon
-                size="xxs"
+                size="50"
                 type="arrow-down-filling"
                 className="arrow-down-filling-icon"
               />
@@ -253,17 +253,27 @@ export default class Header extends Component {
         <div className="header-content">
           <Logo />
           <div className="header-navbar">
-            {
-              (() => {
-                if (this.state.search_box_visible) {
-                  return (
-                    <div className="header-search-input">
-                      <Input placeholder="Anywhere" />
-                    </div>
-                  );
-                }
-              })()
-            }
+            <div className="header-search-input" >
+              {
+                (
+                  ()=>{
+                    if (this.state.search_box_visible) {
+                      return(<Input placeholder="Anywhere"
+                        style={{
+                          visibility:"visible"
+                        }}
+                        />);
+                    } else {
+                      return(<Input placeholder="Anywhere"
+                        style={{
+                          visibility:"hidden"
+                        }}
+                        />);
+                    }
+                  }
+                )()
+              }
+            </div>
             <Menu className="header-navbar-menu" mode="horizontal" onClick={this.onMenuClick}>
               {this.renderMenuItem()}
             </Menu>
