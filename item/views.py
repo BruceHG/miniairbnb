@@ -1,11 +1,13 @@
 import json
 import os
+import math
 from datetime import datetime
 from datetime import timedelta
 from random import randint
 import re
 from django.db.models import Q
 import operator
+from operator import itemgetter
 from functools import reduce
 
 from user.models import User, Host
@@ -163,8 +165,15 @@ def features(request):
 def search(request):
     try:
         data = request.data
+        page_size = 16
+        page = 0
 #        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
 #                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
+        
+        if 'page_size' in data:
+            page_size = data['page_size']
+        if 'page' in data:
+            page = data['page']
         q_list = []
         if 'guest_num' in data:
             q_list.append(Q(guest_num = data['guest_num']))
@@ -172,10 +181,12 @@ def search(request):
             q_list.append(Q(price_per_day__gte = data['min_price']))
         if 'max_price' in data:
             q_list.append(Q(price_per_day__lte = data['max_price']))
-#        if 'min_rating ' in data:
-#            q_list.append(Q(rating__gte = data['min_rating']))
-#        if 'max_rating ' in data:
-#            q_list.append(Q(rating__lte = data['max_rating']))
+        if 'min_rating' in data:
+            hosts = Host.objects.filter(rating__gte = int(data['min_rating']))
+            q_list.append(Q(owner__in = hosts))
+        if 'max_rating' in data:
+            hosts = Host.objects.filter(rating__lte = int(data['max_rating']))
+            q_list.append(Q(owner__in = hosts))
         if 'types' in data:
             item_types = data['types'].split(',')
             q_list.append(Q(i_type__in = item_types))
@@ -185,11 +196,51 @@ def search(request):
             for f in item_features:
                 pattern += f + '[,\d]*'
             q_list.append(Q(features__regex = pattern))
-        search_result = searchResultSerializers(Item.objects.filter(reduce(operator.and_, q_list)), many = True)
+
+        all_objects = Item.objects.filter(reduce(operator.and_, q_list))
+        if 'check_in' in data:
+            filtered_objects = []
+            for o in all_objects:
+                avaliable_check_in = o.avaliable.split(',')
+                date_query = datetime.strptime(data['check_in'],'%Y-%m-%d')
+                for i in range(len(avaliable_check_in) - 2):
+                    date_in = datetime.strptime(avaliable_check_in[i],'%Y-%m-%d')
+                    date_out = datetime.strptime(avaliable_check_in[i + 1],'%Y-%m-%d')
+                    if date_in <= date_query <= date_out:
+                        filtered_objects.append(o)
+                        break
+            all_objects = filtered_objects
+        if 'check_out' in data:
+            filtered_objects = []
+            for o in all_objects:
+                avaliable_check_in = o.avaliable.split(',')
+                date_query = datetime.strptime(data['check_out'],'%Y-%m-%d')
+                for i in range(len(avaliable_check_in) - 2):
+                    date_in = datetime.strptime(avaliable_check_in[i],'%Y-%m-%d')
+                    date_out = datetime.strptime(avaliable_check_in[i + 1],'%Y-%m-%d')
+                    if date_in <= date_query <= date_out:
+                        filtered_objects.append(o)
+                        break
+            all_objects = filtered_objects
+        for o in all_objects:
+            print(o)
+        all_results = searchResultSerializers(all_objects, many = True).data
+        if 'sortby' in data:
+            order = data['sortby']
+            if order == 'rating':
+                all_results = sorted(all_results, key=itemgetter(order), reverse=True)
+            else:
+                all_results = sorted(all_results, key=itemgetter(order))
+                
+        total_page = math.ceil(len(all_results) / page_size)
+        search_result = all_results[page_size * page:page_size * (page + 1)]
         result = {
             'code': status.HTTP_200_OK,
-            'msg': 'test',
-            'data': search_result.data
+            'msg': 'search results',
+            'data': {
+                    'total_page': total_page,
+                    'accommodations': search_result
+                    }
         }
     except Exception as e:
         result = {
