@@ -4,6 +4,8 @@ const DEBUG_IN_LOCAL = false;
 const COOKIE_KEY_CURRENT_USER = 'COOKIE_KEY_CURRENT_USER';
 
 export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://login.cse.unsw.edu.au:8000' : '';
+export const DEFAULT_AVATAR = 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Libai_touxiang.jpg';
+
 
 export var UserStatus = { 'GUEST': 0, 'HOST_PENDING': 1, 'HOST': 2, 'ADMIN': 3 };
 Object.freeze(UserStatus);

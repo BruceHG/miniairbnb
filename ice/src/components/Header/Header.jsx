@@ -99,7 +99,7 @@ export default class Header extends Component {
                 menu_balloon_visible: !this.state.menu_balloon_visible
               });
             }}>
-              <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Libai_touxiang.jpg'} />
+              <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR} />
               &nbsp;
               <Icon
                 size="50"
@@ -256,19 +256,19 @@ export default class Header extends Component {
             <div className="header-search-input" >
               {
                 (
-                  ()=>{
+                  () => {
                     if (this.state.search_box_visible) {
-                      return(<Input placeholder="Anywhere"
+                      return (<Input placeholder="Anywhere"
                         style={{
-                          visibility:"visible"
+                          visibility: "visible"
                         }}
-                        />);
+                      />);
                     } else {
-                      return(<Input placeholder="Anywhere"
+                      return (<Input placeholder="Anywhere"
                         style={{
-                          visibility:"hidden"
+                          visibility: "hidden"
                         }}
-                        />);
+                      />);
                     }
                   }
                 )()
