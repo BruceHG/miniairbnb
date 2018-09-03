@@ -56,7 +56,7 @@ def add_item(target):
                 owner = host,
                 i_type = i_type,
                 title = target.title,
-                album_first = 'item/crawler/album/{}/{}'.format(target.user_id, target.id) + '/0.jpg',
+                album_first = 'static/album/{}/{}'.format(target.user_id, target.id) + '/0.jpg',
                 album = albums(target.user_id, target.id),
                 desc = 'desc test test',
                 adv_desc = 'adv_desc test test',
@@ -72,9 +72,9 @@ def add_item(target):
     item.save()
     
 def albums(user_id, item_id):
-    path = 'item/crawler/album/{}/{}'.format(user_id, item_id)
-    result = ''
-    pictures = os.listdir(path)
+    path = 'static/album/{}/{}'.format(user_id, item_id)
+    result = []
+    pictures = os.listdir('item/crawler/album/{}/{}'.format(user_id, item_id))
     for p in pictures:
         result.append(path + '/' + p)
     return ','.join(result)
@@ -92,10 +92,11 @@ def avai_date():
 def import_real_data(request):
     try:
         admin = request.META.get("HTTP_USERNAME")
-        filename = 'item/crawler/data.json'
         User.objects.get(username = admin, status = User.ADMIN)
-        with open(filename, 'r') as file:
+        with open('item/crawler/data.json', 'r') as file:
             item_data = json.load(file)
+            os.system('mkdir item/static > /dev/null 2>&1')
+            os.system('rsync -av item/crawler/album item/static/ > /dev/null && rm -rf item/crawler/album')
             for i in item_data:
                 item = crawl_airbnb.Item(i)
                 add_new_user(item.user_id)
@@ -103,7 +104,7 @@ def import_real_data(request):
                 add_item(item)
         result = {
             'code': status.HTTP_200_OK,
-            'msg': filename,
+            'msg': 'import crawled data successfully',
         }
     
     except Exception as e:

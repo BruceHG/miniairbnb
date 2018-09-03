@@ -42,3 +42,5 @@ Write API documentation for 'booking'.
 
 -Week 7
 Fix 'Register' datepicker bug.
+Implement accommodation detail page.
+Fix bugs when importing the crawled data into database.
