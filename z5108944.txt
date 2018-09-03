@@ -38,3 +38,7 @@ Implement Become Host screen and function.
 Implement Admin screen and function.
 Write API documentation for 'search'.
 Write API documentation for 'accom detail'.
+Write API documentation for 'booking'.
+
+-Week 7
+Fix 'Register' datepicker bug.
