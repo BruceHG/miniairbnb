@@ -175,10 +175,10 @@ def features(request):
     return Response(result, status=result['code'])
 
 
-@api_view(['POST'])
+@api_view(['Get'])
 def search(request):
     try:
-        data = request.data
+        data = request.query_params
         page_size = 16
         page = 0
 #        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
@@ -210,8 +210,10 @@ def search(request):
             for f in item_features:
                 pattern += f + '[,\d]*'
             q_list.append(Q(features__regex=pattern))
-
-        all_objects = Item.objects.filter(reduce(operator.and_, q_list))
+        if q_list:
+            all_objects = Item.objects.filter(reduce(operator.and_, q_list))
+        else:
+            all_objects = Item.objects.all()
         if 'check_in' in data:
             filtered_objects = []
             for o in all_objects:
@@ -240,8 +242,6 @@ def search(request):
                         filtered_objects.append(o)
                         break
             all_objects = filtered_objects
-        for o in all_objects:
-            print(o)
         all_results = searchResultSerializers(all_objects, many=True).data
         if 'sortby' in data:
             order = data['sortby']
