@@ -1,10 +1,13 @@
 import json
 import os
 import math
+from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
 from datetime import timedelta
 from random import randint
 import re
+import requests
+
 from django.db.models import Q
 import operator
 from operator import itemgetter
@@ -174,6 +177,25 @@ def features(request):
         }
     return Response(result, status=result['code'])
 
+def geocoding(address):
+    api_key = "AIzaSyDoH8ScxK3bBYFT2Ccgz5xtXeAF3Vbp_WI"
+    api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(address, api_key))
+    return api_response.json()
+
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371
+    return c * r * 1000
+
 
 @api_view(['Get'])
 def search(request):
@@ -181,14 +203,24 @@ def search(request):
         data = request.query_params
         page_size = 16
         page = 0
+        valid_address = 0
 #        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
 #                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
-
         if 'page_size' in data:
             page_size = data['page_size']
         if 'page' in data:
             page = data['page']
         q_list = []
+        if 'keyword' in data:
+            geo_response = geocoding(data['keyword'])
+            if geo_response['status'] == 'OK':
+                latitude = geo_response['results'][0]['geometry']['location']['lat']
+                longitude = geo_response['results'][0]['geometry']['location']['lng']
+                valid_address = 1
+            else:
+                q_list.append(Q(title__regex=data['keyword']) |
+                              Q(desc__regex=data['keyword']) |
+                              Q(adv_desc__regex=data['keyword']))
         if 'guest_num' in data:
             q_list.append(Q(guest_num=data['guest_num']))
         if 'min_price' in data:
@@ -243,13 +275,25 @@ def search(request):
                         break
             all_objects = filtered_objects
         all_results = searchResultSerializers(all_objects, many=True).data
+        if valid_address == 1:
+            for r in all_results:
+                distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
+                r['distance'] = distance
+            if 'min_distance' in data:
+                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
+            if 'max_distance' in data:
+                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
         if 'sortby' in data:
             order = data['sortby']
             if order == 'rating':
                 all_results = sorted(
                     all_results, key=itemgetter(order), reverse=True)
-            else:
+            elif order == 'price_per_day':
                 all_results = sorted(all_results, key=itemgetter(order))
+            elif order == 'distance' and valid_address == 1:
+                all_results = sorted(all_results, key=itemgetter(order))
+                for r in all_results:
+                    r.pop('distance')
 
         total_page = math.ceil(len(all_results) / page_size)
         search_result = all_results[page_size * page:page_size * (page + 1)]
