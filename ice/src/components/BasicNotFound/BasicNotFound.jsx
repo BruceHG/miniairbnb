@@ -15,14 +15,14 @@ export default class BasicNotFound extends Component {
               src={require('./images/TB1txw7bNrI8KJjy0FpXXb5hVXa-260-260.png')}
               style={styles.image}
               className="imgException"
-              alt="页面不存在"
+              alt="Page not found"
             />
             <div className="prompt">
               <h3 style={styles.title} className="title">
-                抱歉，你访问的页面不存在
+                Opps, page not foud
               </h3>
               <p style={styles.description} className="description">
-                您要找的页面没有找到，请返回<Link to="/">首页</Link>继续浏览
+                The page you visited is not found. Please back to <Link to="/">homepage</Link> to continue.
               </p>
             </div>
           </div>
