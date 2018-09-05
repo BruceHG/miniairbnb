@@ -8,6 +8,7 @@ import SignupForm from './SignupForm2';
 import BecomeHostForm from './BecomeHostForm';
 import * as CommonUtils from '../../lib/commonUtils';
 import Img from '@icedesign/img';
+import { withRouter } from 'react-router-dom';
 
 var MENU = {
   'BECOME_HOST': 0,
@@ -22,12 +23,11 @@ var MENU = {
 };
 Object.freeze(MENU);
 
+@withRouter
 export default class Header extends Component {
-
 
   constructor(props) {
     super(props);
-    this.style = props['style'];
     this.state = {
       search_box_visible: props['searchBox'] != undefined ? props['searchBox'] : true,
       login_dialog_visible: false,
@@ -249,7 +249,7 @@ export default class Header extends Component {
       window.location = '#/admin';
     }
     return (
-      <div className="header-container" style={this.style}>
+      <div className="header-container" style={this.props.style}>
         <div className="header-content">
           <Logo />
           <div className="header-navbar">
@@ -258,17 +258,25 @@ export default class Header extends Component {
                 (
                   () => {
                     if (this.state.search_box_visible) {
-                      return (<Input placeholder="Anywhere"
-                        style={{
-                          visibility: "visible"
-                        }}
-                      />);
+                      return (
+                        <Input placeholder="Anywhere"
+                          style={{
+                            visibility: "visible"
+                          }}
+                          onChange={(value, e) => this.searchKeyword = value}
+                          onPressEnter={() => {
+                            if (this.searchKeyword) {
+                              this.props.history.push(`/accom/${this.searchKeyword}`);
+                            }
+                          }}
+                        />);
                     } else {
-                      return (<Input placeholder="Anywhere"
-                        style={{
-                          visibility: "hidden"
-                        }}
-                      />);
+                      return (
+                        <Input placeholder="Anywhere"
+                          style={{
+                            visibility: "hidden"
+                          }}
+                        />);
                     }
                   }
                 )()
