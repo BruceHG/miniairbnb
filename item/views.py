@@ -131,23 +131,23 @@ def import_real_data(request):
 @api_view(['GET'])
 def itemDetail(request, item_id):
     try:
-        item = itemDetailSerializers(Item.objects.get(i_id=item_id))
-        return_item = {}
-        for f in item.data:
-            if f != 'album' and f != 'features':
-                return_item[f] = item.data[f]
-        if item.data['album']:
-            return_item['album'] = item.data['album'].split(',')
+        item = itemDetailSerializers(Item.objects.get(i_id=item_id)).data
+        for k in item:
+            if item[k] == None and k != 'album' and k != 'features':
+                item[k] = ''
+        if not item['album'] == None:
+            item['album'] = item['album'].split(',')
         else:
-            return_item['album'] = []
-        if item.data['features']:
-            return_item['features'] = item.data['features'].split(',')
+            item['album'] = []
+        if not item['features'] == None:
+            item['features'] = item['features'].split(',')
         else:
-            return_item['features'] = []
+            item['features'] = []
+
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'accommodation detail',
-            'data': return_item,
+            'data': item,
         }
     except Item.DoesNotExist:
         result = {
