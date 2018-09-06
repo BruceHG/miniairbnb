@@ -16,5 +16,12 @@ class searchResultSerializers(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ('i_id', 'username', 'title', 'i_type', 'price_per_day', 'rating', 'album_first', 'address', 'latitude', 'longitude',)
+        
+class availableSerializers(serializers.ModelSerializer):
+    max_guests = serializers.CharField(source='guest_num')
+    available_date = serializers.CharField(source='avaliable')
+    class Meta:
+        model = Item
+        fields = ('max_guests', 'available_date',)
 
 
