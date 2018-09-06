@@ -15,7 +15,7 @@ from functools import reduce
 
 from user.models import User, Host
 from item.models import Item
-from item.serializers import itemDetailSerializers, searchResultSerializers
+from item.serializers import itemDetailSerializers, searchResultSerializers, availableSerializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -97,7 +97,7 @@ def avai_date():
     end = start + timedelta(days=ran2)
     start = start.strftime('%Y-%m-%d')
     end = end.strftime('%Y-%m-%d')
-    return start + ',' + end + ','
+    return start + ',' + end
 
 
 @api_view(['PUT'])
@@ -222,7 +222,10 @@ def search(request):
                               Q(desc__regex=data['keyword']) |
                               Q(adv_desc__regex=data['keyword']))
         if 'guest_num' in data:
-            q_list.append(Q(guest_num=data['guest_num']))
+            if int(data['guest_num']) <= 4:
+                q_list.append(Q(guest_num=data['guest_num']))
+            else:
+                q_list.append(Q(guest_num__gte=data['guest_num']))
         if 'min_price' in data:
             q_list.append(Q(price_per_day__gte=data['min_price']))
         if 'max_price' in data:
@@ -251,12 +254,12 @@ def search(request):
             for o in all_objects:
                 avaliable_check_in = o.avaliable.split(',')
                 date_query = datetime.strptime(data['check_in'], '%Y-%m-%d')
-                for i in range(len(avaliable_check_in) - 2):
+                for i in range(0, len(avaliable_check_in), 2):
                     date_in = datetime.strptime(
                         avaliable_check_in[i], '%Y-%m-%d')
                     date_out = datetime.strptime(
                         avaliable_check_in[i + 1], '%Y-%m-%d')
-                    if date_in <= date_query <= date_out:
+                    if date_in <= date_query < date_out:
                         filtered_objects.append(o)
                         break
             all_objects = filtered_objects
@@ -265,12 +268,12 @@ def search(request):
             for o in all_objects:
                 avaliable_check_in = o.avaliable.split(',')
                 date_query = datetime.strptime(data['check_out'], '%Y-%m-%d')
-                for i in range(len(avaliable_check_in) - 2):
+                for i in range(0, len(avaliable_check_in), 2):
                     date_in = datetime.strptime(
                         avaliable_check_in[i], '%Y-%m-%d')
                     date_out = datetime.strptime(
                         avaliable_check_in[i + 1], '%Y-%m-%d')
-                    if date_in <= date_query <= date_out:
+                    if date_in < date_query <= date_out:
                         filtered_objects.append(o)
                         break
             all_objects = filtered_objects
@@ -304,6 +307,37 @@ def search(request):
                 'total_page': total_page,
                 'accommodations': search_result
             }
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+
+@api_view(['GET'])
+def available_info(request, item_id):
+    try:
+        item = availableSerializers(Item.objects.get(i_id=item_id)).data
+        available_format = []
+        available_raw = item['available_date'].split(',')
+        
+        for i in range(0, len(available_raw), 2):
+            available_format.append({
+                        'begin': available_raw[i],
+                        'end': available_raw[i + 1]
+                            })
+        
+        item['available_date'] = available_format
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'available detail',
+            'data': item
+        }
+    except Item.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'item not found',
         }
     except Exception as e:
         result = {
