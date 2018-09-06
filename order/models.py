@@ -13,4 +13,4 @@ class Order(models.Model):
     comment = models.TextField(max_length=200)
     
     c_time = models.DateTimeField(auto_now_add=True)
-    item_time = models.DateTimeField()  #a copy of item.c_time
+    item_ctime = models.DateTimeField()  #a copy of item.c_time
