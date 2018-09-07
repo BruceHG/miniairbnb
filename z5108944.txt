@@ -44,3 +44,6 @@ Write API documentation for 'booking'.
 Fix 'Register' datepicker bug.
 Implement accommodation detail page.
 Fix bugs when importing the crawled data into database.
+Optimise 'Header'.
+finish all the function in 'Detail Screen'.
+Pass data from 'Detail Screen' to 'Place order'.

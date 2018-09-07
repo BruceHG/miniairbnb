@@ -8,7 +8,6 @@ import SignupForm from './SignupForm2';
 import BecomeHostForm from './BecomeHostForm';
 import * as CommonUtils from '../../lib/commonUtils';
 import Img from '@icedesign/img';
-import { withRouter } from 'react-router-dom';
 
 var MENU = {
   'BECOME_HOST': 0,
@@ -23,11 +22,13 @@ var MENU = {
 };
 Object.freeze(MENU);
 
-@withRouter
 export default class Header extends Component {
 
   constructor(props) {
     super(props);
+    if (!props.history) {
+      console.error("Have you set '{...this.props}' from parent?");
+    }
     this.state = {
       search_box_visible: props['searchBox'] != undefined ? props['searchBox'] : true,
       login_dialog_visible: false,
@@ -35,7 +36,17 @@ export default class Header extends Component {
       become_host_dialog_visible: false,
     }
     this.current_user = null;
-    this.onAccountStateChange = props.onAccountStateChange;
+  }
+
+  getCurrentUserOrLogin() {
+    if (this.current_user) {
+      return this.current_user;
+    } else {
+      this.setState({
+        login_dialog_visible: true
+      });
+      return null;
+    }
   }
 
   onMenuClick = (...args) => {
@@ -71,13 +82,12 @@ export default class Header extends Component {
         this.setState({
           menu_balloon_visible: false,
         });
-        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
+        CommonUtils.callCustomMemberFunc(this.props.onAccountStateChange)
         break;
       case MENU.LOGIN:
         this.setState({
           login_dialog_visible: true
         });
-        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
         break;
 
       default:
@@ -102,7 +112,7 @@ export default class Header extends Component {
               <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR} />
               &nbsp;
               <Icon
-                size="50"
+                size="medium"
                 type="arrow-down-filling"
                 className="arrow-down-filling-icon"
               />
@@ -265,7 +275,7 @@ export default class Header extends Component {
                           }}
                           onChange={(value, e) => this.searchKeyword = value}
                           onPressEnter={() => {
-                            if (this.searchKeyword) {
+                            if (this.searchKeyword && this.props.history) {
                               this.props.history.push(`/accom/${this.searchKeyword}`);
                             }
                           }}
@@ -303,7 +313,7 @@ export default class Header extends Component {
             if (CommonUtils.UserStatus.ADMIN == this.current_user['status']) {
               window.location = '#/admin';
             }
-            CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
+            CommonUtils.callCustomMemberFunc(this.props.onAccountStateChange);
           }} />
         </Dialog>
         {
@@ -324,7 +334,7 @@ export default class Header extends Component {
                     this.setState({
                       become_host_dialog_visible: false
                     });
-                    CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
+                    CommonUtils.callCustomMemberFunc(this.props.onAccountStateChange);
                   }} />
                 </Dialog>
               );

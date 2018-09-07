@@ -8,6 +8,7 @@ import URegister from './pages/URegister';
 
 import Admin from './pages/Admin';
 import Detail from './pages/Detail';
+import Placeorder from './pages/Placeorder';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -30,6 +31,11 @@ const routerConfig = [
     path: '/detail/:id',
     layout: BlankLayout,
     component: Detail,
+  },
+  {
+    path: '/placeorder/:data',
+    layout: BlankLayout,
+    component: Placeorder,
   },
   {
     path: '*',

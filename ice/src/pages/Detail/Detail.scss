@@ -1,4 +1,12 @@
 .detail-page {
+    min-width: 900px;
+    width: auto !important;
+    width: 900px;
+    .detail-loading {
+        position: relative;
+        width: 100%;
+        height: 500px;
+    }
     .detail-page-slider {
         position: relative;
         width: 100%;
@@ -9,17 +17,41 @@
         }
     }
     .detail-page-detail {
+        padding: 10px;
         position: relative;
+        margin-right: 400px;
         .detail-type {
             font-family: cursive
         }
         .detail-title {
             font-size: 20pt;
         }
+        .detail-description {
+            white-space: pre-wrap;
+            font-size: 12pt;
+            margin-top: 20px;
+        }
         .detail-user {
             position: absolute;
-            top: 0;
-            right: 0;
+            font-weight: bold;
+            top: 10px;
+            right: 10px;
+        }
+        .detail-map {
+            width: 100%;
+            height:400px;
+        }
+    }
+    .detail-booking {
+        position: fixed;
+        background-color: whitesmoke;
+        top: 480px;
+        right: 0;
+        padding: 10px;
+        width: 400px;
+        border: 1px solid lightgrey;
+        .booking-price {
+            font-size: 20pt;
         }
     }
 }

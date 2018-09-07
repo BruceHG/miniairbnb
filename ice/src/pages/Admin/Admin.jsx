@@ -152,6 +152,7 @@ export default class Admin extends Component {
         <div className="admin-page">
           <Header
             style={{ background: CommonUtils.THEME_COLOR }}
+            {...this.props}
             searchBox={false}
             onAccountStateChange={() => this.checkPermission()} />
           <CustomTable
