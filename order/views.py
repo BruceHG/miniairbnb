@@ -8,11 +8,11 @@ from item.models import Item
 from user.models import User, Host
 from order.serializers import ordersSerializers
 
-@api_view(['GET'])
+@api_view(['POST'])
 def booking(request):
     try:
         username = request.META.get("HTTP_USERNAME")
-        data = request.query_params
+        data = request.data
         item = Item.objects.get(i_id = data['item_id'])
         checkin = datetime.strptime(data['check_in'], '%Y-%m-%d')
         checkout = datetime.strptime(data['check_out'], '%Y-%m-%d')
@@ -46,7 +46,9 @@ def booking(request):
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'booking successfully',
-            'data': new_order.o_id,
+            'data': {
+                    'order_id': new_order.o_id,
+                    },
         }
     except Item.DoesNotExist:
         result = {
