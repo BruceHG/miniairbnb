@@ -7,6 +7,8 @@ import Home from './pages/Home';
 import URegister from './pages/URegister';
 
 import Admin from './pages/Admin';
+
+import Accoms from './pages/Accoms';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -24,6 +26,11 @@ const routerConfig = [
     path: '/admin',
     layout: BlankLayout,
     component: Admin,
+  },
+  {
+    path: '/accoms',
+    layout: BlankLayout,
+    component: Accoms,
   },
   {
     path: '*',

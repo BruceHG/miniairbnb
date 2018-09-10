@@ -8,3 +8,10 @@ command for lunach:
 
 26/Aug/2018: date extend for the register page
 
+28/Aug/2018 --- 6/Sep/2018 search result pages:
+28/Aug/2018: set filters
+29/Aug/2018: set filters
+30/Aug/2018: implement date transfer
+31/Aug/2018: implement date transfer
+1/Sep/2018: 
+debug fix the search result pages
