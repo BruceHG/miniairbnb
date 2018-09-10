@@ -9,7 +9,6 @@ import {
 import IceIcon from '@icedesign/icon';
 import './Register.scss';
 import * as CommonUtils from '../../../../lib/commonUtils';
-import Moment from 'moment';
 
 const { Row, Col } = Grid;
 
@@ -34,17 +33,15 @@ export default class Register extends Component {
     this.onRegisterSuccess = props.onRegisterSuccess;
   }
 
-  onDateChange = (date) => {
-    var my_input = date + '';
-    var d1 = Date.parse(my_input);
+  onDateChange = (date, formatDate) => {
+    let selectedDate = new Date(formatDate);
     var today = new Date();
-    var d2 = Date.parse(today);
-    if (d1 >= d2){
+    if (selectedDate >= today) {
       Feedback.toast.error('Birthday is illegal, please reset it!');
-      this.setState({value:{...this.state.value, dob: ''}});
+      this.setState({ value: { ...this.state.value, dob: '' } });
     }
   };
-  
+
   checkPasswd = (rule, values, callback) => {
     if (!values) {
       callback('Please check password');
@@ -88,10 +85,10 @@ export default class Register extends Component {
         body: JSON.stringify({
           'username': values['username'],
           'password': values['passwd'],
+          'email': values['email'],
           'firstname': values['firstname'],
           'lastname': values['lastname'],
-          'birthday': Moment(values['dob']).format('YYYY-MM-DD'),
-          'email': values['email'],
+          'birthday': values['dob'],
         })
       }).then((response) => {
         return response.json();
@@ -180,16 +177,23 @@ export default class Register extends Component {
 
               <Row style={styles.formItem}>
                 <Col style={styles.formItemCol}>
-                <IceIcon type="clock" size="small" style={styles.inputIcon} />
-                <IceFormBinder name="dob">
-                    <DatePicker 
-                    language="en-us"
-                    formater={['YYYY-MM-DD']}
-                    value={this.state.value.dob}
-                    locale={{ datePlaceholder: 'Birthday' }}
-                    onChange={this.onDateChange}                  
+                  <IceIcon type="clock" size="small" style={styles.inputIcon} />
+                  <IceFormBinder
+                    name="dob"
+                    required
+                    valueFormatter={
+                      (date, formatDate) => {
+                        return formatDate;
+                      }
+                    }>
+                    <DatePicker
+                      language="en-us"
+                      formater={['YYYY-MM-DD']}
+                      value={this.state.value.dob}
+                      language={'en-us'}
+                      onChange={this.onDateChange}
                     />
-                    </IceFormBinder>
+                  </IceFormBinder>
                 </Col>
               </Row>
 

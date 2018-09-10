@@ -14,7 +14,7 @@ export default class Home extends Component {
   render() {
     return (
       <div className="home-page" style={styles.homepage}>
-        <Header style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
+        <Header style={{ background: 'rgba(0, 0, 0, 0.1)' }} searchBox={false} />
         <ExcellentHomePage />
         <Footer style={{ position: 'absolute', right: 0, bottom: 0 }} />
       </div>

@@ -1,26 +1,41 @@
 #!/usr/bin/python3
 import json
 
-__PAGES__ = 40
+__PAGES__ = 1
 
 
 class Item:
     def __init__(self, item_json=None):
         if item_json is not None:
-            listing = item_json['listing']
-            self.id = listing['id']
-            self.user_id = listing['user']['id']
-            self.type = listing['room_and_property_type']
-            self.title = listing['name']
-            self.album = listing['picture_urls']
-            self.address = listing['public_address']
-            self.latitude = listing['lat']
-            self.longitude = listing['lng']
-            self.price = item_json['pricing_quote']['rate_with_service_fee']['amount']
-            self.guest_num = listing['person_capacity']
-            self.bedroom_num = listing['bedrooms']
-            self.bed_num = listing['beds']
-            self.bathroom_num = listing['bathrooms']
+            try:
+                listing = item_json['listing']
+                self.id = listing['id']
+                self.user_id = listing['user']['id']
+                self.type = listing['room_and_property_type']
+                self.title = listing['name']
+                self.album = listing['picture_urls']
+                self.address = listing['public_address']
+                self.latitude = listing['lat']
+                self.longitude = listing['lng']
+                self.price = item_json['pricing_quote']['rate_with_service_fee']['amount']
+                self.guest_num = listing['person_capacity']
+                self.bedroom_num = listing['bedrooms']
+                self.bed_num = listing['beds']
+                self.bathroom_num = listing['bathrooms']
+            except KeyError:
+                self.id = item_json['id']
+                self.user_id = item_json['user_id']
+                self.type = item_json['type']
+                self.title = item_json['title']
+                self.album = item_json['album']
+                self.address = item_json['address']
+                self.latitude = item_json['latitude']
+                self.longitude = item_json['longitude']
+                self.price = item_json['price']
+                self.guest_num = item_json['guest_num']
+                self.bedroom_num = item_json['bedroom_num']
+                self.bed_num = item_json['bed_num']
+                self.bathroom_num = item_json['bathroom_num']
         else:
             pass
 

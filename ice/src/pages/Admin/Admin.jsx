@@ -24,7 +24,7 @@ export default class Admin extends Component {
                 shape='circle'
                 width={26}
                 height={26}
-                src={record['avatar'] ? record['avatar'] : ''} />
+                src={record['avatar'] ? record['avatar'] : CommonUtils.DEFAULT_AVATAR} />
               {record['username']}
             </span>
           );
@@ -45,29 +45,7 @@ export default class Admin extends Component {
                 size="small"
                 type="primary"
                 style={{ 'marginRight': '5px' }}
-                onClick={() => {
-                  fetch(CommonUtils.BACKEND_URL + '/hostadmin/approve/', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json; charset=utf-8',
-                      'username': CommonUtils.getUserInfo2Cookie()['username'],
-                    },
-                    body: JSON.stringify({
-                      'username': record['username'],
-                    }),
-                  }).then((response) => {
-                    return response.json();
-                  }).then((json) => {
-                    if (json['code'] == 200) {
-                      Feedback.toast.success(json['msg']);
-                      this.fetchHostRequests();
-                    } else {
-                      Feedback.toast.error(json['msg']);
-                    }
-                  }).catch(() => {
-                    Feedback.toast.error('Opps! Unknow error happens...');
-                  });
-                }}>
+                onClick={() => this.onAccept(record['username'])}>
                 Approve
               </Button>
               <Button
@@ -75,29 +53,7 @@ export default class Admin extends Component {
                 type="primary"
                 style={{ 'marginLeft': '5px' }}
                 shape="warning"
-                onClick={() => {
-                  fetch(CommonUtils.BACKEND_URL + '/hostadmin/decline/', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json; charset=utf-8',
-                      'username': CommonUtils.getUserInfo2Cookie()['username'],
-                    },
-                    body: JSON.stringify({
-                      'username': record['username'],
-                    }),
-                  }).then((response) => {
-                    return response.json();
-                  }).then((json) => {
-                    if (json['code'] == 200) {
-                      Feedback.toast.success(json['msg']);
-                      this.fetchHostRequests();
-                    } else {
-                      Feedback.toast.error(json['msg']);
-                    }
-                  }).catch(() => {
-                    Feedback.toast.error('Opps! Unknow error happens...');
-                  });
-                }}>
+                onClick={() => this.onDecline(record['username'])}>
                 Decline
               </Button>
             </span>
@@ -141,6 +97,54 @@ export default class Admin extends Component {
     this.fetchHostRequests();
   }
 
+  onAccept(username) {
+    fetch(CommonUtils.BACKEND_URL + '/hostadmin/approve/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'username': CommonUtils.getUserInfo2Cookie()['username'],
+      },
+      body: JSON.stringify({
+        'username': username,
+      }),
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      if (json['code'] == 200) {
+        Feedback.toast.success(json['msg']);
+        this.fetchHostRequests();
+      } else {
+        Feedback.toast.error(json['msg']);
+      }
+    }).catch(() => {
+      Feedback.toast.error('Opps! Unknow error happens...');
+    });
+  }
+
+  onDecline(username) {
+    fetch(CommonUtils.BACKEND_URL + '/hostadmin/decline/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'username': CommonUtils.getUserInfo2Cookie()['username'],
+      },
+      body: JSON.stringify({
+        'username': username,
+      }),
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      if (json['code'] == 200) {
+        Feedback.toast.success(json['msg']);
+        this.fetchHostRequests();
+      } else {
+        Feedback.toast.error(json['msg']);
+      }
+    }).catch(() => {
+      Feedback.toast.error('Opps! Unknow error happens...');
+    });
+  }
+
   render() {
     const { dataSource } = this.state;
     if (this.checkPermission()) {
@@ -148,6 +152,7 @@ export default class Admin extends Component {
         <div className="admin-page">
           <Header
             style={{ background: CommonUtils.THEME_COLOR }}
+            searchBox={false}
             onAccountStateChange={() => this.checkPermission()} />
           <CustomTable
             dataSource={dataSource}

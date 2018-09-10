@@ -7,5 +7,6 @@ __pycache__
 migrations/
 # !crawler/requirements.txt
 # !crawler/crawl_airbnb.py
-crawler/
+item/crawler/
+item/static/
 db.sqlite3

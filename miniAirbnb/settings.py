@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     # 'search.apps.SearchConfig',
     'hostadmin.apps.HostadminConfig',
-    # 'item.apps.ItemConfig',
-    # 'order.apps.OrderConfig',
+    'item.apps.ItemConfig',
+    'order.apps.OrderConfig',
 ]
 
 MIDDLEWARE = [

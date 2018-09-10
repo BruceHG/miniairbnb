@@ -1,0 +1,25 @@
+.detail-page {
+    .detail-page-slider {
+        position: relative;
+        width: 100%;
+        .slider-img-wrapper img {
+            max-height:400px;
+            width: 100%;
+            height: auto;
+        }
+    }
+    .detail-page-detail {
+        position: relative;
+        .detail-type {
+            font-family: cursive
+        }
+        .detail-title {
+            font-size: 20pt;
+        }
+        .detail-user {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    }
+}

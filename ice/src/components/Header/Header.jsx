@@ -8,6 +8,7 @@ import SignupForm from './SignupForm2';
 import BecomeHostForm from './BecomeHostForm';
 import * as CommonUtils from '../../lib/commonUtils';
 import Img from '@icedesign/img';
+import { withRouter } from 'react-router-dom';
 
 var MENU = {
   'BECOME_HOST': 0,
@@ -22,13 +23,13 @@ var MENU = {
 };
 Object.freeze(MENU);
 
+@withRouter
 export default class Header extends Component {
-
 
   constructor(props) {
     super(props);
-    this.style = props['style'];
     this.state = {
+      search_box_visible: props['searchBox'] != undefined ? props['searchBox'] : true,
       login_dialog_visible: false,
       menu_balloon_visible: false,
       become_host_dialog_visible: false,
@@ -98,10 +99,10 @@ export default class Header extends Component {
                 menu_balloon_visible: !this.state.menu_balloon_visible
               });
             }}>
-              <Img shape='circle' width={26} height={26} src={this.current_user['avatar'] ? this.current_user['avatar'] : ''} />
-              {menu.name}
+              <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR} />
+              &nbsp;
               <Icon
-                size="xxs"
+                size="50"
                 type="arrow-down-filling"
                 className="arrow-down-filling-icon"
               />
@@ -248,12 +249,38 @@ export default class Header extends Component {
       window.location = '#/admin';
     }
     return (
-      <div className="header-container" style={this.style}>
+      <div className="header-container" style={this.props.style}>
         <div className="header-content">
           <Logo />
           <div className="header-navbar">
-            <div className="header-search-input">
-              <Input placeholder="Anywhere" />
+            <div className="header-search-input" >
+              {
+                (
+                  () => {
+                    if (this.state.search_box_visible) {
+                      return (
+                        <Input placeholder="Anywhere"
+                          style={{
+                            visibility: "visible"
+                          }}
+                          onChange={(value, e) => this.searchKeyword = value}
+                          onPressEnter={() => {
+                            if (this.searchKeyword) {
+                              this.props.history.push(`/accom/${this.searchKeyword}`);
+                            }
+                          }}
+                        />);
+                    } else {
+                      return (
+                        <Input placeholder="Anywhere"
+                          style={{
+                            visibility: "hidden"
+                          }}
+                        />);
+                    }
+                  }
+                )()
+              }
             </div>
             <Menu className="header-navbar-menu" mode="horizontal" onClick={this.onMenuClick}>
               {this.renderMenuItem()}
