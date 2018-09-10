@@ -5,13 +5,14 @@ from datetime import datetime
 
 from order.models import Order
 from item.models import Item
-from user.models import User
+from user.models import User, Host
+from order.serializers import ordersSerializers
 
-@api_view(['GET'])
+@api_view(['POST'])
 def booking(request):
     try:
         username = request.META.get("HTTP_USERNAME")
-        data = request.query_params
+        data = request.data
         item = Item.objects.get(i_id = data['item_id'])
         checkin = datetime.strptime(data['check_in'], '%Y-%m-%d')
         checkout = datetime.strptime(data['check_out'], '%Y-%m-%d')
@@ -43,8 +44,11 @@ def booking(request):
                         )
         new_order.save()
         result = {
-            'code': status.HTTP_400_BAD_REQUEST,
+            'code': status.HTTP_200_OK,
             'msg': 'booking successfully',
+            'data': {
+                    'order_id': new_order.o_id,
+                    },
         }
     except Item.DoesNotExist:
         result = {
@@ -62,3 +66,39 @@ def booking(request):
             'msg': str(e),
         }
     return Response(result, status=result['code'])
+
+@api_view(['GET'])
+def viewOrders(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username=username)
+        host = Host.objects.get(user=user)
+        items = Item.objects.filter(owner=host)
+        orders = ordersSerializers(Order.objects.filter(item__in=items), many=True).data
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'orders',
+            'data': orders,
+        }
+    except Item.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'item not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'host not found',
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+    
