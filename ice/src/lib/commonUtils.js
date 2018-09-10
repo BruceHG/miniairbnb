@@ -8,8 +8,8 @@ export const DEFAULT_AVATAR = 'https://upload.wikimedia.org/wikipedia/commons/d/
 
 
 export var UserStatus = { 'GUEST': 0, 'HOST_PENDING': 1, 'HOST': 2, 'ADMIN': 3 };
-export var AccomType = { 'House': 0, 'Flat': 1, 'Apartment': 2, 'Townhouse': 3, 'Others': 4 };
-export var CancelRule = { 'Free cancel': 0, 'Free cancel before 24h': 1, 'Charging 10% for cancellation': 2 };
+export var AccomType = { 0: 'House', 1: 'Flat', 2: 'Apartment', 3: 'Townhouse', 4: 'Others' };
+export var CancelRule = { 0: 'Free cancel', 1: 'Free cancel before 24h', 2: 'Charging 10% for cancellation' };
 export var BuildinFeaturesName = { 0: 'Wi-Fi', 1: 'Parking', 2: 'Air conditioning' };
 export var BuildinFeaturesIcon = {
     0: "m12 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 5a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm5.92-5.78a.5.5 0 1 1 -.84.55c-1.19-1.81-3.07-2.77-5.08-2.77s-3.89.96-5.08 2.78a.5.5 0 0 1 -.84-.55c1.38-2.1 3.58-3.23 5.92-3.23s4.54 1.13 5.92 3.23zm2.98-3.03a.5.5 0 1 1 -.79.61c-1.66-2.14-5.22-3.8-8.11-3.8-2.83 0-6.26 1.62-8.12 3.82a.5.5 0 0 1 -.76-.65c2.05-2.42 5.75-4.17 8.88-4.17 3.19 0 7.05 1.8 8.9 4.19zm2.95-2.33a.5.5 0 0 1 -.71-.02c-2.94-3.07-6.71-4.84-11.14-4.84s-8.2 1.77-11.14 4.85a.5.5 0 0 1 -.72-.69c3.12-3.27 7.14-5.16 11.86-5.16s8.74 1.89 11.86 5.16a.5.5 0 0 1 -.02.71z",
@@ -45,14 +45,6 @@ export function callCustomMemberFunc(func, ...args) {
     } else {
         console.log(func + ' is not a function!');
     }
-}
-
-export function getAccomType(id) {
-    return Object.keys(AccomType).find(key => AccomType[key] === id);
-}
-
-export function getCancelRule(id) {
-    return Object.keys(CancelRule).find(key => CancelRule[key] === id);
 }
 
 // export function getBuildinFeatures(id) {

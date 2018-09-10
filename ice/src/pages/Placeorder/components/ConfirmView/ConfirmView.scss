@@ -1,0 +1,41 @@
+.confirm-view {
+    margin: 20px;
+    text-align: center;
+    font-size: 15pt;
+    .tip1 {
+        font-size: 17pt;
+        margin-bottom: 30px;
+    }
+    .title {
+        font-size: 32pt;
+    }
+    .address {
+        color: yellowgreen;
+    }
+    .date-guest {
+        margin-top: 30px;
+    }
+    .price-area {
+        font-size: 18pt;
+        margin: 50px;
+        .price {
+            font-style: italic;
+            color: red;
+        }
+    }
+    .rules {
+        color: orange;
+    }
+    .tip3 {
+        margin-top: 20px;
+        font-size: 11pt;
+        color: grey;
+    }
+    .comment {
+        width: 50%;
+    }
+    .button {
+        margin: 10px;
+        font-size: 14pt;
+    }
+}

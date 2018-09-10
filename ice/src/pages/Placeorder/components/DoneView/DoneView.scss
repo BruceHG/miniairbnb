@@ -1,0 +1,33 @@
+.done-view {
+    margin: 20px;
+    text-align: center;
+    font-size: 15pt;
+    .tip1 {
+        font-size: 65pt;
+        color: lightcoral;
+        font-weight: bolder;
+    }
+    .title-area {
+        color: grey;
+        margin-top: 50px;
+        .title {
+            font-size: 25pt;
+            color: orange;
+        }
+    }
+    .order-no-area {
+        margin-top: 50px;
+        .order-no {
+            color: orange;
+        }
+    }
+    .tip2 {
+        color: grey;
+        font-size: 11pt;
+        margin: 30px;
+    }
+    .gohome {
+        color: blue;
+        font-size: 13pt;
+    }
+}

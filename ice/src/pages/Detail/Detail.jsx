@@ -16,7 +16,7 @@ export default class Detail extends Component {
 
   constructor(props) {
     super(props);
-    this.detail_id = this.props.match.params.id;
+    this.accom_id = this.props.match.params.id;
     this.state = {
       data: null,
       availableInfo: null,
@@ -31,7 +31,7 @@ export default class Detail extends Component {
   }
 
   componentDidMount() {
-    fetch(CommonUtils.BACKEND_URL + `/item/${this.detail_id}/`, {
+    fetch(CommonUtils.BACKEND_URL + `/item/${this.accom_id}/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -51,7 +51,7 @@ export default class Detail extends Component {
   }
 
   updateAvailableInfo() {
-    fetch(CommonUtils.BACKEND_URL + `/item/${this.detail_id}/available_info/`, {
+    fetch(CommonUtils.BACKEND_URL + `/item/${this.accom_id}/available_info/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -122,10 +122,11 @@ export default class Detail extends Component {
   gotoPreOrder() {
     this.props.history.push(`/placeorder/${btoa(JSON.stringify({
       ...this.state.bookingInfo,
-      detail_id: this.detail_id,
+      accom_id: this.accom_id,
       title: this.state.data['title'],
       price: this.state.data['price_per_day'],
       rules: this.state.data['rules'],
+      address: this.state.data['address'],
     }))}`);
   }
 
@@ -162,7 +163,7 @@ export default class Detail extends Component {
                     ))}
                   </Slider>
                   <div className="detail-page-detail">
-                    <div className="detail-type">{CommonUtils.getAccomType(this.state.data['i_type'])}</div>
+                    <div className="detail-type">{CommonUtils.AccomType[this.state.data['i_type']]}</div>
                     <div className="detail-title">{this.state.data['title']}</div>
                     <div className="detail-user">
                       <Img className="detail-avatar" shape='circle' width={65} height={65} src={this.state.data['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR} />

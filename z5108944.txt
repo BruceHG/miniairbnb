@@ -47,3 +47,7 @@ Fix bugs when importing the crawled data into database.
 Optimise 'Header'.
 finish all the function in 'Detail Screen'.
 Pass data from 'Detail Screen' to 'Place order'.
+
+-Week 8
+Finish 'Place order' screen and API fucntion.
+Test 'get requests' API.
