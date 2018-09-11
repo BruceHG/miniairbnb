@@ -1,6 +1,6 @@
 import Cookies from 'universal-cookie';
 
-const DEBUG_IN_LOCAL = true;
+const DEBUG_IN_LOCAL = false;
 const COOKIE_KEY_CURRENT_USER = 'COOKIE_KEY_CURRENT_USER';
 
 export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://login.cse.unsw.edu.au:8007' : '';
