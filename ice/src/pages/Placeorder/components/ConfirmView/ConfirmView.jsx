@@ -38,7 +38,8 @@ export default class ConfirmView extends Component {
         Feedback.toast.error(json['msg']);
         Common.callCustomMemberFunc(this.props.onFail, json['code']);
       }
-    }).catch(() => {
+    }).catch((e) => {
+      console.error(e);
       Feedback.toast.error('Opps! Unknow error happens...');
     });
   }

@@ -12,8 +12,8 @@ export default class Placeorder extends Component {
     this.data = JSON.parse(atob(this.props.match.params.data));
     this.state = {
       currentStep: 0,
+      successOrderId: null,
     };
-    this.successOrderId = null;
   }
 
   onOrderSuccess = (orderNo) => {
@@ -43,7 +43,7 @@ export default class Placeorder extends Component {
         >
           <Step.Item title='Confirm Order' />
           <Step.Item title='Submit' />
-          <Step.Item disabled title='Waiting for Host Approve' />
+          <Step.Item title='Waiting for Host Approve' />
           <Step.Item title='Done' />
         </Step>
         {
@@ -63,7 +63,7 @@ export default class Placeorder extends Component {
                   <DoneView
                     {...this.props}
                     title={this.data['title']}
-                    orderNo={this.successOrderId} />
+                    orderNo={this.state.successOrderId} />
                 );
             }
           })()
