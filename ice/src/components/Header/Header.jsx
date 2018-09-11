@@ -266,7 +266,7 @@ export default class Header extends Component {
                           onChange={(value, e) => this.searchKeyword = value}
                           onPressEnter={() => {
                             if (this.searchKeyword) {
-                              this.props.history.push(`/accom/${this.searchKeyword}`);
+                              this.props.history.push(`/accoms/${this.searchKeyword}`);
                             }
                           }}
                         />);

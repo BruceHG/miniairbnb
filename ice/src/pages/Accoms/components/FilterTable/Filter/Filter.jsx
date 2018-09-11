@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Input, Grid, Select, Button, DatePicker, Checkbox, Feedback } from '@icedesign/base';
 import * as CommonUtils from '../../../../../lib/commonUtils';
-import Moment from 'moment';
+// import Moment from 'moment';
 
 // form binder 详细用法请参见官方文档
 import {
@@ -120,8 +120,8 @@ export default class Filter extends Component {
   }
 
   handleSubmit = () => {
-
-
+    // console.log(this.state);
+    console.log("submit!!!!!!")
     this.refs.form.validateAll((errors, values) => {
       if (errors) {
         console.log('errors', errors);
@@ -134,8 +134,11 @@ export default class Filter extends Component {
           'Content-Type': 'application/json; charset=utf-8',
         },
         body: JSON.stringify({
-          'begin': Moment(values['startTime']).format('YYYY-MM-DD'),
-          'end': Moment(values['endTime']).format('YYYY-MM-DD'),
+          // 'begin': Moment(values['startTime']).format('YYYY-MM-DD'),
+          // 'end': Moment(values['endTime']).format('YYYY-MM-DD'),
+          'keyword': this.props.keyword,
+          'check_in': values['startTime'],
+          'check_out':values['endTime'],
           'guest_num': values['number_of_guest'],
           'sortby': values['sort'],
           'types': this.state.value.type_list,
@@ -157,7 +160,6 @@ export default class Filter extends Component {
   };
 
   render() {
-    console.log(this.state);
     return (
       <IceFormBinderWrapper
         value={this.props.value}

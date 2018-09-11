@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
 import IceImg from '@icedesign/img';
 import './SingleItem.scss';
+import * as CommonUtils from '../../../../../lib/commonUtils';
+
 
 export default class SingleItem extends Component {
   static displayName = 'SingleItem';
+  
 
   render() {
+    
     const {
       style,
       className = '',
       active,
+      i_id,
       title,
-      image,
-      price,
+      album_first,
+      price_per_day,
+      address,
       extra,
     } = this.props;
+    // console.log(CommonUtils.BACKEND_URL+'/'+album_first);
     return (
       <div
         className={`${className} single-item`}
@@ -27,8 +34,8 @@ export default class SingleItem extends Component {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <IceImg
-            src={image}
+          <IceImg 
+            src={CommonUtils.BACKEND_URL+'/'+album_first}
             width={149}
             height={149}
             style={{ margin: '8px' }}
@@ -46,6 +53,7 @@ export default class SingleItem extends Component {
           }}
         >
           {title}
+
         </div>
         <div
           style={{
@@ -58,7 +66,7 @@ export default class SingleItem extends Component {
             margin: '0 14px',
           }}
         >
-          {price}
+          {address}
         </div>
         <div
           style={{
@@ -71,7 +79,7 @@ export default class SingleItem extends Component {
             margin: '0 14px',
           }}
         >
-          {extra}
+          {'$'+price_per_day+' AUD per night'}
         </div>
       </div>
     );

@@ -43,7 +43,7 @@ export default class ExcellentHomePage extends Component {
                 onChange={(value, e) => this.searchKeyword = value}
                 onSearch={() => {
                   if (this.searchKeyword) {
-                    this.props.history.push(`/accom/${this.searchKeyword}`);
+                    this.props.history.push(`/accoms/${this.searchKeyword}`);
                   }
                 }}
               />

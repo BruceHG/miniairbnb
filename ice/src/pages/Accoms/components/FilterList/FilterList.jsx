@@ -1,192 +1,197 @@
 import React, { Component } from 'react';
-import { Button, Search, Grid } from '@icedesign/base';
+import { Feedback,Button, Search, Grid } from '@icedesign/base';
 import IceContainer from '@icedesign/container';
 import SingleItem from './SingleItem';
 import './FilterList.scss';
 import FilterForm from '../FilterTable/Filter';
+import * as CommonUtils from '../../../../lib/commonUtils';
 import  EnhanceTable from '../EnhanceTable/EnhanceTable';
 
 const { Row, Col } = Grid;
 // the datasource should come from the database search, so chnage here
-const dataSource = [
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
-  },
-  {
-    title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-    extra: '预计佣金 ¥10',
-    price: '¥89',
-    image:
-      '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
-  },
-];
+// const dataSource = [
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2bxHGtpXXXXXVXXXXXXXXXXXX_!!120976213.jpg_240x240.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2bEcHnXXXXXbgXXXXXXXXXXXX_!!120976213.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i2/TB11DjAIFXXXXaTXFXXXXXXXXXX_!!0-item_pic.jpg_100x100.jpg',
+//   },
+//   {
+//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
+//     extra: '预计佣金 ¥10',
+//     price: '¥89',
+//     image:
+//       '//img.alicdn.com/bao/uploaded/i4/TB1GiPSinJ_SKJjSZPiYXH3LpXa_M2.SS2_100x100.jpg',
+//   },
+// ];
 
 export default class FilterList extends Component {
   static displayName = 'FilterList';
 
   state = {
-    selectedOption:null,
-    selectedOption2:null,
-    filterFormValue: {},
+  //   selectedOption:null,
+  //   selectedOption2:null,
+      filterFormValue: {},
   }
+
+  jumptoDetail(){
+    console.log('submite submite submite....')
+  };
 
   filterFormChange = (value) => {
     this.setState({
@@ -195,17 +200,23 @@ export default class FilterList extends Component {
   };
 
   renderItems = () => {
-    return (
-      <Row gutter="20" wrap style={styles.itemRow}>
-        {dataSource.map((item, index) => {
-          return (
-            <Col key={index} xxs="24" s="8" l="4">
-              <SingleItem key={index} {...item} />
-            </Col>
-          );
-        })}
-      </Row>
-    );
+    console.log(this.props.data);
+    if(this.props.data){
+      return (
+        <Row gutter="20" wrap style={styles.itemRow}>
+          {this.props.data.map((item, index) => {
+            return (
+              <Col key={index} xxs="24" s="8" l="4">
+                <SingleItem key={index} {...item} 
+                onClick={()=>{console.log('button clicked');}}
+                />
+              </Col>
+            );
+          })}
+        </Row>
+        
+      );
+    }
   };
 
   normDate(date, dateStr) {
@@ -223,7 +234,8 @@ export default class FilterList extends Component {
       display: 'flex',
       margin: '20px',
     };
-
+    // console.log(CommonUtils.BACKEND_URL+ '/accoms/'+this.props.keyword);
+    // console.log('in filter, the data is '+this.props.data);
     return (
       <div className="filter-list">
       <br />
@@ -233,7 +245,7 @@ export default class FilterList extends Component {
         <div style={styles.searchWrapper}>
         
             <Search
-              placeholder="Items"
+              placeholder={this.props.keyword}
               inputWidth={120}
               searchText=""
               style={styles.searchInput}
@@ -244,6 +256,7 @@ export default class FilterList extends Component {
         <div className="filter-table">
           <IceContainer title="Filters">
             <FilterForm
+              keyword={this.props.keyword}
               value={this.state.filterFormValue}
               onChange={this.filterFormChange}
               onSubmit={this.filterTable}
@@ -257,7 +270,8 @@ export default class FilterList extends Component {
         <IceContainer style={{ ...styles.searchResultWrapper, ...cardStyle }}>
           {this.renderItems()}
         </IceContainer>
-        <EnhanceTable/>
+       
+        {/* <EnhanceTable/> */}
       </div>
     );
   }
