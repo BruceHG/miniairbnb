@@ -59,7 +59,11 @@ export default class FilterList extends Component {
               // <Col key={index} xxs="24" s="8" l="4">
               <Col key={index} span="6" >
                 <SingleItem key={index} {...item}
-                  onClick={() => { console.log('button clicked'); }}
+                  onClick={() => {
+                    if (this.props.history) {
+                      this.props.history.push(`/detail/${item.i_id}`);
+                    }
+                   }}
                 />
               </Col>
             );

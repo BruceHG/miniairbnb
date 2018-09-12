@@ -25,6 +25,7 @@ export default class SingleItem extends Component {
     return (
       <div
         className={`${className} single-item`}
+        onClick={this.props.onClick}
         style={{
           ...style,
           height: '230px',

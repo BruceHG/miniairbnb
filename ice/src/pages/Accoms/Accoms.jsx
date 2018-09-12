@@ -55,6 +55,7 @@ export default class Accoms extends Component {
       <br/>
       <div className="accoms-page">
         <FilterList 
+        {...this.props}
         keyword={this.state.keyword}
         data={this.state.data['accommodations']}
         />
