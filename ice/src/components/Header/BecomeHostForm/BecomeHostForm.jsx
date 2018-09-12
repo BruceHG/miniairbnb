@@ -63,7 +63,8 @@ export default class BecomeHostForm extends Component {
         } else {
           Feedback.toast.error(json['msg']);
         }
-      }).catch(() => {
+      }).catch((e) => {
+        console.error(e);
         Feedback.toast.error('Opps! Unknow error happens...');
       });
     });

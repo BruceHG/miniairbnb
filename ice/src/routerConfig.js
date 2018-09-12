@@ -10,6 +10,7 @@ import Admin from './pages/Admin';
 
 import Accoms from './pages/Accoms';
 import Detail from './pages/Detail';
+import Placeorder from './pages/Placeorder';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -37,6 +38,11 @@ const routerConfig = [
     path: '/detail/:id',
     layout: BlankLayout,
     component: Detail,
+  },
+  {
+    path: '/placeorder/:data',
+    layout: BlankLayout,
+    component: Placeorder,
   },
   {
     path: '*',

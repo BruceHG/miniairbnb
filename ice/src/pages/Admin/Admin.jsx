@@ -88,7 +88,8 @@ export default class Admin extends Component {
       } else {
         Feedback.toast.error(json['msg']);
       }
-    }).catch(() => {
+    }).catch((e) => {
+      console.error(e);
       Feedback.toast.error('Opps! Unknow error happens...');
     });
   }
@@ -116,7 +117,8 @@ export default class Admin extends Component {
       } else {
         Feedback.toast.error(json['msg']);
       }
-    }).catch(() => {
+    }).catch((e) => {
+      console.error(e);
       Feedback.toast.error('Opps! Unknow error happens...');
     });
   }
@@ -140,7 +142,8 @@ export default class Admin extends Component {
       } else {
         Feedback.toast.error(json['msg']);
       }
-    }).catch(() => {
+    }).catch((e) => {
+      console.error(e);
       Feedback.toast.error('Opps! Unknow error happens...');
     });
   }
@@ -152,6 +155,7 @@ export default class Admin extends Component {
         <div className="admin-page">
           <Header
             style={{ background: CommonUtils.THEME_COLOR }}
+            {...this.props}
             searchBox={false}
             onAccountStateChange={() => this.checkPermission()} />
           <CustomTable

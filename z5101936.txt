@@ -8,6 +8,8 @@ server config =>
 const DEBUG_IN_LOCAL = true 
 export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://127.0.0.1:8888' : '' 
 
+conflict:
+git pull origin master
 
 
 ######################################
