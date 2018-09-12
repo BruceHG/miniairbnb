@@ -128,7 +128,7 @@ export default class Filter extends Component {
         return;
       }
 
-      fetch(CommonUtils.BACKEND_URL + '/login/register/', {
+      fetch(CommonUtils.BACKEND_URL + '/item/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -282,14 +282,14 @@ export default class Filter extends Component {
             }}
           >
 
-            <Button 
+            {/* <Button 
               onClick={this.props.onReset} 
               type="normal">
                 Clear
-            </Button>
+            </Button> */}
 
             <Button
-              onClick={this.props.onSubmit}
+              // onClick={this.props.onSubmit}
               type="primary"
               onClick={this.handleSubmit}
               style={{ marginLeft: '10px' }}

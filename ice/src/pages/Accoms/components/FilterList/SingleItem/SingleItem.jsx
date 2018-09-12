@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Rating } from '@icedesign/base';
 import IceImg from '@icedesign/img';
 import './SingleItem.scss';
 import * as CommonUtils from '../../../../../lib/commonUtils';
@@ -7,7 +8,6 @@ import * as CommonUtils from '../../../../../lib/commonUtils';
 export default class SingleItem extends Component {
   static displayName = 'SingleItem';
   
-
   render() {
     
     const {
@@ -19,7 +19,7 @@ export default class SingleItem extends Component {
       album_first,
       price_per_day,
       address,
-      extra,
+      rating,
     } = this.props;
     // console.log(CommonUtils.BACKEND_URL+'/'+album_first);
     return (
@@ -80,6 +80,23 @@ export default class SingleItem extends Component {
           }}
         >
           {'$'+price_per_day+' AUD per night'}
+        </div>
+        <div
+          style={{
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            color: '#999',
+            lineHeight: '18px',
+            fontSize: '12px',
+            margin: '0 14px',
+          }}
+        >
+          <Rating defaultValue={rating+3} 
+          disabled
+          size="medium"
+          />
+          {rating}
         </div>
       </div>
     );

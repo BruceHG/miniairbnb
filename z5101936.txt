@@ -3,6 +3,13 @@ command for lunach:
     deactivate 
     python3 manage.py runserver 127.0.0.1:8888
 
+server config =>
+    commonUtils.js:
+const DEBUG_IN_LOCAL = true 
+export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://127.0.0.1:8888' : '' 
+
+
+
 ######################################
 09/Aug/2018: Write the proposal draft version 1
 
