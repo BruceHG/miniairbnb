@@ -24,6 +24,11 @@ if !(python3 -c 'import corsheaders') > /dev/null 2>&1
 then
     pip3 install django-cors-headers
 fi
+# check requests model
+if !(python3 -c 'import requests') > /dev/null 2>&1
+then
+    pip3 install requests
+fi
 # check postgres
 # if !(which psql) > /dev/null 2>&1
 # then

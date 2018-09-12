@@ -3,8 +3,24 @@ command for lunach:
     deactivate 
     python3 manage.py runserver 127.0.0.1:8888
 
+server config =>
+    commonUtils.js:
+const DEBUG_IN_LOCAL = true 
+export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://127.0.0.1:8888' : '' 
+
+conflict:
+git pull origin master
+
+
 ######################################
 09/Aug/2018: Write the proposal draft version 1
 
 26/Aug/2018: date extend for the register page
 
+28/Aug/2018 --- 6/Sep/2018 search result pages:
+28/Aug/2018: set filters
+29/Aug/2018: set filters
+30/Aug/2018: implement date transfer
+31/Aug/2018: implement date transfer
+1/Sep/2018: 
+debug fix the search result pages

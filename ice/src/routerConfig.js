@@ -7,6 +7,8 @@ import Home from './pages/Home';
 import URegister from './pages/URegister';
 
 import Admin from './pages/Admin';
+
+import Accoms from './pages/Accoms';
 import Detail from './pages/Detail';
 import Placeorder from './pages/Placeorder';
 import NotFound from './pages/NotFound';
@@ -26,6 +28,11 @@ const routerConfig = [
     path: '/admin',
     layout: BlankLayout,
     component: Admin,
+  },
+  {
+    path: '/accoms/:keyword',
+    layout: BlankLayout,
+    component: Accoms,
   },
   {
     path: '/detail/:id',
