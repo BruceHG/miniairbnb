@@ -391,14 +391,15 @@ def update_item(request, item_id):
             item_serializers.save()
         else:
             raise Exception('invalid update')
-        if 'album' in data:
-            file = data['album']
-            new_album = save_image(file, item.owner.user.u_id, item_id)
-            item.album += ',' + new_album
-            item.save()
+        if 'album' in request.FILES:
+            files = request.FILES.getlist('album')
+            for file in files:
+                new_album = save_image(file, item.owner.user.u_id, item_id)
+                item.album += ',' + new_album
+                item.save()
         result = {
                 'code': status.HTTP_200_OK,
-                'msg': item_serializers.data
+                'msg': 'update successful'
         }
     except User.DoesNotExist:
         result = {
@@ -413,7 +414,7 @@ def update_item(request, item_id):
     except Exception as e:
         result = {
             'code': status.HTTP_400_BAD_REQUEST,
-            'msg': 'update successful',
+            'msg': str(e),
         }
     
     return Response(result, status=result['code'])
