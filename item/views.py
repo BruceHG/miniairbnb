@@ -389,6 +389,8 @@ def update_item(request, item_id):
         item_serializers = itemUpdateSerializers(item, data=data)
         if item_serializers.is_valid():
             item_serializers.save()
+        else:
+            raise Exception('invalid update')
         if 'album' in data:
             file = data['album']
             new_album = save_image(file, item.owner.user.u_id, item_id)
