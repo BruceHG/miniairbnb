@@ -31,7 +31,7 @@ const routerConfig = [
     component: Admin,
   },
   {
-    path: '/accoms/:keyword',
+    path: '/accoms/:keyword?',
     layout: BlankLayout,
     component: Accoms,
   },
