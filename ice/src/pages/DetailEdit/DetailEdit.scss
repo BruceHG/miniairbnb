@@ -1,0 +1,27 @@
+.detail-edit-page {
+    padding: 20px;
+    .title {
+        font-size: 20pt;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .detail-title {
+        white-space: nowrap;
+        margin-bottom: 5px;
+        margin-right: 10px;
+        font-size: 12pt;
+        color: grey;
+    }
+    .description {
+        width: 100%;
+        height: 300px;
+    }
+    Button {
+        width: 200px;
+        margin-top: 20px;
+        font-size: 15pt;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
