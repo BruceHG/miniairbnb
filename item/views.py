@@ -15,7 +15,7 @@ from functools import reduce
 
 from user.models import User, Host
 from item.models import Item
-from item.serializers import itemDetailSerializers, searchResultSerializers, availableSerializers
+from item.serializers import itemDetailSerializers, searchResultSerializers, availableSerializers, itemUpdateSerializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -365,3 +365,57 @@ def available_info(request, item_id):
             'msg': str(e),
         }
     return Response(result, status=result['code'])
+
+def save_image(file, user_id, item_id):
+    path = '{}/static/album/{}/{}/'.format(__CURRENT_DIR, user_id, item_id)
+    num_pictures = str(len(os.listdir(path)))
+    if not os.path.exists(path):
+        os.makedirs(path)
+    file_path = os.path.join(path, num_pictures + '.' + file.name.split('.')[1])
+    f = open(file_path, mode='wb')
+    for i in file.chunks():
+        f.write(i)
+    f.close()
+    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id, num_pictures, file.name.split('.')[1])
+
+@api_view(['POST'])
+def update_item(request, item_id):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        item = Item.objects.get(i_id = item_id)
+        if username != item.owner.user.username:
+            raise Exception('invalid user')
+        data = request.data
+        item_serializers = itemUpdateSerializers(item, data=data)
+        if item_serializers.is_valid():
+            item_serializers.save()
+        if 'album' in data:
+            file = data['album']
+            new_album = save_image(file, item.owner.user.u_id, item_id)
+            item.album += ',' + new_album
+            item.save()
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': item_serializers.data
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Item.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'item not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'update successful',
+        }
+    
+    return Response(result, status=result['code'])
+    
+    
+    
+    

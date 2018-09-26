@@ -23,5 +23,11 @@ class availableSerializers(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ('max_guests', 'available_date',)
+        
+class itemUpdateSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('title', 'desc', 'i_type', 'price_per_day', 'guest_num', 'bedroom_num', 'bed_num', 'bathroom_num',
+                  'address', 'rules', 'features')
 
 
