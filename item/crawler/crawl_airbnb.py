@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import json
 
-__PAGES__ = 1
+__PAGES__ = 40
 
 
 class Item:
