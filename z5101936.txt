@@ -5,7 +5,9 @@ command for lunach:
 
 server config =>
     commonUtils.js:
+
 const DEBUG_IN_LOCAL = true 
+...
 export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://127.0.0.1:8888' : '' 
 
 conflict:

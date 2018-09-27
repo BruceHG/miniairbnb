@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 const DEBUG_IN_LOCAL = false;
 const COOKIE_KEY_CURRENT_USER = 'COOKIE_KEY_CURRENT_USER';
 
-export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://login.cse.unsw.edu.au:8007' : '';
+export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://login.cse.unsw.edu.au:8007' : '' ;
 export const DEFAULT_AVATAR = 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Libai_touxiang.jpg';
 
 

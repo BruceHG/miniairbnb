@@ -3,6 +3,7 @@ import FilterList from './components/FilterList';
 import Header from '../../components/Header';
 import { Feedback} from '@icedesign/base';
 import * as CommonUtils from '../../lib/commonUtils';
+import axios from 'axios';
 
 
 
@@ -12,28 +13,27 @@ export default class Accoms extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      step:1,
       data:{},
       keyword: this.props.match.params.keyword,
     };
     
   }
 
+  setSet(new_request_data) {
+    this.setState({
+      data: new_request_data
+  });
+  }
+
   componentDidMount() {
-    // +this.props.keyword
-    let url = new URL(CommonUtils.BACKEND_URL+ '/item/search/');
-    let params = {
-      'keyword':this.state.keyword,
-    }
-    url.search = new URLSearchParams(params);
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+    axios.get(CommonUtils.BACKEND_URL+ '/item/search/', {
+          params: {
+            'keyword':this.state.keyword,
+          }
     }).then((response) => {
-      return response.json();
+      return response.data;
     }).then((json) => {
-      // console.log(json);
       if (json['code'] == 200) {
         this.setState({ data: json['data'] });
       } else {
@@ -46,11 +46,12 @@ export default class Accoms extends Component {
   }
 
   render() {
+    console.log(this.state.step)
     // console.log(this.state.keyword)
-    // console.log(this.state.data['accommodations']);
+    console.log(this.state.data['accommodations']);
     return (
       <div>
-        <Header style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
+        <Header {...this.props} style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
       <br/>
       <br/>
       <div className="accoms-page">
@@ -58,6 +59,7 @@ export default class Accoms extends Component {
         {...this.props}
         keyword={this.state.keyword}
         data={this.state.data['accommodations']}
+        setSet={this.setSet.bind(this)}
         />
       </div>
       </div>

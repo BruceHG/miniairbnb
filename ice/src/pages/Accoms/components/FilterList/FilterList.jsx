@@ -50,7 +50,7 @@ export default class FilterList extends Component {
   };
 
   renderItems = () => {
-    console.log(this.props.data);
+    // console.log(this.props.data);
     if (this.props.data) {
       return (
         <Row gutter="20" wrap style={styles.itemRow}>
@@ -61,6 +61,7 @@ export default class FilterList extends Component {
                 <SingleItem key={index} {...item}
                   onClick={() => {
                     if (this.props.history) {
+                      console.log(66666);
                       this.props.history.push(`/detail/${item.i_id}`);
                     }
                    }}
@@ -149,6 +150,7 @@ export default class FilterList extends Component {
                 onChange={this.filterFormChange}
                 onSubmit={this.filterTable}
                 onReset={this.resetFilter}
+                {...this.props}
               />
             </IceContainer>
           </div>
