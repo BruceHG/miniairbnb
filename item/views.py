@@ -452,12 +452,13 @@ def update_item(request, item_id):
 def upload_image(request):
     try:
         username = request.META.get("HTTP_USERNAME")
+        Host.objects.get(user = User.objects.get(username = username))
         files = request.FILES.getlist('image')
+        path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
+        if not os.path.exists(path):
+            os.makedirs(path)
         tmp_urls = []
         for file in files:
-            path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
-            if not os.path.exists(path):
-                os.makedirs(path)
             file_path = os.path.join(path, file.name)
             f = open(file_path, mode='wb')
             for i in file.chunks():
@@ -475,6 +476,11 @@ def upload_image(request):
         result = {
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': 'user not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'invalid host',
         }
     except Exception as e:
         result = {
