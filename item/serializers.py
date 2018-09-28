@@ -27,7 +27,7 @@ class availableSerializers(serializers.ModelSerializer):
 class itemUpdateSerializers(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ('title', 'desc', 'i_type', 'price_per_day', 'guest_num', 'bedroom_num', 'bed_num', 'bathroom_num',
+        fields = ('title', 'desc', 'i_type', 'price_per_day', 'avaliable', 'guest_num', 'bedroom_num', 'bed_num', 'bathroom_num',
                   'address', 'rules', 'features')
 
 
