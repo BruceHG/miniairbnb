@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import math
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
@@ -368,15 +369,31 @@ def available_info(request, item_id):
 
 def save_image(file, user_id, item_id):
     path = '{}/static/album/{}/{}/'.format(__CURRENT_DIR, user_id, item_id)
-    num_pictures = str(len(os.listdir(path)))
+    file_name = file.split('\\')[-1]
+    num_pictures = 0
+    for f in os.listdir(path):
+        n = int(f.split('.')[0])
+        if n >= num_pictures:
+            num_pictures = n + 1
     if not os.path.exists(path):
         os.makedirs(path)
-    file_path = os.path.join(path, num_pictures + '.' + file.name.split('.')[1])
-    f = open(file_path, mode='wb')
-    for i in file.chunks():
-        f.write(i)
-    f.close()
-    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id, num_pictures, file.name.split('.')[1])
+    file_path = os.path.join(path,  str(num_pictures) + '.' + file_name.split('.')[1])
+    tmp_path = os.path.join(__CURRENT_DIR, file)
+    shutil.move(tmp_path, file_path)
+    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id, str(num_pictures), file_name.split('.')[1])
+
+def delete_image(file, album, user_id, item_id):
+    path = os.path.join(__CURRENT_DIR, file)
+    if os.path.exists(path):
+        os.remove(path)
+        p = re.compile(file + ',*')
+        album = re.sub(p, '', album)
+    return album
+
+def clear_tmp():
+    path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
+    for f in os.listdir(path):
+        os.remove(os.path.join(path, f))
 
 @api_view(['POST'])
 def update_item(request, item_id):
@@ -391,12 +408,24 @@ def update_item(request, item_id):
             item_serializers.save()
         else:
             raise Exception('invalid update')
-        if 'album' in request.FILES:
-            files = request.FILES.getlist('album')
-            for file in files:
+        if 'album' in data:
+            files = set(data['album'].split(','))
+            if item.album == '':
+                origin_files = set()
+            else:
+                origin_files = set(item.album.split(','))
+            files_to_add = files - origin_files
+            files_to_delete = origin_files - files
+            for file in files_to_add:
                 new_album = save_image(file, item.owner.user.u_id, item_id)
-                item.album += ',' + new_album
-                item.save()
+                if item.album == '':
+                    item.album += new_album
+                else:
+                    item.album += ',' + new_album
+            for file in files_to_delete:
+                item.album = delete_image(file, item.album, item.owner.user.u_id, item_id)
+            clear_tmp()
+            item.save()
         result = {
                 'code': status.HTTP_200_OK,
                 'msg': 'update successful'
@@ -419,6 +448,38 @@ def update_item(request, item_id):
     
     return Response(result, status=result['code'])
     
+@api_view(['POST'])
+def upload_image(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        files = request.FILES.getlist('image')
+        tmp_urls = []
+        for file in files:
+            path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
+            if not os.path.exists(path):
+                os.makedirs(path)
+            file_path = os.path.join(path, file.name)
+            f = open(file_path, mode='wb')
+            for i in file.chunks():
+                f.write(i)
+            f.close()
+            tmp_urls.append('static/album/tmp/' + file.name)
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'images saved',
+                'data': {
+                        'url': tmp_urls
+                        }
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
     
-    
-    
+    return Response(result, status=result['code'])
