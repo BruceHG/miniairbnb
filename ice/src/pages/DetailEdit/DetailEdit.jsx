@@ -162,7 +162,7 @@ export default class DetailEdit extends Component {
             if (this.accom_id) {
               this.setState({ success_update: true });
             } else {
-              this.accom_id = json['item_id'];
+              this.accom_id = json.data.item_id;
               this.setState({ success_create: true });
             }
           } else {

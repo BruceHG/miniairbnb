@@ -9,7 +9,7 @@ export default class Placeorder extends Component {
 
   constructor(props) {
     super(props);
-    this.data = JSON.parse(atob(this.props.match.params.data));
+    this.data = JSON.parse(decodeURIComponent(escape(atob(this.props.match.params.data))));
     this.state = {
       currentStep: 0,
       successOrderId: null,

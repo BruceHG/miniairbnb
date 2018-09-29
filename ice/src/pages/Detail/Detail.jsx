@@ -123,14 +123,14 @@ export default class Detail extends Component {
   }
 
   gotoPreOrder() {
-    this.props.history.push(`/placeorder/${btoa(JSON.stringify({
+    this.props.history.push(`/placeorder/${btoa(unescape(encodeURIComponent(JSON.stringify({
       ...this.state.bookingInfo,
       accom_id: this.accom_id,
       title: this.state.data['title'],
       price: this.state.data['price_per_day'],
       rules: this.state.data['rules'],
       address: this.state.data['address'],
-    }))}`);
+    }))))}`);
   }
 
   render() {
