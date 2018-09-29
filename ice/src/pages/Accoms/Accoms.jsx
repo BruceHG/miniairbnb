@@ -13,10 +13,17 @@ export default class Accoms extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      step:1,
       data:{},
       keyword: this.props.match.params.keyword,
     };
     
+  }
+
+  setSet(new_request_data) {
+    this.setState({
+      data: new_request_data
+  });
   }
 
   componentDidMount() {
@@ -39,8 +46,7 @@ export default class Accoms extends Component {
   }
 
   render() {
-    // console.log(this.state.keyword)
-    // console.log(this.state.data['accommodations']);
+    console.log(this.state.data['accommodations']);
     return (
       <div>
         <Header {...this.props} style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
@@ -50,7 +56,9 @@ export default class Accoms extends Component {
         <FilterList 
         {...this.props}
         keyword={this.state.keyword}
+        total_page={this.state.data['total_page']}
         data={this.state.data['accommodations']}
+        setSet={this.setSet.bind(this)}
         />
       </div>
       </div>

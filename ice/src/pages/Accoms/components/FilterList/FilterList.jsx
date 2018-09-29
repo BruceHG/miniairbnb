@@ -5,26 +5,10 @@ import SingleItem from './SingleItem';
 import './FilterList.scss';
 import FilterForm from '../FilterTable/Filter';
 import * as CommonUtils from '../../../../lib/commonUtils';
+import axios from 'axios';
 import EnhanceTable from '../EnhanceTable/EnhanceTable';
 
 const { Row, Col } = Grid;
-// the datasource should come from the database search, so chnage here
-// const dataSource = [
-//   {
-//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-//     extra: '预计佣金 ¥10',
-//     price: '¥89',
-//     image:
-//       '//img.alicdn.com/bao/uploaded/i3/120976213/TB2O4nSnblmpuFjSZFlXXbdQXXa_!!120976213.jpg_240x240.jpg',
-//   },
-//   {
-//     title: '衬衫女雪纺上衣2017大纺上衣2017大纺上衣2017大',
-//     extra: '预计佣金 ¥10',
-//     price: '¥89',
-//     image:
-//       '//img.alicdn.com/bao/uploaded/i4/120976213/TB2GiVsdS0mpuFjSZPiXXbssVXa_!!120976213.jpg_240x240.jpg',
-//   },
-// ];
 
 export default class FilterList extends Component {
   static displayName = 'FilterList';
@@ -32,15 +16,31 @@ export default class FilterList extends Component {
   constructor(props) {
     super(props);
     this.render=this.render.bind(this);
+    this.state = {
+ 
+      my_keyword:this.props.keyword,
+      page_index: 0,
+      data:{},
+      filterFormValue: {},
+      filter_info:{
+        startTime: '',
+        endTime: '',
+        number_of_guest:'',
+        sort:'',
+        type_list : [],
+        other_list : [],
+      }
+    };
+    this.searchAgain = this.searchAgain.bind(this);
+    this.newPageRequest = this.newPageRequest.bind(this);
   }
-  state = {
-    //   selectedOption:null,
-    //   selectedOption2:null,
-    filterFormValue: {},
-  }
+  
 
-  jumptoDetail() {
-    console.log('submite submite submite....')
+  setFilter(new_request_data){
+    this.setState({
+      filter_info: new_request_data,
+      page_index: 0,
+    });
   };
 
   filterFormChange = (value) => {
@@ -49,8 +49,38 @@ export default class FilterList extends Component {
     });
   };
 
+  newPageRequest(page_clicked, _){
+    var new_index = page_clicked - 1;
+    axios.get(CommonUtils.BACKEND_URL+ '/item/search/', {
+      params: {
+          'keyword': this.props.keyword,
+          'page': new_index,
+          'check_in': this.state.filter_info['startTime'],
+          'check_out':this.state.filter_info['endTime'],
+          'guest_num': this.state.filter_info['number_of_guest'],
+          'sortby': this.state.filter_info['sort'],
+          'types': this.state.filter_info.type_list.join(),
+          'features': this.state.filter_info.other_list.join(),
+      }
+    }).then((response) => {
+      return response.data;
+    }).then((json) => {
+      if (json['code'] == 200) {
+        this.setState({ data: json['data'] });
+        this.props.setSet(this.state.data);
+      } else {
+        Feedback.toast.error(json['msg']);
+      }
+    }).catch((e) => {
+      console.error(e);
+      Feedback.toast.error('Opps! Unknow error happens...');
+    });
+    this.setState({
+      page_index: new_index,
+    });
+  };
+
   renderItems = () => {
-    console.log(this.props.data);
     if (this.props.data) {
       return (
         <Row gutter="20" wrap style={styles.itemRow}>
@@ -75,42 +105,32 @@ export default class FilterList extends Component {
   };
 
   normDate(date, dateStr) {
-    console.log("normDate:", date, dateStr);
     return date.getTime();
   };
 
   normRange(date, dateStr) {
-    console.log(date, dateStr);
     return date;
   };
 
   searchAgain(obj) {
-    console.log(".......search.....");
     if (obj['key']) {
-      console.log(obj['key']);
-      let url = new URL(CommonUtils.BACKEND_URL + '/item/search/');
-      let params = {
-        'keyword': obj['key'],
-      }
-      url.search = new URLSearchParams(params);
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
+      axios.get(CommonUtils.BACKEND_URL+ '/item/search/', {
+        params: {
+          'keyword':obj['key'],
+        }
       }).then((response) => {
-        return response.json();
+        return response.data;
       }).then((json) => {
-        // console.log(json);
         if (json['code'] == 200) {
           this.setState({ data: json['data'] });
+          this.props.setSet(this.state.data);
         } else {
           Feedback.toast.error(json['msg']);
         }
-      }).catch((e) => {
+       }).catch((e) => {
         console.error(e);
-        Feedback.toast.error('Opps! Unknow error happens...');
-      });
+      Feedback.toast.error('Opps! Unknow error happens...');
+    });
     } else {
       Feedback.toast.error('Please input new destination');
     };
@@ -121,8 +141,7 @@ export default class FilterList extends Component {
       display: 'flex',
       margin: '20px',
     };
-    // console.log(CommonUtils.BACKEND_URL+ '/accoms/'+this.props.keyword);
-    // console.log('in filter, the data is '+this.props.data);
+
     return (
       <div className="filter-list">
         <br />
@@ -136,9 +155,9 @@ export default class FilterList extends Component {
               inputWidth={120}
               searchText=""
               style={styles.searchInput}
+              onChange={this.searchInput}
               onSearch={this.searchAgain}
             />
-            {/* <Button type="primary">Search</Button> */}
           </div>
 
           <div className="filter-table">
@@ -149,6 +168,8 @@ export default class FilterList extends Component {
                 onChange={this.filterFormChange}
                 onSubmit={this.filterTable}
                 onReset={this.resetFilter}
+                setFilter={this.setFilter.bind(this)}
+                {...this.props}
               />
             </IceContainer>
           </div>
@@ -163,6 +184,10 @@ export default class FilterList extends Component {
           <IceContainer style={{ ...styles.searchResultWrapper, ...cardStyle }}>
             <Pagination
               language='en-us'
+              total={this.props.total_page * 16 }
+              pageSize={16}
+              defaultCurrent={this.state.page_index }
+              onChange={this.newPageRequest}
             />
           </IceContainer>
         </div>
@@ -171,7 +196,7 @@ export default class FilterList extends Component {
       </div>
     );
   }
-}
+};
 
 const styles = {
   selectItem: {

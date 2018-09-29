@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Input, Grid, Select, Button, DatePicker, Checkbox, Feedback } from '@icedesign/base';
 import * as CommonUtils from '../../../../../lib/commonUtils';
+import axios from 'axios';
 // import Moment from 'moment';
 
 // form binder 详细用法请参见官方文档
@@ -57,6 +58,7 @@ export default class Filter extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      data:{},
       value: {
         startTime: '',
         endTime: '',
@@ -77,7 +79,6 @@ export default class Filter extends Component {
   }
 
   checkIn = (_, formatDate)=>{
-    console.log(formatDate);
     this.setState(
       {value:{...this.state.value, startTime: formatDate, endTime: ''}});
   }
@@ -99,67 +100,50 @@ export default class Filter extends Component {
   }
 
   sortChange(option){
-    console.log(option);
     this.setState({value:{...this.state.value, sort: option}});
   }
   guestChange(option){
     this.setState({value:{...this.state.value, number_of_guest: option}});
   }
-  // onChange(selectedItems) {
-  //   console.log("onChange callback", selectedItems);
-  // }
 
   onCheckChange(selectedItems) {
-    console.log("onCheckChange callback", selectedItems);
     this.setState({ value: { ...this.state.value, type_list:selectedItems } });
   }
 
   onCheckChange2(selectedItems) {
-    console.log("onCheckChange callback", selectedItems);
     this.setState({ value: { ...this.state.value, other_list:selectedItems } });
   }
 
   handleSubmit = () => {
-    // console.log(this.state);
-    console.log("submit!!!!!!")
-    this.refs.form.validateAll((errors, values) => {
-      if (errors) {
-        console.log('errors', errors);
-        return;
-      }
-
-      fetch(CommonUtils.BACKEND_URL + '/item/search/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify({
-          // 'begin': Moment(values['startTime']).format('YYYY-MM-DD'),
-          // 'end': Moment(values['endTime']).format('YYYY-MM-DD'),
+    axios.get(CommonUtils.BACKEND_URL+ '/item/search/', {
+      params: {
           'keyword': this.props.keyword,
-          'check_in': values['startTime'],
-          'check_out':values['endTime'],
-          'guest_num': values['number_of_guest'],
-          'sortby': values['sort'],
-          'types': this.state.value.type_list,
-          'features': this.state.value.other_list,
-        })
-      }).then((response) => {
-        return response.json();
-      }).then((json) => {
-        if (json['code'] == 200) {
-          CommonUtils.saveUserInfo2Cookie(json['data']);
-          CommonUtils.callCustomMemberFunc(this.onRegisterSuccess);
-        } else {
-          Feedback.toast.error(json['msg']);
-        }
-      }).catch(() => {
-        Feedback.toast.error('Opps! Unknow error happens...');
-      });
+          'check_in': this.state.value['startTime'],
+          'check_out':this.state.value['endTime'],
+          'guest_num': this.state.value['number_of_guest'],
+          'sortby': this.state.value['sort'],
+          'types': this.state.value.type_list.join(),
+          'features': this.state.value.other_list.join(),
+      }
+    }).then((response) => {
+      return response.data;
+    }).then((json) => {
+      if (json['code'] == 200) {
+        this.setState({ data: json['data'] });
+        this.props.setFilter(this.state.value);
+        this.props.setSet(this.state.data);
+      } else {
+        Feedback.toast.error(json['msg']);
+      }
+    }).catch((e) => {
+      console.error(e);
+      Feedback.toast.error('Opps! Unknow error happens...');
     });
+
   };
 
   render() {
+    console.log(this.state);
     return (
       <IceFormBinderWrapper
         value={this.props.value}
@@ -167,7 +151,6 @@ export default class Filter extends Component {
         ref="form"
       >
         <div>
-          {/* row 1 */}
           <Row wrap>
             <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
               <label style={styles.filterTitle}>Check in:</label>
@@ -282,14 +265,7 @@ export default class Filter extends Component {
             }}
           >
 
-            {/* <Button 
-              onClick={this.props.onReset} 
-              type="normal">
-                Clear
-            </Button> */}
-
             <Button
-              // onClick={this.props.onSubmit}
               type="primary"
               onClick={this.handleSubmit}
               style={{ marginLeft: '10px' }}
