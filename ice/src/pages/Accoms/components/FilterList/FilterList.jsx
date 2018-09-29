@@ -36,7 +36,23 @@ export default class FilterList extends Component {
   state = {
     //   selectedOption:null,
     //   selectedOption2:null,
+    page_index: 0,
     filterFormValue: {},
+    filter_info:{
+      startTime: '',
+      endTime: '',
+      number_of_guest:'',
+      sort:'',
+      type_list : [],
+      other_list : [],
+    }
+  }
+
+  setFilter(new_request_data){
+    this.setState({
+      filter_info: new_request_data,
+      page_index: 0,
+    });
   }
 
   jumptoDetail() {
@@ -150,6 +166,7 @@ export default class FilterList extends Component {
                 onChange={this.filterFormChange}
                 onSubmit={this.filterTable}
                 onReset={this.resetFilter}
+                setFilter={this.setFilter.bind(this)}
                 {...this.props}
               />
             </IceContainer>

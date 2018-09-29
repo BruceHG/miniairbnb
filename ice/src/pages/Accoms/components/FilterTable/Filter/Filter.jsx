@@ -62,10 +62,10 @@ export default class Filter extends Component {
       value: {
         startTime: '',
         endTime: '',
-        number_of_guest:'1',
-        sort:'distance',
-        type_list : ['0'],
-        other_list : ['0'],
+        number_of_guest:'',
+        sort:'',
+        type_list : [],
+        other_list : [],
       },      
     };
     // this.onChange = this.onChange.bind(this);
@@ -123,6 +123,8 @@ export default class Filter extends Component {
 
   handleSubmit = () => {
     console.log(this.state);
+    console.log(this.state.value.type_list.join());
+    console.log(this.state.value.other_list.join());
     console.log("submit!!!!!!")
     axios.get(CommonUtils.BACKEND_URL+ '/item/search/', {
       params: {
@@ -131,8 +133,8 @@ export default class Filter extends Component {
           'check_out':this.state.value['endTime'],
           'guest_num': this.state.value['number_of_guest'],
           'sortby': this.state.value['sort'],
-          'types': this.state.value.type_list,
-          'features': this.state.value.other_list,
+          'types': this.state.value.type_list.join(),
+          'features': this.state.value.other_list.join(),
       }
     }).then((response) => {
       return response.data;
@@ -140,6 +142,7 @@ export default class Filter extends Component {
       if (json['code'] == 200) {
         this.setState({ data: json['data'] });
         // console.log("seccessfully!!!");
+        this.props.setFilter(this.state.value);
         this.props.setSet(this.state.data);
       } else {
         Feedback.toast.error(json['msg']);
