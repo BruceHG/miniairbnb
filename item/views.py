@@ -69,7 +69,6 @@ def add_item(target):
                     target.user_id, target.id),
                 album=albums(target.user_id, target.id),
                 desc='desc test test',
-                adv_desc='adv_desc test test',
                 address=target.address,
                 longitude=target.longitude,
                 latitude=target.latitude,
@@ -294,8 +293,6 @@ def search(request):
                     if o.title is not None and re.search(data['keyword'], o.title):
                         keywords_match.append(o)
                     elif o.desc is not None and re.search(data['keyword'], o.desc):
-                        keywords_match.append(o)
-                    elif o.adv_desc is not None and re.search(data['keyword'], o.adv_desc):
                         keywords_match.append(o)
                     else:
                         keywords_not_match.append(o)
