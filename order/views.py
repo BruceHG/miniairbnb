@@ -74,7 +74,7 @@ def requests(request):
         user = User.objects.get(username=username)
         host = Host.objects.get(user=user)
         items = Item.objects.filter(owner=host)
-        orders = requestsSerializers(Order.objects.filter(item__in=items), many=True).data
+        orders = requestsSerializers(Order.objects.filter(item__in=items, status=Order.Pending), many=True).data
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'orders',
