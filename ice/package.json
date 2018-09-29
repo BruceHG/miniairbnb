@@ -19,6 +19,7 @@
     "rc-queue-anim": "^1.5.0",
     "rc-scroll-anim": "^2.5.1",
     "react": "^16.4.2",
+    "react-day-picker": "^7.2.4",
     "react-document-title": "^2.0.3",
     "react-dom": "^16.4.1",
     "react-motion": "^0.5.2",

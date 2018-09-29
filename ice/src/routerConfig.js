@@ -11,6 +11,7 @@ import Admin from './pages/Admin';
 import Accoms from './pages/Accoms';
 import Detail from './pages/Detail';
 import Placeorder from './pages/Placeorder';
+import DetailEdit from './pages/DetailEdit';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -30,7 +31,7 @@ const routerConfig = [
     component: Admin,
   },
   {
-    path: '/accoms/:keyword',
+    path: '/accoms/:keyword?',
     layout: BlankLayout,
     component: Accoms,
   },
@@ -43,6 +44,11 @@ const routerConfig = [
     path: '/placeorder/:data',
     layout: BlankLayout,
     component: Placeorder,
+  },
+  {
+    path: '/edit/:id?',
+    layout: BlankLayout,
+    component: DetailEdit,
   },
   {
     path: '*',
