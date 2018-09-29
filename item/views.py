@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import math
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
@@ -15,7 +16,7 @@ from functools import reduce
 
 from user.models import User, Host
 from item.models import Item
-from item.serializers import itemDetailSerializers, searchResultSerializers, availableSerializers
+from item.serializers import itemDetailSerializers, searchResultSerializers, availableSerializers, itemUpdateSerializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -207,76 +208,94 @@ def search(request):
 #        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
 #                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
         if 'page_size' in data:
-            page_size = data['page_size']
+            if not data['page_size'] == '':
+                page_size = data['page_size']
         if 'page' in data:
-            page = data['page']
+            if not data['page'] == '':
+                page = data['page']
         q_list = []
         if 'keyword' in data:
-            geo_response = geocoding(data['keyword'])
-            if geo_response['status'] == 'OK':
-                latitude = geo_response['results'][0]['geometry']['location']['lat']
-                longitude = geo_response['results'][0]['geometry']['location']['lng']
-                valid_address = 1
-            else:
-                q_list.append(Q(title__regex=data['keyword']) |
-                              Q(desc__regex=data['keyword']) |
-                              Q(adv_desc__regex=data['keyword']))
+            if not data['keyword'] == '':
+                geo_response = geocoding(data['keyword'])
+                if geo_response['status'] == 'OK':
+                    latitude = geo_response['results'][0]['geometry']['location']['lat']
+                    longitude = geo_response['results'][0]['geometry']['location']['lng']
+                    valid_address = 1
         if 'guest_num' in data:
-            if int(data['guest_num']) <= 4:
-                q_list.append(Q(guest_num=data['guest_num']))
-            else:
-                q_list.append(Q(guest_num__gte=data['guest_num']))
+            if not data['guest_num'] == '':
+                if int(data['guest_num']) <= 4:
+                    q_list.append(Q(guest_num=data['guest_num']))
+                else:
+                    q_list.append(Q(guest_num__gte=data['guest_num']))
         if 'min_price' in data:
-            q_list.append(Q(price_per_day__gte=data['min_price']))
+            if not data['min_price'] == '':
+                q_list.append(Q(price_per_day__gte=data['min_price']))
         if 'max_price' in data:
-            q_list.append(Q(price_per_day__lte=data['max_price']))
+            if not data['max_price'] == '':
+                q_list.append(Q(price_per_day__lte=data['max_price']))
         if 'min_rating' in data:
-            hosts = Host.objects.filter(rating__gte=int(data['min_rating']))
+            if not data['min_rating'] == '':
+                hosts = Host.objects.filter(rating__gte=int(data['min_rating']))
             q_list.append(Q(owner__in=hosts))
         if 'max_rating' in data:
-            hosts = Host.objects.filter(rating__lte=int(data['max_rating']))
-            q_list.append(Q(owner__in=hosts))
+            if not data['max_rating'] == '':
+                hosts = Host.objects.filter(rating__lte=int(data['max_rating']))
+                q_list.append(Q(owner__in=hosts))
         if 'types' in data:
-            item_types = data['types'].split(',')
-            q_list.append(Q(i_type__in=item_types))
+            if not data['types'] == '':
+                item_types = data['types'].split(',')
+                q_list.append(Q(i_type__in=item_types))
         if 'features' in data:
-            item_features = sorted(data['features'].split(','))
-            pattern = ''
-            for f in item_features:
-                pattern += f + '[,\d]*'
-            q_list.append(Q(features__regex=pattern))
+            if not data['features'] == '':
+                item_features = sorted(data['features'].split(','))
+                pattern = ''
+                for f in item_features:
+                    pattern += f + '[,\d]*'
+                q_list.append(Q(features__regex=pattern))
         if q_list:
             all_objects = Item.objects.filter(reduce(operator.and_, q_list))
         else:
             all_objects = Item.objects.all()
         if 'check_in' in data:
-            filtered_objects = []
-            for o in all_objects:
-                avaliable_check_in = o.avaliable.split(',')
-                date_query = datetime.strptime(data['check_in'], '%Y-%m-%d')
-                for i in range(0, len(avaliable_check_in), 2):
-                    date_in = datetime.strptime(
-                        avaliable_check_in[i], '%Y-%m-%d')
-                    date_out = datetime.strptime(
-                        avaliable_check_in[i + 1], '%Y-%m-%d')
-                    if date_in <= date_query < date_out:
-                        filtered_objects.append(o)
-                        break
-            all_objects = filtered_objects
+            if not data['check_in'] == '':
+                filtered_objects = []
+                for o in all_objects:
+                    avaliable_check_in = o.avaliable.split(',')
+                    date_query = datetime.strptime(data['check_in'], '%Y-%m-%d')
+                    for i in range(0, len(avaliable_check_in), 2):
+                        date_in = datetime.strptime(
+                            avaliable_check_in[i], '%Y-%m-%d')
+                        date_out = datetime.strptime(
+                            avaliable_check_in[i + 1], '%Y-%m-%d')
+                        if date_in <= date_query < date_out:
+                            filtered_objects.append(o)
+                            break
+                all_objects = filtered_objects
         if 'check_out' in data:
-            filtered_objects = []
-            for o in all_objects:
-                avaliable_check_in = o.avaliable.split(',')
-                date_query = datetime.strptime(data['check_out'], '%Y-%m-%d')
-                for i in range(0, len(avaliable_check_in), 2):
-                    date_in = datetime.strptime(
-                        avaliable_check_in[i], '%Y-%m-%d')
-                    date_out = datetime.strptime(
-                        avaliable_check_in[i + 1], '%Y-%m-%d')
-                    if date_in < date_query <= date_out:
-                        filtered_objects.append(o)
-                        break
-            all_objects = filtered_objects
+            if not data['check_out'] == '':
+                filtered_objects = []
+                for o in all_objects:
+                    avaliable_check_in = o.avaliable.split(',')
+                    date_query = datetime.strptime(data['check_out'], '%Y-%m-%d')
+                    for i in range(0, len(avaliable_check_in), 2):
+                        date_in = datetime.strptime(
+                            avaliable_check_in[i], '%Y-%m-%d')
+                        date_out = datetime.strptime(
+                            avaliable_check_in[i + 1], '%Y-%m-%d')
+                        if date_in < date_query <= date_out:
+                            filtered_objects.append(o)
+                            break
+                all_objects = filtered_objects
+        if 'keyword' in data:
+            if not data['keyword'] == '':
+                keywords_match = []
+                keywords_not_match = []
+                for o in all_objects:
+                    if re.search(data['keyword'], o.title) or re.search(data['keyword'], o.desc) or re.search(data['keyword'], o.adv_desc):
+                        keywords_match.append(o)
+                    else:
+                        keywords_not_match.append(o)
+                all_objects = keywords_match + keywords_not_match
         all_results = searchResultSerializers(all_objects, many=True).data
         if valid_address == 1:
             for r in all_results:
@@ -287,16 +306,18 @@ def search(request):
             if 'max_distance' in data:
                 all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
         if 'sortby' in data:
-            order = data['sortby']
-            if order == 'rating':
-                all_results = sorted(
-                    all_results, key=itemgetter(order), reverse=True)
-            elif order == 'price_per_day':
-                all_results = sorted(all_results, key=itemgetter(order))
-            elif order == 'distance' and valid_address == 1:
-                all_results = sorted(all_results, key=itemgetter(order))
-                for r in all_results:
-                    r.pop('distance')
+            if not data['sortby'] == '':
+                order = data['sortby']
+                if order == 'rating':
+                    all_results = sorted(
+                        all_results, key=itemgetter(order), reverse=True)
+                elif order == 'price_per_day':
+                    all_results = sorted(all_results, key=itemgetter(order))
+                elif order == 'distance' and valid_address == 1:
+                    all_results = sorted(all_results, key=itemgetter(order))
+        if valid_address == 1:
+            for r in all_results:
+                r.pop('distance')
 
         total_page = math.ceil(len(all_results) / page_size)
         search_result = all_results[page_size * page:page_size * (page + 1)]
@@ -344,4 +365,202 @@ def available_info(request, item_id):
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
         }
+    return Response(result, status=result['code'])
+
+def save_image(file, user_id, item_id):
+    path = '{}/static/album/{}/{}/'.format(__CURRENT_DIR, user_id, item_id)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    file_name = file.split('\\')[-1]
+    num_pictures = 0
+    for f in os.listdir(path):
+        n = int(f.split('.')[0])
+        if n >= num_pictures:
+            num_pictures = n + 1
+    file_path = os.path.join(path,  str(num_pictures) + '.' + file_name.split('.')[1])
+    tmp_path = os.path.join(__CURRENT_DIR, file)
+    shutil.move(tmp_path, file_path)
+    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id, str(num_pictures), file_name.split('.')[1])
+
+def delete_image(file, album, user_id, item_id):
+    path = os.path.join(__CURRENT_DIR, file)
+    if os.path.exists(path):
+        os.remove(path)
+        p = re.compile(file + ',*')
+        album = re.sub(p, '', album)
+    return album
+
+def clear_tmp():
+    path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
+    for f in os.listdir(path):
+        os.remove(os.path.join(path, f))
+
+@api_view(['POST'])
+def update_item(request, item_id):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        item = Item.objects.get(i_id = item_id)
+        if username != item.owner.user.username:
+            raise Exception('invalid user')
+        data = request.data
+        item_serializers = itemUpdateSerializers(item, data=data)
+        if item_serializers.is_valid():
+            item_serializers.save()
+        else:
+            raise Exception('invalid update')
+        if 'album' in data:
+            files = set(data['album'].split(','))
+            if item.album == '':
+                origin_files = set()
+            else:
+                origin_files = set(item.album.split(','))
+            files_to_add = files - origin_files
+            files_to_delete = origin_files - files
+            for file in files_to_add:
+                new_album = save_image(file, item.owner.user.u_id, item_id)
+                if item.album == '':
+                    item.album += new_album
+                else:
+                    item.album += ',' + new_album
+            for file in files_to_delete:
+                item.album = delete_image(file, item.album, item.owner.user.u_id, item_id)
+            clear_tmp()
+            item.save()
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'update successful'
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Item.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'item not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    
+    return Response(result, status=result['code'])
+    
+@api_view(['POST'])
+def upload_image(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        Host.objects.get(user = User.objects.get(username = username))
+        files = request.FILES.getlist('image')
+        path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        tmp_urls = []
+        for file in files:
+            file_path = os.path.join(path, file.name)
+            f = open(file_path, mode='wb')
+            for i in file.chunks():
+                f.write(i)
+            f.close()
+            tmp_urls.append('static/album/tmp/' + file.name)
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'images saved',
+                'data': {
+                        'url': tmp_urls
+                        }
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'invalid host',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    
+    return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def create_item(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username = username)
+        host = Host.objects.get(user = user)
+        data = request.data
+        valid_address = 0
+        if 'address' in data:
+            geo_response = geocoding(data['address'])
+            if geo_response['status'] == 'OK':
+                latitude = geo_response['results'][0]['geometry']['location']['lat']
+                longitude = geo_response['results'][0]['geometry']['location']['lng']
+                valid_address = 1
+        item = Item(
+                    owner = host,
+                    title = data['title'], 
+                    desc = data['desc'], 
+                    i_type = data['i_type'], 
+                    price_per_day = data['price_per_day'], 
+                    guest_num = data['guest_num'], 
+                    bedroom_num = data['bedroom_num'], 
+                    bed_num = data['bed_num'], 
+                    bathroom_num = data['bathroom_num'], 
+                    address = data['address'], 
+                    rules = data['rules'], 
+                    features = data['features'],
+                    avaliable = data['avaliable'],
+                    album = ''
+                    )
+        if valid_address:
+            item.latitude = latitude
+            item.longitude = longitude
+        item.save()
+        if 'album' in data:
+            files = set(data['album'].split(','))
+            if item.album == '':
+                origin_files = set()
+            else:
+                origin_files = set(item.album.split(','))
+            files_to_add = files - origin_files
+            files_to_delete = origin_files - files
+            for file in files_to_add:
+                new_album = save_image(file, user.u_id, item.i_id)
+                if item.album == '':
+                    item.album += new_album
+                else:
+                    item.album += ',' + new_album
+            for file in files_to_delete:
+                item.album = delete_image(file, item.album, user.u_id, item.i_id)
+            clear_tmp()
+        item.album_first = item.album.split(',')[0]
+        item.save()
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'creation successful'
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'invalid host',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    
     return Response(result, status=result['code'])
