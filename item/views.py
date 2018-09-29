@@ -211,7 +211,7 @@ def search(request):
                 page_size = data['page_size']
         if 'page' in data:
             if not data['page'] == '':
-                page = data['page']
+                page = int(data['page'])
         q_list = []
         if 'keyword' in data:
             if not data['keyword'] == '':

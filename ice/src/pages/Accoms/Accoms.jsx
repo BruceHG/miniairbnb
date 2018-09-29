@@ -46,9 +46,6 @@ export default class Accoms extends Component {
   }
 
   render() {
-    // console.log(this.state.step)
-    // console.log(this.state.keyword)
-    console.log("this is the page number :"+this.state.data['total_page']);
     console.log(this.state.data['accommodations']);
     return (
       <div>
@@ -59,6 +56,7 @@ export default class Accoms extends Component {
         <FilterList 
         {...this.props}
         keyword={this.state.keyword}
+        total_page={this.state.data['total_page']}
         data={this.state.data['accommodations']}
         setSet={this.setSet.bind(this)}
         />
