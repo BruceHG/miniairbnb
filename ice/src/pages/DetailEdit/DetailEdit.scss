@@ -1,8 +1,11 @@
 .detail-edit-page {
-    padding: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 40px;
+    padding-top: 20px;
     .title {
         font-size: 20pt;
-        margin-top: 10px;
+        margin-top: 20px;
         margin-bottom: 10px;
     }
     .detail-title {
@@ -12,9 +15,24 @@
         font-size: 12pt;
         color: grey;
     }
-    .description {
-        width: 100%;
-        height: 300px;
+    .address-title {
+        font-size: 12pt;
+        color: grey;
+    }
+    .price-range {
+        width: 50%;
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
+    .price-label {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 12pt;
+        color: grey;
+        .price-value {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-size: 20pt;
+            color: red;
+        }
     }
     Button {
         width: 200px;

@@ -42,8 +42,12 @@ export default class Detail extends Component {
           Feedback.toast.error(json['msg']);
         }
       }).catch((e) => {
-        console.error(e);
-        Feedback.toast.error('Opps! Unknow error happens...');
+        if (e.response && e.response.data) {
+          Feedback.toast.error(e.response.data['msg']);
+        } else {
+          console.error(e);
+          Feedback.toast.error('Opps! Unknow error happens...');
+        }
       });
     this.updateAvailableInfo();
   }
@@ -59,8 +63,12 @@ export default class Detail extends Component {
           Feedback.toast.error(json['msg']);
         }
       }).catch((e) => {
-        console.error(e);
-        Feedback.toast.error('Opps! Unknow error happens...');
+        if (e.response && e.response.data) {
+          Feedback.toast.error(e.response.data['msg']);
+        } else {
+          console.error(e);
+          Feedback.toast.error('Opps! Unknow error happens...');
+        }
       });
   }
 
