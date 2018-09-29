@@ -1,0 +1,26 @@
+.success-view {
+    padding: 50px;
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: pink;
+    .tip1 {
+        font-size: 50pt;
+        margin-bottom: 30px;
+        font-family: fantasy;
+        color: lime;
+    }
+    .tip2 {
+        font-size: 17pt;
+        color: orange;
+    }
+    .tip3 {
+        font-size: 20pt;
+        margin-left: 10px;
+        margin-right: 2px;
+        color: red;
+    }
+}

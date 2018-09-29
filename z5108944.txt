@@ -51,3 +51,7 @@ Pass data from 'Detail Screen' to 'Place order'.
 -Week 8
 Finish 'Place order' screen and API fucntion.
 Test 'get requests' API.
+Fix 'Accoms' search result page bugs.
+
+-Week 9
+Start 'ad edit' page.

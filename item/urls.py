@@ -10,4 +10,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('<int:item_id>/available_info/', views.available_info, name='available_info'),
     path('update_item/<int:item_id>/', views.update_item, name='update_item'),
+    path('create_item/', views.create_item, name='create_item'),
+    path('upload_image/', views.upload_image, name='upload_image'),
+#    path('view_items/', views.view_items, name='view_items'),
 ]

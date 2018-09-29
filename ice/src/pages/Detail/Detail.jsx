@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Detail.scss';
 import * as CommonUtils from '../../lib/commonUtils';
+import axios from 'axios';
 import Header from '../../components/Header';
 import { Feedback, Slider, Loading, Rating, Button, DatePicker, Select, } from '@icedesign/base';
 import Img from '@icedesign/img';
@@ -31,44 +32,44 @@ export default class Detail extends Component {
   }
 
   componentDidMount() {
-    fetch(CommonUtils.BACKEND_URL + `/item/${this.accom_id}/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    }).then((response) => {
-      return response.json();
-    }).then((json) => {
-      if (json['code'] == 200) {
-        this.setState({ data: json['data'] });
-      } else {
-        Feedback.toast.error(json['msg']);
-      }
-    }).catch((e) => {
-      console.error(e);
-      Feedback.toast.error('Opps! Unknow error happens...');
-    });
+    axios.get(CommonUtils.BACKEND_URL + `/item/${this.accom_id}/`)
+      .then((response) => {
+        return response.data;
+      }).then((json) => {
+        if (json['code'] == 200) {
+          this.setState({ data: json['data'] });
+        } else {
+          Feedback.toast.error(json['msg']);
+        }
+      }).catch((e) => {
+        if (e.response && e.response.data) {
+          Feedback.toast.error(e.response.data['msg']);
+        } else {
+          console.error(e);
+          Feedback.toast.error('Opps! Unknow error happens...');
+        }
+      });
     this.updateAvailableInfo();
   }
 
   updateAvailableInfo() {
-    fetch(CommonUtils.BACKEND_URL + `/item/${this.accom_id}/available_info/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    }).then((response) => {
-      return response.json();
-    }).then((json) => {
-      if (json['code'] == 200) {
-        this.setState({ availableInfo: json['data'] });
-      } else {
-        Feedback.toast.error(json['msg']);
-      }
-    }).catch((e) => {
-      console.error(e);
-      Feedback.toast.error('Opps! Unknow error happens...');
-    });
+    axios.get(CommonUtils.BACKEND_URL + `/item/${this.accom_id}/available_info/`)
+      .then((response) => {
+        return response.data;
+      }).then((json) => {
+        if (json['code'] == 200) {
+          this.setState({ availableInfo: json['data'] });
+        } else {
+          Feedback.toast.error(json['msg']);
+        }
+      }).catch((e) => {
+        if (e.response && e.response.data) {
+          Feedback.toast.error(e.response.data['msg']);
+        } else {
+          console.error(e);
+          Feedback.toast.error('Opps! Unknow error happens...');
+        }
+      });
   }
 
   disabledDate = (date) => {
@@ -181,7 +182,7 @@ export default class Detail extends Component {
                         }
                         return ` ${guest_num} ${suffix} `;
                       })()}
-                      🏠{(() => {
+                      🏠 {(() => {
                         let bedroom_num = this.state.data['bedroom_num'];
                         if (bedroom_num > 1) {
                           var suffix = 'bedrooms';

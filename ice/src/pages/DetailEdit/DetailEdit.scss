@@ -1,0 +1,45 @@
+.detail-edit-page {
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 40px;
+    padding-top: 20px;
+    .title {
+        font-size: 20pt;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    .detail-title {
+        white-space: nowrap;
+        margin-bottom: 5px;
+        margin-right: 10px;
+        font-size: 12pt;
+        color: grey;
+    }
+    .address-title {
+        font-size: 12pt;
+        color: grey;
+    }
+    .price-range {
+        width: 50%;
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
+    .price-label {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 12pt;
+        color: grey;
+        .price-value {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-size: 20pt;
+            color: red;
+        }
+    }
+    Button {
+        width: 200px;
+        margin-top: 20px;
+        font-size: 15pt;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import math
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
@@ -68,7 +69,6 @@ def add_item(target):
                     target.user_id, target.id),
                 album=albums(target.user_id, target.id),
                 desc='desc test test',
-                adv_desc='adv_desc test test',
                 address=target.address,
                 longitude=target.longitude,
                 latitude=target.latitude,
@@ -290,7 +290,9 @@ def search(request):
                 keywords_match = []
                 keywords_not_match = []
                 for o in all_objects:
-                    if re.search(data['keyword'], o.title) or re.search(data['keyword'], o.desc) or re.search(data['keyword'], o.adv_desc):
+                    if o.title is not None and re.search(data['keyword'], o.title):
+                        keywords_match.append(o)
+                    elif o.desc is not None and re.search(data['keyword'], o.desc):
                         keywords_match.append(o)
                     else:
                         keywords_not_match.append(o)
@@ -368,15 +370,31 @@ def available_info(request, item_id):
 
 def save_image(file, user_id, item_id):
     path = '{}/static/album/{}/{}/'.format(__CURRENT_DIR, user_id, item_id)
-    num_pictures = str(len(os.listdir(path)))
     if not os.path.exists(path):
         os.makedirs(path)
-    file_path = os.path.join(path, num_pictures + '.' + file.name.split('.')[1])
-    f = open(file_path, mode='wb')
-    for i in file.chunks():
-        f.write(i)
-    f.close()
-    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id, num_pictures, file.name.split('.')[1])
+    file_name = file.split('\\')[-1]
+    num_pictures = 0
+    for f in os.listdir(path):
+        n = int(f.split('.')[0])
+        if n >= num_pictures:
+            num_pictures = n + 1
+    file_path = os.path.join(path,  str(num_pictures) + '.' + file_name.split('.')[1])
+    tmp_path = os.path.join(__CURRENT_DIR, file)
+    shutil.move(tmp_path, file_path)
+    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id, str(num_pictures), file_name.split('.')[1])
+
+def delete_image(file, album, user_id, item_id):
+    path = os.path.join(__CURRENT_DIR, file)
+    if os.path.exists(path):
+        os.remove(path)
+        p = re.compile(file + ',*')
+        album = re.sub(p, '', album)
+    return album
+
+def clear_tmp():
+    path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
+    for f in os.listdir(path):
+        os.remove(os.path.join(path, f))
 
 @api_view(['POST'])
 def update_item(request, item_id):
@@ -391,12 +409,24 @@ def update_item(request, item_id):
             item_serializers.save()
         else:
             raise Exception('invalid update')
-        if 'album' in request.FILES:
-            files = request.FILES.getlist('album')
-            for file in files:
+        if 'album' in data:
+            files = set(data['album'].split(','))
+            if item.album == '':
+                origin_files = set()
+            else:
+                origin_files = set(item.album.split(','))
+            files_to_add = files - origin_files
+            files_to_delete = origin_files - files
+            for file in files_to_add:
                 new_album = save_image(file, item.owner.user.u_id, item_id)
-                item.album += ',' + new_album
-                item.save()
+                if item.album == '':
+                    item.album += new_album
+                else:
+                    item.album += ',' + new_album
+            for file in files_to_delete:
+                item.album = delete_image(file, item.album, item.owner.user.u_id, item_id)
+            clear_tmp()
+            item.save()
         result = {
                 'code': status.HTTP_200_OK,
                 'msg': 'update successful'
@@ -418,6 +448,169 @@ def update_item(request, item_id):
         }
     
     return Response(result, status=result['code'])
+    
+@api_view(['POST'])
+def upload_image(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        Host.objects.get(user = User.objects.get(username = username))
+        files = request.FILES.getlist('image')
+        path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        tmp_urls = []
+        for file in files:
+            file_path = os.path.join(path, file.name)
+            f = open(file_path, mode='wb')
+            for i in file.chunks():
+                f.write(i)
+            f.close()
+            tmp_urls.append('static/album/tmp/' + file.name)
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'images saved',
+                'data': {
+                        'url': tmp_urls
+                        }
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'invalid host',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    
+    return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def create_item(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username = username)
+        host = Host.objects.get(user = user)
+        data = request.data
+        valid_address = 0
+        if 'address' in data:
+            geo_response = geocoding(data['address'])
+            if geo_response['status'] == 'OK':
+                latitude = geo_response['results'][0]['geometry']['location']['lat']
+                longitude = geo_response['results'][0]['geometry']['location']['lng']
+                valid_address = 1
+        item = Item(
+                    owner = host,
+                    title = data['title'], 
+                    desc = data['desc'], 
+                    i_type = data['i_type'], 
+                    price_per_day = data['price_per_day'], 
+                    guest_num = data['guest_num'], 
+                    bedroom_num = data['bedroom_num'], 
+                    bed_num = data['bed_num'], 
+                    bathroom_num = data['bathroom_num'], 
+                    address = data['address'], 
+                    rules = data['rules'], 
+                    features = data['features'],
+                    avaliable = data['avaliable'],
+                    album = ''
+                    )
+        if valid_address:
+            item.latitude = latitude
+            item.longitude = longitude
+        item.save()
+        if 'album' in data:
+            files = set(data['album'].split(','))
+            if item.album == '':
+                origin_files = set()
+            else:
+                origin_files = set(item.album.split(','))
+            files_to_add = files - origin_files
+            files_to_delete = origin_files - files
+            for file in files_to_add:
+                new_album = save_image(file, user.u_id, item.i_id)
+                if item.album == '':
+                    item.album += new_album
+                else:
+                    item.album += ',' + new_album
+            for file in files_to_delete:
+                item.album = delete_image(file, item.album, user.u_id, item.i_id)
+            clear_tmp()
+        item.album_first = item.album.split(',')[0]
+        item.save()
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'creation successful',
+                'data': {
+                        'item_id': item.i_id
+                        }
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'invalid host',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    
+    return Response(result, status=result['code'])
+
+#@api_view(['GET'])
+#def view_items(request):
+#    try:
+#        username = request.META.get("HTTP_USERNAME")
+#        user = User.objects.get(username=username)
+#        host = Host.objects.get(user=user)
+#        items = Item.objects.filter(owner=host)
+#        orders = ordersSerializers(Order.objects.filter(item__in=items), many=True).data
+#        result = {
+#            'code': status.HTTP_200_OK,
+#            'msg': 'orders',
+#            'data': orders,
+#        }
+#    except Item.DoesNotExist:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': 'item not found',
+#        }
+#    except Host.DoesNotExist:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': 'host not found',
+#        }
+#    except User.DoesNotExist:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': 'user not found',
+#        }
+#    except Exception as e:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': str(e),
+#        }
+#    return Response(result, status=result['code'])
+    
+
+    
+    
+    
+    
+    
+    
     
     
     

@@ -6,7 +6,7 @@ from datetime import datetime
 from order.models import Order
 from item.models import Item
 from user.models import User, Host
-from order.serializers import ordersSerializers
+from order.serializers import requestsSerializers, ordersSerializers
 
 @api_view(['POST'])
 def booking(request):
@@ -68,13 +68,13 @@ def booking(request):
     return Response(result, status=result['code'])
 
 @api_view(['GET'])
-def viewOrders(request):
+def requests(request):
     try:
         username = request.META.get("HTTP_USERNAME")
         user = User.objects.get(username=username)
         host = Host.objects.get(user=user)
         items = Item.objects.filter(owner=host)
-        orders = ordersSerializers(Order.objects.filter(item__in=items), many=True).data
+        orders = requestsSerializers(Order.objects.filter(item__in=items, status=Order.Pending), many=True).data
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'orders',
@@ -101,4 +101,26 @@ def viewOrders(request):
             'msg': str(e),
         }
     return Response(result, status=result['code'])
-    
+
+@api_view(['GET'])
+def orders(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username=username)
+        orders = ordersSerializers(Order.objects.filter(user=user), many=True).data
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'orders',
+            'data': orders,
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])

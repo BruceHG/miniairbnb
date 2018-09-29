@@ -28,9 +28,9 @@ export default class Accoms extends Component {
 
   componentDidMount() {
     axios.get(CommonUtils.BACKEND_URL+ '/item/search/', {
-          params: {
-            'keyword':this.state.keyword,
-          }
+      params: {
+        'keyword':this.state.keyword,
+      }
     }).then((response) => {
       return response.data;
     }).then((json) => {
