@@ -291,7 +291,11 @@ def search(request):
                 keywords_match = []
                 keywords_not_match = []
                 for o in all_objects:
-                    if re.search(data['keyword'], o.title) or re.search(data['keyword'], o.desc) or re.search(data['keyword'], o.adv_desc):
+                    if o.title is not None and re.search(data['keyword'], o.title):
+                        keywords_match.append(o)
+                    elif o.desc is not None and re.search(data['keyword'], o.desc):
+                        keywords_match.append(o)
+                    elif o.adv_desc is not None and re.search(data['keyword'], o.adv_desc):
                         keywords_match.append(o)
                     else:
                         keywords_not_match.append(o)
@@ -545,7 +549,10 @@ def create_item(request):
         item.save()
         result = {
                 'code': status.HTTP_200_OK,
-                'msg': 'creation successful'
+                'msg': 'creation successful',
+                'data': {
+                        'item_id': item.i_id
+                        }
         }
     except User.DoesNotExist:
         result = {
@@ -564,3 +571,50 @@ def create_item(request):
         }
     
     return Response(result, status=result['code'])
+
+#@api_view(['GET'])
+#def view_items(request):
+#    try:
+#        username = request.META.get("HTTP_USERNAME")
+#        user = User.objects.get(username=username)
+#        host = Host.objects.get(user=user)
+#        items = Item.objects.filter(owner=host)
+#        orders = ordersSerializers(Order.objects.filter(item__in=items), many=True).data
+#        result = {
+#            'code': status.HTTP_200_OK,
+#            'msg': 'orders',
+#            'data': orders,
+#        }
+#    except Item.DoesNotExist:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': 'item not found',
+#        }
+#    except Host.DoesNotExist:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': 'host not found',
+#        }
+#    except User.DoesNotExist:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': 'user not found',
+#        }
+#    except Exception as e:
+#        result = {
+#            'code': status.HTTP_400_BAD_REQUEST,
+#            'msg': str(e),
+#        }
+#    return Response(result, status=result['code'])
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
