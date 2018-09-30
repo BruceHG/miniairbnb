@@ -12,6 +12,7 @@ import Accoms from './pages/Accoms';
 import Detail from './pages/Detail';
 import Placeorder from './pages/Placeorder';
 import DetailEdit from './pages/DetailEdit';
+import Orders from './pages/Orders';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -49,6 +50,11 @@ const routerConfig = [
     path: '/edit/:id?',
     layout: BlankLayout,
     component: DetailEdit,
+  },
+  {
+    path: '/orders',
+    layout: BlankLayout,
+    component: Orders,
   },
   {
     path: '*',
