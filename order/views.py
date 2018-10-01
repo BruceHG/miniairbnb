@@ -159,3 +159,43 @@ def cancel(request, order_id):
             'msg': str(e),
         }
     return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def reject(request, order_id):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username=username)
+        host = Host.objects.get(user=user)
+        order = Order.objects.get(o_id=order_id)
+        if not order.item.owner == host:
+            raise Exception('order and host do not match')
+        if order.status == Order.Completed or order.status == Order.Rejected or order.status == Order.Accepted:
+            raise Exception('reject failed, accepted, completed or rejected order')
+        order.status = Order.Rejected
+        order.save()
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'reject successful',
+        }
+        
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'host not found',
+        }
+    except Order.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'order not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
