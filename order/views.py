@@ -77,7 +77,7 @@ def requests(request):
         orders = requestsSerializers(Order.objects.filter(item__in=items, status=Order.Pending), many=True).data
         result = {
             'code': status.HTTP_200_OK,
-            'msg': 'orders',
+            'msg': 'requests',
             'data': orders,
         }
     except Item.DoesNotExist:
@@ -117,6 +117,41 @@ def orders(request):
         result = {
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': 'user not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+
+@api_view(['DELETE'])
+def cancel(request, order_id):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username=username)
+        order = Order.objects.get(o_id=order_id)
+        if not order.user == user:
+            raise Exception('order and user do not match')
+        if order.status == Order.Completed or order.status == Order.Rejected:
+            raise Exception('cancel failed, completed or rejected order')
+        item = order.item
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'cancellation successful',
+        }
+        if order.status == Order.Accepted:
+            result['data'] = {"rules": item.rules}
+        order.delete()
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Order.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'order not found',
         }
     except Exception as e:
         result = {
