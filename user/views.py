@@ -128,7 +128,7 @@ def ads(request):
         }
     return Response(result, status=result['code'])
 
-@api_view(['GET'])
+@api_view(['DELETE'])
 def ad_delete(request, item_id):
     try:
         username = request.META.get("HTTP_USERNAME")
