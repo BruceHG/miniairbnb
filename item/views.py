@@ -426,6 +426,7 @@ def update_item(request, item_id):
             for file in files_to_delete:
                 item.album = delete_image(file, item.album, item.owner.user.u_id, item_id)
             clear_tmp()
+            item.album_first = item.album.split(',')[0]
             item.save()
         result = {
                 'code': status.HTTP_200_OK,
