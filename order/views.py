@@ -77,7 +77,7 @@ def requests(request):
         orders = requestsSerializers(Order.objects.filter(item__in=items, status=Order.Pending), many=True).data
         result = {
             'code': status.HTTP_200_OK,
-            'msg': 'orders',
+            'msg': 'requests',
             'data': orders,
         }
     except Item.DoesNotExist:

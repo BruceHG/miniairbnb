@@ -29,5 +29,10 @@ class itemUpdateSerializers(serializers.ModelSerializer):
         model = Item
         fields = ('title', 'desc', 'i_type', 'price_per_day', 'avaliable', 'guest_num', 'bedroom_num', 'bed_num', 'bathroom_num',
                   'address', 'rules', 'features')
+        
+class adsSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('i_id', 'title', 'price_per_day', 'album_first', 'address',)
 
 

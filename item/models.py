@@ -64,6 +64,17 @@ class Item(models.Model):
         default = R1,
         )
     c_time = models.DateTimeField(auto_now=True)
+    
+    Active = 1
+    Inactive = 0
+    status_type = (
+        (Active, 'Active'),
+        (Inactive, 'Inactive'),
+    )
+    status = models.IntegerField(
+        choices = status_type,
+        default = Active,
+        )
 
 
 
