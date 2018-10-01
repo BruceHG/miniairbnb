@@ -13,6 +13,7 @@ import Detail from './pages/Detail';
 import Placeorder from './pages/Placeorder';
 import DetailEdit from './pages/DetailEdit';
 import Orders from './pages/Orders';
+import MyAds from './pages/MyAds';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -55,6 +56,11 @@ const routerConfig = [
     path: '/orders',
     layout: BlankLayout,
     component: Orders,
+  },
+  {
+    path: '/MyAds',
+    layout: BlankLayout,
+    component: MyAds,
   },
   {
     path: '*',
