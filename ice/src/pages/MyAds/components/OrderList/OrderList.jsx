@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Table,Button } from '@icedesign/base';
+import { Table,Button,Feedback } from '@icedesign/base';
 import IceContainer from '@icedesign/container';
+import * as CommonUtils from '../../../../lib/commonUtils';
+
 
 export default class OrderList extends Component {
   static displayName = 'OrderList';
@@ -12,7 +14,10 @@ export default class OrderList extends Component {
 
   constructor(props) {
     super(props);
+    this.render=this.render.bind(this);
+    this.current_user = null;
     this.state = {
+      data: {},
       tableData: [],
     };
   }
@@ -22,54 +27,104 @@ export default class OrderList extends Component {
   }
 
   getTableData = () => {
-    axios
-      .get('/mock/order-list.json')
-      .then((response) => {
-        this.setState({
-          tableData: response.data.data,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    fetch(CommonUtils.BACKEND_URL + '/user/ads/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'username': CommonUtils.getUserInfo2Cookie()['username'],
+      },
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      if (json['code'] == 200) {
+        this.setState({ data: json['data'] });
+        this.setState({ tableData: this.state.data['accommodations']});
+      } else {
+        Feedback.toast.error(json['msg']);
+      }
+    }).catch((e) => {
+      console.error(e);
+      Feedback.toast.error('Opps! Unknow error happens...');
+    });
   };
 
+  getTableData_AfterDelet = (id) => {
+    fetch(CommonUtils.BACKEND_URL + `/user/ad_delete/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'username': CommonUtils.getUserInfo2Cookie()['username'],
+      },
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      if (json['code'] == 200) {
+        this.setState({ data: json['data'] });
+        this.setState({ tableData: this.state.data['accommodations']});
+      } else {
+        Feedback.toast.error(json['msg']);
+      }
+    }).catch((e) => {
+      console.error(e);
+      Feedback.toast.error('Opps! Unknow error happens...');
+    });
+  };
+    
+  checkcookie=()=>{
+    this.current_user = CommonUtils.getUserInfo2Cookie();
+    if(this.current_user == null){
+      Feedback.toast.error('Sorry,cookie is empty, please login again ');
+      return(
+        window.location = '#/');
+    };
+  }
   /**
-   * 渲染订单信息
+   * For the firstr colunm info render
    */
-  renderOrderInfo = (product) => {
+  renderOrderInfo = (description) => {
+    // console.log(description[0]);
     return (
       <div className="order-info" style={styles.orderInfo}>
-        <img src={product[0].avatar} style={styles.orderImg} alt="头像" />
+        <img src={CommonUtils.BACKEND_URL+'/'+description[0].album_first} style={styles.orderImg} alt="头像" />
         <div className="order-description" style={styles.orderDescription}>
-          {product[0].description}
+          {description[0].address}
+        </div>
+        <div>
+          Price Per Day: ${description[0].price_per_day}
         </div>
       </div>
     );
   };
 
   /**
-   * 渲染订单价格
+   * Delete operation
    */
-  renderOrderPrice = (price) => {
+  renderDelete = (id) => {
     return (
     <Button
       type="primary"
       shape="warning"
-      onClick={()=>{console.log("I will be deleted"+price)}}
+      onClick={()=>{
+        if(!CommonUtils.getUserInfo2Cookie()){
+          Feedback.toast.error('Sorry,cookie is empty, please login again ');
+          return(window.location = '#/');
+        }
+        this.getTableData_AfterDelet(id);
+
+      }}
     >Delete</Button>
     );
   };
 
   /**
-   * 渲染订单单号
+   * render the title
    */
   renderOrderNumber = (record) => {
-    return <div>{record.product[0].title}</div>;
+    return <div>{record.description[0].title}</div>;
   };
 
   /**
-   * 设置每一行的样式名称
+   * set row name
    */
   getRowClassName = (record) => {
     if (record.status === 0) {
@@ -78,18 +133,28 @@ export default class OrderList extends Component {
   };
 
   /**
-   * 渲染操作行
+   * For edit event
    */
-  renderOperation = () => {
+  renderEdit = (id) => {
     return (
-      <a href="/" style={styles.orderDetailLink}>
-        查看
-      </a>
+      // <a href="/" style={styles.orderDetailLink}>
+      //   Edit
+      // </a>
+      <Button
+        type="primary"
+        onClick={() => {
+          if (this.props.history) {
+            this.props.history.push(`/edit/${id}`);
+          }
+        }}
+        >
+        Edit
+        </Button>
     );
   };
 
   /**
-   * 选中当前行的回调
+   *row render, it may be useless?...
    */
   handleRowSelection = (selectedRowKeys, records) => {
     console.log('selectedRowKeys:', selectedRowKeys);
@@ -97,11 +162,12 @@ export default class OrderList extends Component {
   };
 
   render() {
+    this.checkcookie();
+
     const rowSelection = {
       onChange: this.handleRowSelection,
       mode: 'single',
     };
-
     const { tableData } = this.state;
 
     return (
@@ -112,22 +178,24 @@ export default class OrderList extends Component {
             getRowClassName={this.getRowClassName}
             rowSelection={rowSelection}
             hasBorder={false}
+            language='en-us'
           >
             <Table.GroupHeader cell={this.renderOrderNumber} />
             <Table.Column
               cell={this.renderOrderInfo}
               title="Posted Accommdation Resources"
-              dataIndex="product"
+              dataIndex="description"
               width={400}
             />
             <Table.Column
-              cell={this.renderOrderPrice}
+              cell={this.renderDelete}
               title="Operation"
-              dataIndex="price"
+              dataIndex="i_id"
               width={100}
             />
             <Table.Column
-              cell={this.renderOperation}
+              cell={this.renderEdit}
+              dataIndex="i_id"
               title="Operation"
               width={100}
             />

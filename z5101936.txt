@@ -9,7 +9,7 @@ server config =>
 const DEBUG_IN_LOCAL = true 
 ...
 export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://login.cse.unsw.edu.au:8007' : '';
-export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://127.0.0.1:8888' : '' 
+export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://127.0.0.1:8888' : ''; 
 
 conflict:
 git pull origin master
@@ -37,3 +37,12 @@ debug fix the search result pages
 20/Sep - 29/Sep:    
     implement the pagination
     implement the communication from childrens component to Parents
+
+30/Sep:
+    implement the Host Ads API and HuaGe do some modification for it.
+
+1/Oct:
+    implement UI for host Ads review screen.
+
+2/Oct:
+    connect with database, and test it, and debug.
