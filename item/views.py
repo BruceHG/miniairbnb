@@ -212,7 +212,7 @@ def search(request):
         if 'page' in data:
             if not data['page'] == '':
                 page = int(data['page'])
-        q_list = []
+        q_list = [Q(status=Item.Active)]
         if 'keyword' in data:
             if not data['keyword'] == '':
                 geo_response = geocoding(data['keyword'])
@@ -251,10 +251,7 @@ def search(request):
                 for f in item_features:
                     pattern += f + '[,\d]*'
                 q_list.append(Q(features__regex=pattern))
-        if q_list:
-            all_objects = Item.objects.filter(reduce(operator.and_, q_list))
-        else:
-            all_objects = Item.objects.all()
+        all_objects = Item.objects.filter(reduce(operator.and_, q_list))
         if 'check_in' in data:
             if not data['check_in'] == '':
                 filtered_objects = []
