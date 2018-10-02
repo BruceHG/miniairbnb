@@ -67,7 +67,7 @@ export default class Header extends Component {
         console.log('Requests');
         break;
       case MENU.ORDER_HISTORY:
-      this.props.history.push('/orders');
+        this.props.history.push('/orders');
         break;
       case MENU.PUBLISH_AD:
         this.props.history.push('/edit');
@@ -110,8 +110,21 @@ export default class Header extends Component {
                 menu_balloon_visible: !this.state.menu_balloon_visible
               });
             }}>
-              <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR} />
-              &nbsp;
+              <Img
+                shape='circle'
+                style={{ verticalAlign: 'middle' }}
+                width={25} height={25}
+                src={this.current_user['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR}
+              />
+              <span style={{
+                fontSize: '10pt',
+                fontFamily: 'fantasy',
+                color: 'lime',
+                marginLeft: '5px',
+                marginRight: '5px',
+              }}>
+                {this.current_user['username']}
+              </span>
               <Icon
                 size="medium"
                 type="arrow-down-filling"

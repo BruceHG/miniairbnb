@@ -300,8 +300,11 @@ def search(request):
         all_results = searchResultSerializers(all_objects, many=True).data
         if valid_address == 1:
             for r in all_results:
-                distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
-                r['distance'] = distance
+                if r['longitude'] is not None and r['latitude'] is not None:
+                    distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
+                    r['distance'] = distance
+                else:
+                    r['distance'] = float('inf')
             if 'min_distance' in data:
                 all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
             if 'max_distance' in data:
@@ -426,6 +429,7 @@ def update_item(request, item_id):
             for file in files_to_delete:
                 item.album = delete_image(file, item.album, item.owner.user.u_id, item_id)
             clear_tmp()
+            item.album_first = item.album.split(',')[0]
             item.save()
         result = {
                 'code': status.HTTP_200_OK,
