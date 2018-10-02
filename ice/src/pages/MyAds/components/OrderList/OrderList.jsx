@@ -143,9 +143,13 @@ export default class OrderList extends Component {
       <Button
         type="primary"
         onClick={() => {
+          if(!CommonUtils.getUserInfo2Cookie()){
+            Feedback.toast.error('Sorry,cookie is empty, please login again ');
+            return(window.location = '#/');
+          };
           if (this.props.history) {
             this.props.history.push(`/edit/${id}`);
-          }
+          };
         }}
         >
         Edit
