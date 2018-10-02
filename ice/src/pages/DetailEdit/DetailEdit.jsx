@@ -277,346 +277,350 @@ export default class DetailEdit extends Component {
   }
 
   render() {
-    return (
-      !(this.state.success_create || this.state.success_update) ?
-        <div >
-          <Header
-            {...this.props}
-            style={{ position: 'relative', background: CommonUtils.THEME_COLOR }}
-            onAccountStateChange={() => this.checkPermission()} />
-          <div className='detail-edit-page'>
-            <IceFormBinderWrapper
-              value={this.state.data}
-              ref='form'
-            >
-              <div>
-                <div className='title'>Title</div>
-                <IceFormBinder name='title' required>
-                  <Input
-                    size='large'
-                    style={{ width: '50%' }}
-                    placeholder='the tile/name of your accomodation'
-                  />
-                </IceFormBinder>
-                <div className='title'>Type</div>
-                <IceFormBinder name='i_type' required>
-                  <Select
-                    language='en-us'
-                    size='large'
-                    autoWidth={false}
-                    dataSource={
-                      Object.keys(CommonUtils.AccomType).map(
-                        (key) => {
-                          return {
-                            value: key,
-                            label: CommonUtils.AccomType[key],
+    if (this.checkPermission()) {
+      return (
+        !(this.state.success_create || this.state.success_update) ?
+          <div >
+            <Header
+              {...this.props}
+              style={{ position: 'relative', background: CommonUtils.THEME_COLOR }}
+              onAccountStateChange={() => this.checkPermission()} />
+            <div className='detail-edit-page'>
+              <IceFormBinderWrapper
+                value={this.state.data}
+                ref='form'
+              >
+                <div>
+                  <div className='title'>Title</div>
+                  <IceFormBinder name='title' required>
+                    <Input
+                      size='large'
+                      style={{ width: '50%' }}
+                      placeholder='the tile/name of your accomodation'
+                    />
+                  </IceFormBinder>
+                  <div className='title'>Type</div>
+                  <IceFormBinder name='i_type' required>
+                    <Select
+                      language='en-us'
+                      size='large'
+                      autoWidth={false}
+                      dataSource={
+                        Object.keys(CommonUtils.AccomType).map(
+                          (key) => {
+                            return {
+                              value: key,
+                              label: CommonUtils.AccomType[key],
+                            }
                           }
-                        }
-                      )
-                    }
-                  />
-                </IceFormBinder>
-                <div className='title'>Room Detail</div>
-                <Row>
-                  <Col>
-                    <div className='detail-title'>👥 Max Guests Number</div>
-                    <IceFormBinder name='guest_num' required>
-                      <Select
-                        language='en-us'
-                        size='large'
-                        dataSource={
-                          Array.apply(null, { length: MAX_GUEST_NO }).map(Function.call, Number).map(
-                            (i) => {
-                              let num = i + 1;
-                              return {
-                                value: num,
-                                label: num + (num > 1 ? ' guests' : ' guest'),
+                        )
+                      }
+                    />
+                  </IceFormBinder>
+                  <div className='title'>Room Detail</div>
+                  <Row>
+                    <Col>
+                      <div className='detail-title'>👥 Max Guests Number</div>
+                      <IceFormBinder name='guest_num' required>
+                        <Select
+                          language='en-us'
+                          size='large'
+                          dataSource={
+                            Array.apply(null, { length: MAX_GUEST_NO }).map(Function.call, Number).map(
+                              (i) => {
+                                let num = i + 1;
+                                return {
+                                  value: num,
+                                  label: num + (num > 1 ? ' guests' : ' guest'),
+                                }
                               }
-                            }
-                          )
-                        }
-                      />
-                    </IceFormBinder>
-                  </Col>
-                  <Col>
-                    <div className='detail-title'>🏠 Bedrooms Number</div>
-                    <IceFormBinder name='bedroom_num' required>
-                      <Select
-                        language='en-us'
-                        size='large'
-                        dataSource={
-                          Array.apply(null, { length: MAX_BEDROOM_NO }).map(Function.call, Number).map(
-                            (i) => {
-                              let num = i + 1;
-                              return {
-                                value: num,
-                                label: num + (num > 1 ? ' rooms' : ' room'),
-                              }
-                            }
-                          )
-                        }
-                      />
-                    </IceFormBinder>
-                  </Col>
-                  <Col>
-                    <div className='detail-title'>🛏 Beds Number</div>
-                    <IceFormBinder name='bed_num' required>
-                      <Select
-                        language='en-us'
-                        size='large'
-                        dataSource={
-                          Array.apply(null, { length: MAX_BED_NO }).map(Function.call, Number).map(
-                            (i) => {
-                              let num = i + 1;
-                              return {
-                                value: num,
-                                label: num + (num > 1 ? ' beds' : ' bed'),
-                              }
-                            }
-                          )
-                        }
-                      />
-                    </IceFormBinder>
-                  </Col>
-                  <Col>
-                    <div className='detail-title'>🛁 Bathrooms Number</div>
-                    <IceFormBinder name='bathroom_num' required>
-                      <Select
-                        language='en-us'
-                        size='large'
-                        dataSource={
-                          Array.apply(null, { length: MAX_BATH_NO }).map(Function.call, Number).map(
-                            (i) => {
-                              let num = i + 1;
-                              return {
-                                value: num,
-                                label: num + (num > 1 ? ' baths' : ' bath'),
-                              }
-                            }
-                          )
-                        }
-                      />
-                    </IceFormBinder>
-                  </Col>
-                </Row>
-                <div className='title'>Address</div>
-                <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
-                  <Col className='address-title' fixedSpan={4}>
-                    Room
-              </Col>
-                  <Col>
-                    <IceFormBinder name='addr_room' required>
-                      <Input
-                        size='large'
-                        style={{ width: '70%' }}
-                        placeholder='E.g. Room 1 or the master room'
-                      />
-                    </IceFormBinder>
-                  </Col>
-                </Row>
-                <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
-                  <Col className='address-title' fixedSpan={4}>
-                    Unit No.
-              </Col>
-                  <Col>
-                    <IceFormBinder name='addr_unit_no' required>
-                      <Input
-                        size='large'
-                        trim
-                        style={{ width: '70%' }}
-                        placeholder='E.g. 001'
-                      />
-                    </IceFormBinder>
-                  </Col>
-                </Row>
-                <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
-                  <Col className='address-title' fixedSpan={4}>
-                    Street
-              </Col>
-                  <Col>
-                    <IceFormBinder name='addr_street' required>
-                      <Input
-                        size='large'
-                        style={{ width: '70%' }}
-                        placeholder='E.g. High Street'
-                      />
-                    </IceFormBinder>
-                  </Col>
-                </Row>
-                <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
-                  <Col className='address-title' fixedSpan={4}>
-                    Region
-              </Col>
-                  <Col>
-                    <IceFormBinder name='addr_region' required>
-                      <Input
-                        size='large'
-                        trim
-                        style={{ width: '70%' }}
-                        placeholder='E.g. Kensington'
-                      />
-                    </IceFormBinder>
-                  </Col>
-                </Row>
-                <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
-                  <Col className='address-title' fixedSpan={4}>
-                    State
-              </Col>
-                  <Col>
-                    <IceFormBinder name='addr_state' required>
-                      <Input
-                        size='large'
-                        trim
-                        style={{ width: '70%' }}
-                        placeholder='E.g. NSW'
-                      />
-                    </IceFormBinder>
-                  </Col>
-                </Row>
-                <div className='title'>Cancellation Rules</div>
-                <IceFormBinder name='rules' required>
-                  <Select
-                    language='en-us'
-                    size='large'
-                    autoWidth={false}
-                    dataSource={
-                      Object.keys(CommonUtils.CancelRule).map(
-                        (key) => {
-                          return {
-                            value: key,
-                            label: CommonUtils.CancelRule[key],
+                            )
                           }
-                        }
-                      )
-                    }
-                  />
-                </IceFormBinder>
-                <div className='title'>Features</div>
-                <IceFormBinder name='features'>
-                  <Select
-                    language='en-us'
-                    size='large'
-                    autoWidth={false}
-                    multiple
-                    dataSource={
-                      Object.keys(this.all_features).map(
-                        (key) => {
-                          return {
-                            value: key,
-                            label: this.all_features[key],
+                        />
+                      </IceFormBinder>
+                    </Col>
+                    <Col>
+                      <div className='detail-title'>🏠 Bedrooms Number</div>
+                      <IceFormBinder name='bedroom_num' required>
+                        <Select
+                          language='en-us'
+                          size='large'
+                          dataSource={
+                            Array.apply(null, { length: MAX_BEDROOM_NO }).map(Function.call, Number).map(
+                              (i) => {
+                                let num = i + 1;
+                                return {
+                                  value: num,
+                                  label: num + (num > 1 ? ' rooms' : ' room'),
+                                }
+                              }
+                            )
                           }
-                        }
-                      )
-                    }
-                  />
-                </IceFormBinder>
-                <div className='title'>Price</div>
-                <IceFormBinder name='price_per_day' type='number'>
-                  <Range
-                    className='price-range'
-                    min={0}
-                    max={MAX_PRICE}
-                    step={5}
-                    marks={{ 0: '$0', [MAX_PRICE]: '$' + MAX_PRICE }}
-                    tipFormatter={(value) => {
-                      return '$ ' + value;
-                    }}
-                    onChange={(value) => this.setState({ data: { ...this.state.data, 'price_per_day': value } })}
-                  />
-                </IceFormBinder>
-                <div className='price-label'>
-                  <span className='price-value'>${this.state.data['price_per_day']}</span> per night (GST. included)
+                        />
+                      </IceFormBinder>
+                    </Col>
+                    <Col>
+                      <div className='detail-title'>🛏 Beds Number</div>
+                      <IceFormBinder name='bed_num' required>
+                        <Select
+                          language='en-us'
+                          size='large'
+                          dataSource={
+                            Array.apply(null, { length: MAX_BED_NO }).map(Function.call, Number).map(
+                              (i) => {
+                                let num = i + 1;
+                                return {
+                                  value: num,
+                                  label: num + (num > 1 ? ' beds' : ' bed'),
+                                }
+                              }
+                            )
+                          }
+                        />
+                      </IceFormBinder>
+                    </Col>
+                    <Col>
+                      <div className='detail-title'>🛁 Bathrooms Number</div>
+                      <IceFormBinder name='bathroom_num' required>
+                        <Select
+                          language='en-us'
+                          size='large'
+                          dataSource={
+                            Array.apply(null, { length: MAX_BATH_NO }).map(Function.call, Number).map(
+                              (i) => {
+                                let num = i + 1;
+                                return {
+                                  value: num,
+                                  label: num + (num > 1 ? ' baths' : ' bath'),
+                                }
+                              }
+                            )
+                          }
+                        />
+                      </IceFormBinder>
+                    </Col>
+                  </Row>
+                  <div className='title'>Address</div>
+                  <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <Col className='address-title' fixedSpan={4}>
+                      Room
+              </Col>
+                    <Col>
+                      <IceFormBinder name='addr_room' required>
+                        <Input
+                          size='large'
+                          style={{ width: '70%' }}
+                          placeholder='E.g. Room 1 or the master room'
+                        />
+                      </IceFormBinder>
+                    </Col>
+                  </Row>
+                  <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <Col className='address-title' fixedSpan={4}>
+                      Unit No.
+              </Col>
+                    <Col>
+                      <IceFormBinder name='addr_unit_no' required>
+                        <Input
+                          size='large'
+                          trim
+                          style={{ width: '70%' }}
+                          placeholder='E.g. 001'
+                        />
+                      </IceFormBinder>
+                    </Col>
+                  </Row>
+                  <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <Col className='address-title' fixedSpan={4}>
+                      Street
+              </Col>
+                    <Col>
+                      <IceFormBinder name='addr_street' required>
+                        <Input
+                          size='large'
+                          style={{ width: '70%' }}
+                          placeholder='E.g. High Street'
+                        />
+                      </IceFormBinder>
+                    </Col>
+                  </Row>
+                  <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <Col className='address-title' fixedSpan={4}>
+                      Region
+              </Col>
+                    <Col>
+                      <IceFormBinder name='addr_region' required>
+                        <Input
+                          size='large'
+                          trim
+                          style={{ width: '70%' }}
+                          placeholder='E.g. Kensington'
+                        />
+                      </IceFormBinder>
+                    </Col>
+                  </Row>
+                  <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <Col className='address-title' fixedSpan={4}>
+                      State
+              </Col>
+                    <Col>
+                      <IceFormBinder name='addr_state' required>
+                        <Input
+                          size='large'
+                          trim
+                          style={{ width: '70%' }}
+                          placeholder='E.g. NSW'
+                        />
+                      </IceFormBinder>
+                    </Col>
+                  </Row>
+                  <div className='title'>Cancellation Rules</div>
+                  <IceFormBinder name='rules' required>
+                    <Select
+                      language='en-us'
+                      size='large'
+                      autoWidth={false}
+                      dataSource={
+                        Object.keys(CommonUtils.CancelRule).map(
+                          (key) => {
+                            return {
+                              value: key,
+                              label: CommonUtils.CancelRule[key],
+                            }
+                          }
+                        )
+                      }
+                    />
+                  </IceFormBinder>
+                  <div className='title'>Features</div>
+                  <IceFormBinder name='features'>
+                    <Select
+                      language='en-us'
+                      size='large'
+                      autoWidth={false}
+                      multiple
+                      dataSource={
+                        Object.keys(this.all_features).map(
+                          (key) => {
+                            return {
+                              value: key,
+                              label: this.all_features[key],
+                            }
+                          }
+                        )
+                      }
+                    />
+                  </IceFormBinder>
+                  <div className='title'>Price</div>
+                  <IceFormBinder name='price_per_day' type='number'>
+                    <Range
+                      className='price-range'
+                      min={0}
+                      max={MAX_PRICE}
+                      step={5}
+                      marks={{ 0: '$0', [MAX_PRICE]: '$' + MAX_PRICE }}
+                      tipFormatter={(value) => {
+                        return '$ ' + value;
+                      }}
+                      onChange={(value) => this.setState({ data: { ...this.state.data, 'price_per_day': value } })}
+                    />
+                  </IceFormBinder>
+                  <div className='price-label'>
+                    <span className='price-value'>${this.state.data['price_per_day']}</span> per night (GST. included)
             </div>
-                <div className='title'>Available Date</div>
-                <DayPicker
-                  numberOfMonths={2}
-                  onDayClick={this.handleDayClick}
-                  canChangeMonth={false}
-                  modifiers={{ Sunday: { daysOfWeek: [0] } }}
-                  modifiersStyles={
-                    {
-                      Sunday: {
-                        color: '#FF0000',
-                      },
-                      today: {
-                        color: '#FFFFFF',
-                        backgroundColor: '#0EB01C',
+                  <div className='title'>Available Date</div>
+                  <DayPicker
+                    numberOfMonths={2}
+                    onDayClick={this.handleDayClick}
+                    canChangeMonth={false}
+                    modifiers={{ Sunday: { daysOfWeek: [0] } }}
+                    modifiersStyles={
+                      {
+                        Sunday: {
+                          color: '#FF0000',
+                        },
+                        today: {
+                          color: '#FFFFFF',
+                          backgroundColor: '#0EB01C',
+                        }
+                      }}
+                    selectedDays={this.selected_dates}
+                  />
+                  <div className='title'>Album of your accomodation</div>
+                  <ImageUpload
+                    language='en-us'
+                    action={CommonUtils.BACKEND_URL + '/item/upload_image/'}
+                    listType='picture-card'
+                    name='image'
+                    headers={{ username: CommonUtils.getUserInfo2Cookie()['username'] }}
+                    accept='image/png, image/jpg, image/jpeg'
+                    formatter={(res) => {
+                      if (res.code == 200) {
+                        return {
+                          code: 0,
+                          imgURL: `${CommonUtils.BACKEND_URL}/${res.data.url}`,
+                        };
+                      } else {
+                        return {
+                          code: 1,
+                        };
                       }
                     }}
-                  selectedDays={this.selected_dates}
-                />
-                <div className='title'>Album of your accomodation</div>
-                <ImageUpload
-                  language='en-us'
-                  action={CommonUtils.BACKEND_URL + '/item/upload_image/'}
-                  listType='picture-card'
-                  name='image'
-                  headers={{ username: CommonUtils.getUserInfo2Cookie()['username'] }}
-                  accept='image/png, image/jpg, image/jpeg'
-                  formatter={(res) => {
-                    if (res.code == 200) {
-                      return {
-                        code: 0,
-                        imgURL: `${CommonUtils.BACKEND_URL}/${res.data.url}`,
-                      };
-                    } else {
-                      return {
-                        code: 1,
-                      };
-                    }
-                  }}
-                  fileList={
-                    this.state.data['album'] ?
-                      this.state.data['album'].map((url) => {
-                        return {
-                          status: 'done',
-                          imgURL: `${CommonUtils.BACKEND_URL}/${url}`,
-                        };
-                      }) : []}
-                  onSuccess={(info) => {
-                    let url_suffix = info.imgURL.substring(CommonUtils.BACKEND_URL.length + 1);
-                    if (!this.state.data['album']) {
-                      this.state.data['album'] = [];
-                    }
-                    this.state.data['album'].push(url_suffix);
-                  }}
-                  onRemove={(info) => {
-                    if (info.imgURL) {
+                    fileList={
+                      this.state.data['album'] ?
+                        this.state.data['album'].map((url) => {
+                          return {
+                            status: 'done',
+                            imgURL: `${CommonUtils.BACKEND_URL}/${url}`,
+                          };
+                        }) : []}
+                    onSuccess={(info) => {
                       let url_suffix = info.imgURL.substring(CommonUtils.BACKEND_URL.length + 1);
-                      let index = this.state.data['album'].findIndex(image =>
-                        url_suffix === image
-                      );
-                      this.state.data['album'].splice(index, 1);
-                    }
-                  }}
-                />
-                <div className='title'>Description</div>
-                <IceFormBinder name='desc' required>
-                  <Input
-                    size='large'
-                    rows={25}
-                    style={{ width: '100%' }}
-                    multiple
-                    placeholder='the description of your accomodation'
+                      if (!this.state.data['album']) {
+                        this.state.data['album'] = [];
+                      }
+                      this.state.data['album'].push(url_suffix);
+                    }}
+                    onRemove={(info) => {
+                      if (info.imgURL) {
+                        let url_suffix = info.imgURL.substring(CommonUtils.BACKEND_URL.length + 1);
+                        let index = this.state.data['album'].findIndex(image =>
+                          url_suffix === image
+                        );
+                        this.state.data['album'].splice(index, 1);
+                      }
+                    }}
                   />
-                </IceFormBinder>
-              </div>
-            </IceFormBinderWrapper>
-            <Button
-              type='primary'
-              size='large'
-              onClick={this.handleSubmit}
-            >
-              Save
+                  <div className='title'>Description</div>
+                  <IceFormBinder name='desc' required>
+                    <Input
+                      size='large'
+                      rows={25}
+                      style={{ width: '100%' }}
+                      multiple
+                      placeholder='the description of your accomodation'
+                    />
+                  </IceFormBinder>
+                </div>
+              </IceFormBinderWrapper>
+              <Button
+                type='primary'
+                size='large'
+                onClick={this.handleSubmit}
+              >
+                Save
         </Button>
-          </div>
-        </div > :
-        <SuccessView
-          {...this.props}
-          accom_id={this.accom_id}
-          success_create={this.state.success_create}
-          success_update={this.state.success_update}
-        />
-    );
+            </div>
+          </div > :
+          <SuccessView
+            {...this.props}
+            accom_id={this.accom_id}
+            success_create={this.state.success_create}
+            success_update={this.state.success_update}
+          />
+      );
+    } else {
+      return null;
+    }
   }
 }
