@@ -300,8 +300,11 @@ def search(request):
         all_results = searchResultSerializers(all_objects, many=True).data
         if valid_address == 1:
             for r in all_results:
-                distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
-                r['distance'] = distance
+                if r['longitude'] is not None and r['latitude'] is not None:
+                    distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
+                    r['distance'] = distance
+                else:
+                    r['distance'] = float('inf')
             if 'min_distance' in data:
                 all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
             if 'max_distance' in data:
