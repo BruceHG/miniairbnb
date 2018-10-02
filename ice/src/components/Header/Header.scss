@@ -27,12 +27,12 @@
       width: auto;
       input {
         width: 100px;
+        height: 35px;
         transition: all ease-out 0.3s;
         color: #fff;
         &::placeholder {
           color: rgba(255, 255, 255, 0.7);
-          font-size: 20px;
-          font-family:"Times New Roman", Times, serif;
+          font-size: 11pt;
         }
         &:focus,
         &:hover {
@@ -63,8 +63,7 @@
         line-height: 26px;
         padding: 0 10px;
         color: #fff;
-        font-size: 20px;
-        font-family:"Times New Roman", Times, serif;
+        font-size: 16pt;
         a:hover {
           color: #bfbfbf;
         }
