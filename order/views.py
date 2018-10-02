@@ -135,14 +135,11 @@ def cancel(request, order_id):
             raise Exception('order and user do not match')
         if order.status == Order.Completed or order.status == Order.Rejected:
             raise Exception('cancel failed, completed or rejected order')
-        item = order.item
+        order.delete()
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'cancellation successful',
         }
-        if order.status == Order.Accepted:
-            result['data'] = {"rules": item.rules}
-        order.delete()
     except User.DoesNotExist:
         result = {
             'code': status.HTTP_400_BAD_REQUEST,
