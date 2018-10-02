@@ -61,6 +61,7 @@ export default class Header extends Component {
         break;
       case MENU.MANAGE_ADS:
         console.log('Manage Ads');
+        this.props.history.push('/MyAds');
         break;
       case MENU.REQUESTS:
         console.log('Requests');
