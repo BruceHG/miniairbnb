@@ -211,24 +211,29 @@ export default class Detail extends Component {
                       })()}
                     </div>
                     <div className="detail-description">
-                      <ReactTextCollapse
-                        options={{
-                          collapse: false,
-                          collapseText: 'More...',
-                          expandText: 'Less',
-                          minHeight: 70,
-                          maxHeight: 700,
-                          textStyle: {
-                            color: 'blue',
-                          }
-                        }
-                        }>
-                        {this.state.data['desc']}
-                      </ReactTextCollapse>
+                      {
+                        this.state.data['desc'].length > 300 ?
+                          <ReactTextCollapse
+                            options={{
+                              collapse: false,
+                              collapseText: 'More...',
+                              expandText: 'Less',
+                              minHeight: 70,
+                              maxHeight: 700,
+                              textStyle: {
+                                color: 'blue',
+                              }
+                            }
+                            }>
+                            {this.state.data['desc']}
+                          </ReactTextCollapse>
+                          :
+                          this.state.data['desc']
+                      }
                       <br />
                     </div>
                     <hr />
-                    <div style={{ fontSize: "20pt", fontWeight: "bold" }}>Features</div>
+                    <div className='detail-subtitle'>Features</div>
                     {
                       (() => {
                         let rows = [];
@@ -251,6 +256,7 @@ export default class Detail extends Component {
                       })()
                     }
                     <hr />
+                    <div className='detail-subtitle'>Address</div>
                     <div style={{ fontFamily: 'cursive', fontSize: '13pt', fontWeight: 'bold', margin: '10px' }}>{this.state.data['address']}</div>
                     <iframe
                       className="detail-map"
