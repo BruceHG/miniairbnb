@@ -55,3 +55,11 @@ Fix 'Accoms' search result page bugs.
 
 -Week 9
 Start 'ad edit' page.
+
+-Week 10
+'Order History' list.
+'Delete order'.
+Fix bugs and robust test.
+Optimise system UI.
+add 'suburb', 'city' for address.
+Optimise detail page UI.

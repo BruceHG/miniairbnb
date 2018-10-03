@@ -203,7 +203,7 @@ def search(request):
         data = request.query_params
         page_size = 16
         page = 0
-        valid_address = 0
+#        valid_address = 0
 #        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
 #                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
         if 'page_size' in data:
@@ -213,6 +213,7 @@ def search(request):
             if not data['page'] == '':
                 page = int(data['page'])
         q_list = [Q(status=Item.Active)]
+<<<<<<< HEAD
         if 'keyword' in data:
             if not data['keyword'] == '':
                 geo_response = geocoding(data['keyword'])
@@ -220,6 +221,15 @@ def search(request):
                     latitude = geo_response['results'][0]['geometry']['location']['lat']
                     longitude = geo_response['results'][0]['geometry']['location']['lng']
                     valid_address = 1
+=======
+#        if 'keyword' in data:
+#            if not data['keyword'] == '':
+#                geo_response = geocoding(data['keyword'])
+#                if geo_response['status'] == 'OK':
+#                    latitude = geo_response['results'][0]['geometry']['location']['lat']
+#                    longitude = geo_response['results'][0]['geometry']['location']['lng']
+#                    valid_address = 1
+>>>>>>> 7b67acc88045173b67916565769a4713dd5f4153
         if 'guest_num' in data:
             if not data['guest_num'] == '':
                 if int(data['guest_num']) <= 4:
@@ -284,41 +294,45 @@ def search(request):
                 all_objects = filtered_objects
         if 'keyword' in data:
             if not data['keyword'] == '':
-                keywords_match = []
-                keywords_not_match = []
+                
+                title_match = []
+                address_match = []
+                desc_match = []
                 for o in all_objects:
-                    if o.title is not None and re.search(data['keyword'], o.title):
-                        keywords_match.append(o)
-                    elif o.desc is not None and re.search(data['keyword'], o.desc):
-                        keywords_match.append(o)
-                    else:
-                        keywords_not_match.append(o)
-                all_objects = keywords_match + keywords_not_match
+                    if o.title is not None and re.search(data['keyword'].lower(), o.title.lower()):
+                        title_match.append(o)
+                    elif o.desc is not None and re.search(data['keyword'].lower(), o.address.lower()):
+                        address_match.append(o)
+                    elif o.desc is not None and re.search(data['keyword'].lower(), o.desc.lower()):
+                        desc_match.append(o)
+#                    else:
+#                        keywords_not_match.append(o)
+                all_objects = title_match + address_match + desc_match
         all_results = searchResultSerializers(all_objects, many=True).data
-        if valid_address == 1:
-            for r in all_results:
-                if r['longitude'] is not None and r['latitude'] is not None:
-                    distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
-                    r['distance'] = distance
-                else:
-                    r['distance'] = float('inf')
-            if 'min_distance' in data:
-                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
-            if 'max_distance' in data:
-                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
-        if 'sortby' in data:
-            if not data['sortby'] == '':
-                order = data['sortby']
-                if order == 'rating':
-                    all_results = sorted(
-                        all_results, key=itemgetter(order), reverse=True)
-                elif order == 'price_per_day':
-                    all_results = sorted(all_results, key=itemgetter(order))
-                elif order == 'distance' and valid_address == 1:
-                    all_results = sorted(all_results, key=itemgetter(order))
-        if valid_address == 1:
-            for r in all_results:
-                r.pop('distance')
+#        if valid_address == 1:
+#            for r in all_results:
+#                if r['longitude'] is not None and r['latitude'] is not None:
+#                    distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
+#                    r['distance'] = distance
+#                else:
+#                    r['distance'] = float('inf')
+#            if 'min_distance' in data:
+#                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
+#            if 'max_distance' in data:
+#                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
+#        if 'sortby' in data:
+#            if not data['sortby'] == '':
+#                order = data['sortby']
+#                if order == 'rating':
+#                    all_results = sorted(
+#                        all_results, key=itemgetter(order), reverse=True)
+#                elif order == 'price_per_day':
+#                    all_results = sorted(all_results, key=itemgetter(order))
+#                elif order == 'distance' and valid_address == 1:
+#                    all_results = sorted(all_results, key=itemgetter(order))
+#        if valid_address == 1:
+#            for r in all_results:
+#                r.pop('distance')
 
         total_page = math.ceil(len(all_results) / page_size)
         search_result = all_results[page_size * page:page_size * (page + 1)]
