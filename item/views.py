@@ -284,15 +284,16 @@ def search(request):
                 all_objects = filtered_objects
         if 'keyword' in data:
             if not data['keyword'] == '':
+                
                 title_match = []
                 address_match = []
                 desc_match = []
                 for o in all_objects:
-                    if o.title is not None and re.search(data['keyword'], o.title):
+                    if o.title is not None and re.search(data['keyword'].lower(), o.title.lower()):
                         title_match.append(o)
-                    elif o.desc is not None and re.search(data['keyword'], o.address):
+                    elif o.desc is not None and re.search(data['keyword'].lower(), o.address.lower()):
                         address_match.append(o)
-                    elif o.desc is not None and re.search(data['keyword'], o.desc):
+                    elif o.desc is not None and re.search(data['keyword'].lower(), o.desc.lower()):
                         desc_match.append(o)
 #                    else:
 #                        keywords_not_match.append(o)
