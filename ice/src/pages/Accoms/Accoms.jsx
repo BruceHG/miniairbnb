@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import FilterList from './components/FilterList';
 import Header from '../../components/Header';
-import { Feedback} from '@icedesign/base';
+import { Feedback, Loading} from '@icedesign/base';
 import * as CommonUtils from '../../lib/commonUtils';
 import axios from 'axios';
 
@@ -13,7 +13,6 @@ export default class Accoms extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      step:1,
       data:{},
       keyword: this.props.match.params.keyword,
     };
@@ -46,22 +45,22 @@ export default class Accoms extends Component {
   }
 
   render() {
-    console.log(this.state.data['accommodations']);
-    return (
-      <div>
-        <Header {...this.props} style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
-      <br/>
-      <br/>
-      <div className="accoms-page">
-        <FilterList 
-        {...this.props}
-        keyword={this.state.keyword}
-        total_page={this.state.data['total_page']}
-        data={this.state.data['accommodations']}
-        setSet={this.setSet.bind(this)}
-        />
-      </div>
-      </div>
-    );
-  }
+    console.log(this.state.data['accommodations']); 
+      return (
+        <div>
+          <Header {...this.props} style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
+        <br/>
+        <br/>
+        <div className="accoms-page">
+          <FilterList 
+          {...this.props}
+          keyword={this.state.keyword}
+          total_page={this.state.data['total_page']}
+          data={this.state.data['accommodations']}
+          setSet={this.setSet.bind(this)}
+          />
+        </div>
+        </div>
+      );
+    }
 }

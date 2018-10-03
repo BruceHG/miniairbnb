@@ -93,7 +93,7 @@ export default class SingleItem extends Component {
             margin: '0 14px',
           }}
         >
-          <Rating defaultValue={rating+3} 
+          <Rating defaultValue={rating} 
           disabled
           size="medium"
           />

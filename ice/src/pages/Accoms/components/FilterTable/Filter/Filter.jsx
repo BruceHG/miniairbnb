@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Grid, Select, Button, DatePicker, Checkbox, Feedback } from '@icedesign/base';
+import { Input, Grid, Select, Button, DatePicker, Checkbox, Feedback, Range,Rating } from '@icedesign/base';
 import * as CommonUtils from '../../../../../lib/commonUtils';
 import axios from 'axios';
 // import Moment from 'moment';
@@ -10,6 +10,8 @@ import {
   FormBinder as IceFormBinder,
 } from '@icedesign/form-binder';
 
+const MAX_PRICE = 300;
+const Max_Start = 5;
 const { Row, Col } = Grid;
 const { Option } = Select;
 const { Group: CheckboxGroup } = Checkbox;
@@ -60,15 +62,19 @@ export default class Filter extends Component {
     this.state = {
       data:{},
       value: {
+        sort:'0',
         startTime: '',
         endTime: '',
         number_of_guest:'',
-        sort:'',
+        rating:[0, Max_Start],
+        price:[0,MAX_PRICE],
         type_list : [],
         other_list : [],
       },      
     };
     // this.onChange = this.onChange.bind(this);
+    this.checkPrice = this.checkPrice.bind(this);
+    this.checkRating = this.checkRating.bind(this);
     this.onCheckChange = this.onCheckChange.bind(this);
     this.onCheckChange2 = this.onCheckChange2.bind(this);
     this.checkIn = this.checkIn.bind(this);
@@ -76,6 +82,25 @@ export default class Filter extends Component {
     this.guestChange = this.guestChange.bind(this);
     this.sortChange = this.sortChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  // compare_increasing(first, second) {
+  //   if (first.price_per_day < second.price_per_day)
+  //       return -1;
+  //   if (first.price_per_day > second.price_per_day)
+  //     return 1;
+  //  return 0;
+  // }
+
+
+  checkPrice = (price_array)=>{
+    this.setState(
+      {value:{...this.state.value, price: price_array}});
+  }
+
+  checkRating = (rating_array)=>{
+    this.setState(
+      {value:{...this.state.value, rating: rating_array}});
   }
 
   checkIn = (_, formatDate)=>{
@@ -117,11 +142,15 @@ export default class Filter extends Component {
   handleSubmit = () => {
     axios.get(CommonUtils.BACKEND_URL+ '/item/search/', {
       params: {
-          'keyword': this.props.keyword,
+          'keyword': this.props.keyword1,
           'check_in': this.state.value['startTime'],
           'check_out':this.state.value['endTime'],
           'guest_num': this.state.value['number_of_guest'],
           'sortby': this.state.value['sort'],
+          'min_price': this.state.value.price[0],
+          'max_price': this.state.value.price[1],
+          'min_rating': this.state.value.rating[0],
+          'max_rating': this.state.value.rating[1],
           'types': this.state.value.type_list.join(),
           'features': this.state.value.other_list.join(),
       }
@@ -143,7 +172,6 @@ export default class Filter extends Component {
   };
 
   render() {
-    console.log(this.state);
     return (
       <IceFormBinderWrapper
         value={this.props.value}
@@ -215,11 +243,76 @@ export default class Filter extends Component {
                   value={this.state.value.sort}
                   onChange={this.sortChange}
                 >
-                  <Option value="price_per_day">Price</Option>
-                  <Option value="distance">Distance</Option>
-                  <Option value="rating">Rating</Option>
+                  <Option value="0">Price Increasing</Option>
+                  <Option value="1">Price Decreasing</Option>
+                  <Option value="2">Rating Increasing</Option>
+                  <Option value="3">Rating Decreasing</Option>
                 </Select>
               </IceFormBinder>
+            </Col>
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+            
+            {/* empty layout */}
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+
+            {/* row new add for price*/}
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+              <label style={styles.filterTitle}>Price:</label>
+              <br/>
+              {/* <IceFormBinder> */}
+                <Range
+                  className='price-range'
+                  marks={{ 0: '$0', [MAX_PRICE]: '$' + MAX_PRICE }}
+                  step={10}
+                  min={0}
+                  max={MAX_PRICE}
+                  slider={"double"} 
+                  // defaultValue={[0, 300]}
+                  value={this.state.value.price}
+                  onChange={this.checkPrice}
+                />
+              {/* </IceFormBinder> */}
+            </Col>
+
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+
+             {/* empty layout */}
+             <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+            </Col>
+
+            {/* row new add for rating*/}
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
+              <label style={styles.filterTitle}>Rating:</label>
+              <br/>
+              {/* <IceFormBinder> */}
+                <Range
+                  className='rating-range'
+                  marks={{ 0: '0 star', [Max_Start]: Max_Start+' starts' }}
+                  step={1}
+                  min={0}
+                  max={Max_Start}
+                  slider={"double"} 
+                  // defaultValue={[0, Max_Start]}
+                  value={this.state.value.rating}
+                  onChange={this.checkRating}
+                />
+              {/* </IceFormBinder> */}
+            </Col>
+
+            <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
             </Col>
             <Col xxs={24} xs={12} l={8} style={styles.filterCol}>
             </Col>
@@ -270,7 +363,7 @@ export default class Filter extends Component {
               onClick={this.handleSubmit}
               style={{ marginLeft: '10px' }}
             >
-              Search
+              Search Again
             </Button>
           </div>
         </div>
