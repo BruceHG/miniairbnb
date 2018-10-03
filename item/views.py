@@ -213,15 +213,6 @@ def search(request):
             if not data['page'] == '':
                 page = int(data['page'])
         q_list = [Q(status=Item.Active)]
-<<<<<<< HEAD
-        if 'keyword' in data:
-            if not data['keyword'] == '':
-                geo_response = geocoding(data['keyword'])
-                if geo_response['status'] == 'OK':
-                    latitude = geo_response['results'][0]['geometry']['location']['lat']
-                    longitude = geo_response['results'][0]['geometry']['location']['lng']
-                    valid_address = 1
-=======
 #        if 'keyword' in data:
 #            if not data['keyword'] == '':
 #                geo_response = geocoding(data['keyword'])
@@ -229,7 +220,6 @@ def search(request):
 #                    latitude = geo_response['results'][0]['geometry']['location']['lat']
 #                    longitude = geo_response['results'][0]['geometry']['location']['lng']
 #                    valid_address = 1
->>>>>>> 7b67acc88045173b67916565769a4713dd5f4153
         if 'guest_num' in data:
             if not data['guest_num'] == '':
                 if int(data['guest_num']) <= 4:
