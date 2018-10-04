@@ -27,26 +27,9 @@ from item.crawler import crawl_airbnb
 __CURRENT_DIR = os.path.dirname(__file__)
 
 
-def add_new_user(user_id):
-    users = User.objects.filter(u_id=user_id)
-    for u in users:
-        u.delete()
-    user = User(u_id=user_id,
-                username='user' + str(user_id),
-                password='123',
-                email=str(user_id) + '@test.com',
-                status=User.HOST)
-    user.save()
-
-
-def add_new_host(user_id):
-    target = User.objects.get(u_id=user_id)
-    hosts = Host.objects.filter(user=target)
-    for h in hosts:
-        h.delete()
-    host = Host(user=target,
-                phone=str(user_id) + '123456')
-    host.save()
+def super_host_id():
+    users = User.objects.filter(username='host')
+    return users[0].u_id
 
 
 def add_item(target):
@@ -61,23 +44,24 @@ def add_item(target):
         i_type = Item.Apartment
     else:
         i_type = Item.Flat
-    item = Item(i_id=target.id,
-                owner=host,
-                i_type=i_type,
-                title=target.title,
-                album_first='static/album/{}/{}/0.jpg'.format(
-                    target.user_id, target.id),
-                album=albums(target.user_id, target.id),
-                desc='desc test test',
-                address=target.address,
-                longitude=target.longitude,
-                latitude=target.latitude,
-                avaliable=avai_date(),
-                price_per_day=target.price,
-                guest_num=target.guest_num,
-                bedroom_num=target.bedroom_num,
-                bed_num=target.bed_num,
-                bathroom_num=target.bathroom_num)
+    item = Item(
+        i_id=target.id,
+        owner=host,
+        i_type=i_type,
+        title=target.title,
+        album_first='static/album/{}/{}/0.jpg'.format(target.user_id,
+                                                      target.id),
+        album=albums(target.user_id, target.id),
+        desc='desc test test',
+        address=target.address,
+        longitude=target.longitude,
+        latitude=target.latitude,
+        avaliable=avai_date(),
+        price_per_day=target.price,
+        guest_num=target.guest_num,
+        bedroom_num=target.bedroom_num,
+        bed_num=target.bed_num,
+        bathroom_num=target.bathroom_num)
     item.save()
 
 
@@ -106,19 +90,24 @@ def import_real_data(request):
         admin = request.META.get("HTTP_USERNAME")
         User.objects.get(username=admin, status=User.ADMIN)
         with open('{}/crawler/data.json'.format(__CURRENT_DIR), 'r') as file:
+            s_hid = super_host_id()
+            os.makedirs('{}/static/album/{}'.format(__CURRENT_DIR, s_hid))
             item_data = json.load(file)
-            os.system('mkdir {}/static > /dev/null 2>&1'.format(__CURRENT_DIR))
-            os.system(
-                'mv {}/crawler/album {}/static/'.format(__CURRENT_DIR, __CURRENT_DIR))
             for i in item_data:
                 item = crawl_airbnb.Item(i)
-                add_new_user(item.user_id)
-                add_new_host(item.user_id)
+                previous_user_id = item.user_id
+                os.system(
+                    'mv {}/crawler/album/{}/{} a {}/static/album/{}'.format(
+                        __CURRENT_DIR, previous_user_id, item.id,
+                        __CURRENT_DIR, s_hid, item.id))
+                item.user_id = s_hid
                 add_item(item)
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'import crawled data successfully',
         }
+        os.system('rm -rf {}/crawler/data.json {}/crawler/album'.format(
+            __CURRENT_DIR, __CURRENT_DIR))
 
     except Exception as e:
         result = {
@@ -177,9 +166,12 @@ def features(request):
         }
     return Response(result, status=result['code'])
 
+
 def geocoding(address):
     api_key = "AIzaSyDoH8ScxK3bBYFT2Ccgz5xtXeAF3Vbp_WI"
-    api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(address, api_key))
+    api_response = requests.get(
+        'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'
+        .format(address, api_key))
     return api_response.json()
 
 
@@ -189,10 +181,10 @@ def haversine(lon1, lat1, lon2, lat2):
     on the earth (specified in decimal degrees)
     """
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-    dlon = lon2 - lon1 
-    dlat = lat2 - lat1 
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    c = 2 * asin(sqrt(a)) 
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * asin(sqrt(a))
     r = 6371
     return c * r * 1000
 
@@ -203,9 +195,9 @@ def search(request):
         data = request.query_params
         page_size = 16
         page = 0
-#        valid_address = 0
-#        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
-#                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
+        #        valid_address = 0
+        #        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
+        #                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
         if 'page_size' in data:
             if not data['page_size'] == '':
                 page_size = data['page_size']
@@ -213,13 +205,13 @@ def search(request):
             if not data['page'] == '':
                 page = int(data['page'])
         q_list = [Q(status=Item.Active)]
-#        if 'keyword' in data:
-#            if not data['keyword'] == '':
-#                geo_response = geocoding(data['keyword'])
-#                if geo_response['status'] == 'OK':
-#                    latitude = geo_response['results'][0]['geometry']['location']['lat']
-#                    longitude = geo_response['results'][0]['geometry']['location']['lng']
-#                    valid_address = 1
+        #        if 'keyword' in data:
+        #            if not data['keyword'] == '':
+        #                geo_response = geocoding(data['keyword'])
+        #                if geo_response['status'] == 'OK':
+        #                    latitude = geo_response['results'][0]['geometry']['location']['lat']
+        #                    longitude = geo_response['results'][0]['geometry']['location']['lng']
+        #                    valid_address = 1
         if 'guest_num' in data:
             if not data['guest_num'] == '':
                 if int(data['guest_num']) <= 4:
@@ -234,11 +226,13 @@ def search(request):
                 q_list.append(Q(price_per_day__lte=data['max_price']))
         if 'min_rating' in data:
             if not data['min_rating'] == '':
-                hosts = Host.objects.filter(rating__gte=int(data['min_rating']))
+                hosts = Host.objects.filter(
+                    rating__gte=int(data['min_rating']))
             q_list.append(Q(owner__in=hosts))
         if 'max_rating' in data:
             if not data['max_rating'] == '':
-                hosts = Host.objects.filter(rating__lte=int(data['max_rating']))
+                hosts = Host.objects.filter(
+                    rating__lte=int(data['max_rating']))
                 q_list.append(Q(owner__in=hosts))
         if 'types' in data:
             if not data['types'] == '':
@@ -257,12 +251,13 @@ def search(request):
                 filtered_objects = []
                 for o in all_objects:
                     avaliable_check_in = o.avaliable.split(',')
-                    date_query = datetime.strptime(data['check_in'], '%Y-%m-%d')
+                    date_query = datetime.strptime(data['check_in'],
+                                                   '%Y-%m-%d')
                     for i in range(0, len(avaliable_check_in), 2):
-                        date_in = datetime.strptime(
-                            avaliable_check_in[i], '%Y-%m-%d')
-                        date_out = datetime.strptime(
-                            avaliable_check_in[i + 1], '%Y-%m-%d')
+                        date_in = datetime.strptime(avaliable_check_in[i],
+                                                    '%Y-%m-%d')
+                        date_out = datetime.strptime(avaliable_check_in[i + 1],
+                                                     '%Y-%m-%d')
                         if date_in <= date_query < date_out:
                             filtered_objects.append(o)
                             break
@@ -272,57 +267,63 @@ def search(request):
                 filtered_objects = []
                 for o in all_objects:
                     avaliable_check_in = o.avaliable.split(',')
-                    date_query = datetime.strptime(data['check_out'], '%Y-%m-%d')
+                    date_query = datetime.strptime(data['check_out'],
+                                                   '%Y-%m-%d')
                     for i in range(0, len(avaliable_check_in), 2):
-                        date_in = datetime.strptime(
-                            avaliable_check_in[i], '%Y-%m-%d')
-                        date_out = datetime.strptime(
-                            avaliable_check_in[i + 1], '%Y-%m-%d')
+                        date_in = datetime.strptime(avaliable_check_in[i],
+                                                    '%Y-%m-%d')
+                        date_out = datetime.strptime(avaliable_check_in[i + 1],
+                                                     '%Y-%m-%d')
                         if date_in < date_query <= date_out:
                             filtered_objects.append(o)
                             break
                 all_objects = filtered_objects
         if 'keyword' in data:
             if not data['keyword'] == '':
-                
+
                 title_match = []
                 address_match = []
                 desc_match = []
                 for o in all_objects:
-                    if o.title is not None and re.search(data['keyword'].lower(), o.title.lower()):
+                    if o.title is not None and re.search(
+                            data['keyword'].lower(), o.title.lower()):
                         title_match.append(o)
-                    elif o.desc is not None and re.search(data['keyword'].lower(), o.address.lower()):
+                    elif o.desc is not None and re.search(
+                            data['keyword'].lower(), o.address.lower()):
                         address_match.append(o)
-                    elif o.desc is not None and re.search(data['keyword'].lower(), o.desc.lower()):
+                    elif o.desc is not None and re.search(
+                            data['keyword'].lower(), o.desc.lower()):
                         desc_match.append(o)
+
+
 #                    else:
 #                        keywords_not_match.append(o)
                 all_objects = title_match + address_match + desc_match
         all_results = searchResultSerializers(all_objects, many=True).data
-#        if valid_address == 1:
-#            for r in all_results:
-#                if r['longitude'] is not None and r['latitude'] is not None:
-#                    distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
-#                    r['distance'] = distance
-#                else:
-#                    r['distance'] = float('inf')
-#            if 'min_distance' in data:
-#                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
-#            if 'max_distance' in data:
-#                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
-#        if 'sortby' in data:
-#            if not data['sortby'] == '':
-#                order = data['sortby']
-#                if order == 'rating':
-#                    all_results = sorted(
-#                        all_results, key=itemgetter(order), reverse=True)
-#                elif order == 'price_per_day':
-#                    all_results = sorted(all_results, key=itemgetter(order))
-#                elif order == 'distance' and valid_address == 1:
-#                    all_results = sorted(all_results, key=itemgetter(order))
-#        if valid_address == 1:
-#            for r in all_results:
-#                r.pop('distance')
+        #        if valid_address == 1:
+        #            for r in all_results:
+        #                if r['longitude'] is not None and r['latitude'] is not None:
+        #                    distance = haversine(float(longitude), float(latitude), float(r['longitude']), float(r['latitude']))
+        #                    r['distance'] = distance
+        #                else:
+        #                    r['distance'] = float('inf')
+        #            if 'min_distance' in data:
+        #                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
+        #            if 'max_distance' in data:
+        #                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
+        #        if 'sortby' in data:
+        #            if not data['sortby'] == '':
+        #                order = data['sortby']
+        #                if order == 'rating':
+        #                    all_results = sorted(
+        #                        all_results, key=itemgetter(order), reverse=True)
+        #                elif order == 'price_per_day':
+        #                    all_results = sorted(all_results, key=itemgetter(order))
+        #                elif order == 'distance' and valid_address == 1:
+        #                    all_results = sorted(all_results, key=itemgetter(order))
+        #        if valid_address == 1:
+        #            for r in all_results:
+        #                r.pop('distance')
 
         total_page = math.ceil(len(all_results) / page_size)
         search_result = all_results[page_size * page:page_size * (page + 1)]
@@ -341,19 +342,20 @@ def search(request):
         }
     return Response(result, status=result['code'])
 
+
 @api_view(['GET'])
 def available_info(request, item_id):
     try:
         item = availableSerializers(Item.objects.get(i_id=item_id)).data
         available_format = []
         available_raw = item['available_date'].split(',')
-        
+
         for i in range(0, len(available_raw), 2):
             available_format.append({
-                        'begin': available_raw[i],
-                        'end': available_raw[i + 1]
-                            })
-        
+                'begin': available_raw[i],
+                'end': available_raw[i + 1]
+            })
+
         item['available_date'] = available_format
         result = {
             'code': status.HTTP_200_OK,
@@ -372,6 +374,7 @@ def available_info(request, item_id):
         }
     return Response(result, status=result['code'])
 
+
 def save_image(file, user_id, item_id):
     path = '{}/static/album/{}/{}/'.format(__CURRENT_DIR, user_id, item_id)
     if not os.path.exists(path):
@@ -382,10 +385,14 @@ def save_image(file, user_id, item_id):
         n = int(f.split('.')[0])
         if n >= num_pictures:
             num_pictures = n + 1
-    file_path = os.path.join(path,  str(num_pictures) + '.' + file_name.split('.')[1])
+    file_path = os.path.join(path,
+                             str(num_pictures) + '.' + file_name.split('.')[1])
     tmp_path = os.path.join(__CURRENT_DIR, file)
     shutil.move(tmp_path, file_path)
-    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id, str(num_pictures), file_name.split('.')[1])
+    return 'static/album/{}/{}/{}.{}'.format(user_id, item_id,
+                                             str(num_pictures),
+                                             file_name.split('.')[1])
+
 
 def delete_image(file, album, user_id, item_id):
     path = os.path.join(__CURRENT_DIR, file)
@@ -395,16 +402,18 @@ def delete_image(file, album, user_id, item_id):
         album = re.sub(p, '', album)
     return album
 
+
 def clear_tmp():
     path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
     for f in os.listdir(path):
         os.remove(os.path.join(path, f))
 
+
 @api_view(['POST'])
 def update_item(request, item_id):
     try:
         username = request.META.get("HTTP_USERNAME")
-        item = Item.objects.get(i_id = item_id)
+        item = Item.objects.get(i_id=item_id)
         if username != item.owner.user.username:
             raise Exception('invalid user')
         data = request.data
@@ -428,14 +437,12 @@ def update_item(request, item_id):
                 else:
                     item.album += ',' + new_album
             for file in files_to_delete:
-                item.album = delete_image(file, item.album, item.owner.user.u_id, item_id)
+                item.album = delete_image(file, item.album,
+                                          item.owner.user.u_id, item_id)
             clear_tmp()
             item.album_first = item.album.split(',')[0]
             item.save()
-        result = {
-                'code': status.HTTP_200_OK,
-                'msg': 'update successful'
-        }
+        result = {'code': status.HTTP_200_OK, 'msg': 'update successful'}
     except User.DoesNotExist:
         result = {
             'code': status.HTTP_400_BAD_REQUEST,
@@ -451,14 +458,15 @@ def update_item(request, item_id):
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
         }
-    
+
     return Response(result, status=result['code'])
-    
+
+
 @api_view(['POST'])
 def upload_image(request):
     try:
         username = request.META.get("HTTP_USERNAME")
-        Host.objects.get(user = User.objects.get(username = username))
+        Host.objects.get(user=User.objects.get(username=username))
         files = request.FILES.getlist('image')
         path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
         if not os.path.exists(path):
@@ -472,11 +480,11 @@ def upload_image(request):
             f.close()
             tmp_urls.append('static/album/tmp/' + file.name)
         result = {
-                'code': status.HTTP_200_OK,
-                'msg': 'images saved',
-                'data': {
-                        'url': tmp_urls
-                        }
+            'code': status.HTTP_200_OK,
+            'msg': 'images saved',
+            'data': {
+                'url': tmp_urls
+            }
         }
     except User.DoesNotExist:
         result = {
@@ -493,39 +501,41 @@ def upload_image(request):
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
         }
-    
+
     return Response(result, status=result['code'])
+
 
 @api_view(['POST'])
 def create_item(request):
     try:
         username = request.META.get("HTTP_USERNAME")
-        user = User.objects.get(username = username)
-        host = Host.objects.get(user = user)
+        user = User.objects.get(username=username)
+        host = Host.objects.get(user=user)
         data = request.data
         valid_address = 0
         if 'address' in data:
             geo_response = geocoding(data['address'])
             if geo_response['status'] == 'OK':
-                latitude = geo_response['results'][0]['geometry']['location']['lat']
-                longitude = geo_response['results'][0]['geometry']['location']['lng']
+                latitude = geo_response['results'][0]['geometry']['location'][
+                    'lat']
+                longitude = geo_response['results'][0]['geometry']['location'][
+                    'lng']
                 valid_address = 1
         item = Item(
-                    owner = host,
-                    title = data['title'], 
-                    desc = data['desc'], 
-                    i_type = data['i_type'], 
-                    price_per_day = data['price_per_day'], 
-                    guest_num = data['guest_num'], 
-                    bedroom_num = data['bedroom_num'], 
-                    bed_num = data['bed_num'], 
-                    bathroom_num = data['bathroom_num'], 
-                    address = data['address'], 
-                    rules = data['rules'], 
-                    features = data['features'],
-                    avaliable = data['avaliable'],
-                    album = ''
-                    )
+            owner=host,
+            title=data['title'],
+            desc=data['desc'],
+            i_type=data['i_type'],
+            price_per_day=data['price_per_day'],
+            guest_num=data['guest_num'],
+            bedroom_num=data['bedroom_num'],
+            bed_num=data['bed_num'],
+            bathroom_num=data['bathroom_num'],
+            address=data['address'],
+            rules=data['rules'],
+            features=data['features'],
+            avaliable=data['avaliable'],
+            album='')
         if valid_address:
             item.latitude = latitude
             item.longitude = longitude
@@ -545,16 +555,17 @@ def create_item(request):
                 else:
                     item.album += ',' + new_album
             for file in files_to_delete:
-                item.album = delete_image(file, item.album, user.u_id, item.i_id)
+                item.album = delete_image(file, item.album, user.u_id,
+                                          item.i_id)
             clear_tmp()
         item.album_first = item.album.split(',')[0]
         item.save()
         result = {
-                'code': status.HTTP_200_OK,
-                'msg': 'creation successful',
-                'data': {
-                        'item_id': item.i_id
-                        }
+            'code': status.HTTP_200_OK,
+            'msg': 'creation successful',
+            'data': {
+                'item_id': item.i_id
+            }
         }
     except User.DoesNotExist:
         result = {
@@ -571,8 +582,9 @@ def create_item(request):
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': str(e),
         }
-    
+
     return Response(result, status=result['code'])
+
 
 #@api_view(['GET'])
 #def view_items(request):
@@ -608,15 +620,3 @@ def create_item(request):
 #            'msg': str(e),
 #        }
 #    return Response(result, status=result['code'])
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
