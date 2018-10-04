@@ -28,7 +28,6 @@ __CURRENT_DIR = os.path.dirname(__file__)
 
 
 def super_host_id():
-    super_host_name = 'host'
     users = User.objects.filter(username='host')
     return users[0].u_id
 
