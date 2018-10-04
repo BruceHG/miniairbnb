@@ -7,8 +7,7 @@
   .header-content {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 1200px;
-    min-width: 300px;
+    min-width: 770px;
     width: 100%;
     padding: 20px 10px;
     display: flex;
@@ -90,7 +89,6 @@
     //position: absolute;
     //right:0px;
     font-size: 20px;
-    font-family:"Times New Roman", Times, serif;
     color: #666;
     text-decoration: none;
     &:hover {
