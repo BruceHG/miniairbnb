@@ -1,0 +1,77 @@
+.detail-page {
+    min-width: 900px;
+    width: auto !important;
+    width: 900px;
+    .detail-loading {
+        position: relative;
+        width: 100%;
+        height: 500px;
+    }
+    .detail-page-slider {
+        position: relative;
+        width: 100%;
+        .slider-img-wrapper img {
+            max-height:400px;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+    }
+    .detail-page-detail {
+        padding: 10px;
+        position: relative;
+        margin-right: 400px;
+        .detail-type {
+            font-family: cursive;
+            color: chocolate;
+            font-size: 20pt;
+        }
+        .detail-title {
+            font-size: 30pt;
+            color: dimgrey;
+        }
+        .detail-rooms {
+            color: grey;
+        }
+        .detail-description {
+            white-space: pre-wrap;
+            font-size: 12pt;
+            margin-top: 20px;
+            // font-size: 15pt;
+            padding: 5px;
+            color: navy;
+            border-radius: 7px;
+            border-style: dotted;
+            border-color: green;
+            border-width: 1px;
+        }
+        .detail-user {
+            position: absolute;
+            font-weight: bold;
+            top: 10px;
+            right: 10px;
+        }
+        .detail-map {
+            width: 100%;
+            height:400px;
+        }
+    }
+    .detail-subtitle {
+        font-size: 15pt;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .detail-booking {
+        position: fixed;
+        background-color: whitesmoke;
+        top: 480px;
+        right: 0;
+        padding: 10px;
+        width: 400px;
+        border: 1px solid lightgrey;
+        .booking-price {
+            font-size: 20pt;
+        }
+    }
+}

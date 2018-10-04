@@ -1,0 +1,52 @@
+.orders-page {
+    border-radius: 25px;
+    background: pink;
+    padding: 20px;
+    margin: 20px;
+
+    .order-item-header-txt {
+        font-size: 13pt;
+        color: darkgoldenrod;
+    }
+    .order-item-left {
+        img {
+            width: 160px;
+            height: 120px;
+            border-radius: 10px;
+            float: left;
+            margin-right: 10px;
+        }
+        .order-item-title {
+            font-size: 15pt;
+            color: grey;
+        }
+        .order-item-guest-num {
+            margin-top: 10px;
+            font-size: 11pt;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            color: purple;
+        }
+        .order-item-comment {
+            margin-top: 20px;
+            font-size: 13pt;
+            font-family: fantasy;
+            color:dodgerblue;
+        }
+    }
+    .order-item-price-detail {
+        font-size: 9pt;
+        font-family: 'Courier New', Courier, monospace;
+        color: red;
+    }
+    .order-item-price-total {
+        font-size: 13pt;
+        font-family: 'Courier New', Courier, monospace;
+        color: green;
+    }
+    .order-item-right {
+        text-align:center;
+        Button {
+            margin: 5px;
+        }
+    }
+}

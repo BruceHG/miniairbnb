@@ -8,4 +8,5 @@ migrations/
 # !crawler/requirements.txt
 # !crawler/crawl_airbnb.py
 item/crawler/
+item/static/
 db.sqlite3

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Button } from '@icedesign/base';
 import './ExcellentHomePage.scss';
 import { Search } from '@icedesign/base';
+import { withRouter } from 'react-router-dom';
 
+@withRouter
 export default class ExcellentHomePage extends Component {
   static displayName = 'ExcellentHomePage';
 
@@ -38,6 +40,12 @@ export default class ExcellentHomePage extends Component {
                 onSearch={this.handleSearch}
                 type="primary"
                 size="large"
+                onChange={(value, e) => this.searchKeyword = value}
+                onSearch={() => {
+                  if (this.searchKeyword) {
+                    this.props.history.push(`/accoms/${this.searchKeyword}`);
+                  }
+                }}
               />
             </div>
 

@@ -13,4 +13,19 @@ class Order(models.Model):
     comment = models.TextField(max_length=200)
     
     c_time = models.DateTimeField(auto_now_add=True)
-    item_time = models.DateTimeField()  #a copy of item.c_time
+    item_ctime = models.DateTimeField()  #a copy of item.c_time
+    
+    Pending = 0
+    Accepted = 1
+    Completed = 2
+    Rejected = 3
+    status_type = (
+        (Pending, 'Pending'),
+        (Accepted, 'Accepted'),
+        (Completed, 'Completed'),
+        (Rejected, 'Rejected'),
+    )
+    status = models.IntegerField(
+        choices = status_type,
+        default = Pending,
+        )

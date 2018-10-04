@@ -24,6 +24,11 @@ if !(python3 -c 'import corsheaders') > /dev/null 2>&1
 then
     pip3 install django-cors-headers
 fi
+# check requests model
+if !(python3 -c 'import requests') > /dev/null 2>&1
+then
+    pip3 install requests
+fi
 # check postgres
 # if !(which psql) > /dev/null 2>&1
 # then
@@ -33,4 +38,4 @@ fi
 # sudo -u postgres psql -c "CREATE DATABASE miniairbnb WITH OWNER admin" > /dev/null 2>&1
 python3 manage.py makemigrations
 python3 manage.py migrate
-python3 manage.py runserver 0.0.0.0:8000
+python3 manage.py runserver 0:8007

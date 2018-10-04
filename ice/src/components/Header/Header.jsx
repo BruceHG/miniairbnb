@@ -24,10 +24,11 @@ Object.freeze(MENU);
 
 export default class Header extends Component {
 
-
   constructor(props) {
     super(props);
-    this.style = props['style'];
+    if (!props.history) {
+      console.error("Have you set '{...this.props}' from parent?");
+    }
     this.state = {
       search_box_visible: props['searchBox'] != undefined ? props['searchBox'] : true,
       login_dialog_visible: false,
@@ -35,7 +36,17 @@ export default class Header extends Component {
       become_host_dialog_visible: false,
     }
     this.current_user = null;
-    this.onAccountStateChange = props.onAccountStateChange;
+  }
+
+  getCurrentUserOrLogin() {
+    if (this.current_user) {
+      return this.current_user;
+    } else {
+      this.setState({
+        login_dialog_visible: true
+      });
+      return null;
+    }
   }
 
   onMenuClick = (...args) => {
@@ -50,15 +61,16 @@ export default class Header extends Component {
         break;
       case MENU.MANAGE_ADS:
         console.log('Manage Ads');
+        this.props.history.push('/MyAds');
         break;
       case MENU.REQUESTS:
         console.log('Requests');
         break;
       case MENU.ORDER_HISTORY:
-        console.log('Order History');
+        this.props.history.push('/orders');
         break;
       case MENU.PUBLISH_AD:
-        console.log('Publish Ad');
+        this.props.history.push('/edit');
         break;
       case MENU.PROFILE:
         console.log('Profile');
@@ -71,13 +83,12 @@ export default class Header extends Component {
         this.setState({
           menu_balloon_visible: false,
         });
-        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
+        CommonUtils.callCustomMemberFunc(this.props.onAccountStateChange)
         break;
       case MENU.LOGIN:
         this.setState({
           login_dialog_visible: true
         });
-        CommonUtils.callCustomMemberFunc(this.onAccountStateChange)
         break;
 
       default:
@@ -99,10 +110,23 @@ export default class Header extends Component {
                 menu_balloon_visible: !this.state.menu_balloon_visible
               });
             }}>
-              <Img shape='circle' width={25} height={25} src={this.current_user['avatar'] ? this.current_user['avatar'] : 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Libai_touxiang.jpg'} />
-              &nbsp;
+              <Img
+                shape='circle'
+                style={{ verticalAlign: 'middle' }}
+                width={25} height={25}
+                src={this.current_user['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR}
+              />
+              <span style={{
+                fontSize: '10pt',
+                fontFamily: 'fantasy',
+                color: 'lime',
+                marginLeft: '5px',
+                marginRight: '5px',
+              }}>
+                {this.current_user['username']}
+              </span>
               <Icon
-                size="50"
+                size="medium"
                 type="arrow-down-filling"
                 className="arrow-down-filling-icon"
               />
@@ -249,25 +273,33 @@ export default class Header extends Component {
       window.location = '#/admin';
     }
     return (
-      <div className="header-container" style={this.style}>
+      <div className="header-container" style={this.props.style}>
         <div className="header-content">
           <Logo />
           <div className="header-navbar">
             <div className="header-search-input" >
               {
                 (
-                  ()=>{
+                  () => {
                     if (this.state.search_box_visible) {
-                      return(<Input placeholder="Anywhere"
-                        style={{
-                          visibility:"visible"
-                        }}
+                      return (
+                        <Input placeholder="Anywhere"
+                          style={{
+                            visibility: "visible"
+                          }}
+                          onChange={(value, e) => this.searchKeyword = value}
+                          onPressEnter={() => {
+                            if (this.searchKeyword && this.props.history) {
+                              this.props.history.push(`/accoms/${this.searchKeyword}`);
+                            }
+                          }}
                         />);
                     } else {
-                      return(<Input placeholder="Anywhere"
-                        style={{
-                          visibility:"hidden"
-                        }}
+                      return (
+                        <Input placeholder="Anywhere"
+                          style={{
+                            visibility: "hidden"
+                          }}
                         />);
                     }
                   }
@@ -295,7 +327,7 @@ export default class Header extends Component {
             if (CommonUtils.UserStatus.ADMIN == this.current_user['status']) {
               window.location = '#/admin';
             }
-            CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
+            CommonUtils.callCustomMemberFunc(this.props.onAccountStateChange);
           }} />
         </Dialog>
         {
@@ -316,7 +348,7 @@ export default class Header extends Component {
                     this.setState({
                       become_host_dialog_visible: false
                     });
-                    CommonUtils.callCustomMemberFunc(this.onAccountStateChange);
+                    CommonUtils.callCustomMemberFunc(this.props.onAccountStateChange);
                   }} />
                 </Dialog>
               );

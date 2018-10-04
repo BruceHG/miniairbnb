@@ -3,8 +3,46 @@ command for lunach:
     deactivate 
     python3 manage.py runserver 127.0.0.1:8888
 
-######################################
+server config =>
+    commonUtils.js:
+
+const DEBUG_IN_LOCAL = true 
+...
+export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://login.cse.unsw.edu.au:8007' : '';
+export const BACKEND_URL = DEBUG_IN_LOCAL ? 'http://127.0.0.1:8888' : ''; 
+
+conflict:
+git pull origin master
+
+
+############################################################################
+
 09/Aug/2018: Write the proposal draft version 1
 
 26/Aug/2018: date extend for the register page
 
+28/Aug/2018 --- 6/Sep/2018 search result pages:
+28/Aug/2018: set filters
+29/Aug/2018: set filters
+30/Aug/2018: implement date transfer
+31/Aug/2018: implement date transfer
+1/Sep/2018: 
+debug fix the search result pages
+
+7/Sep/2018 -- 29/Sep/2018:
+7/Sep - 18/Sep :
+    implement the filter search
+    change the design structure
+    implement the communication from Parents component to childrens
+20/Sep - 29/Sep:    
+    implement the pagination
+    implement the communication from childrens component to Parents
+
+30/Sep:
+    implement the Host Ads API and HuaGe do some modification for it.
+
+1/Oct:
+    implement UI for host Ads review screen.
+
+2/Oct:
+    connect with database, and test it, and debug.
