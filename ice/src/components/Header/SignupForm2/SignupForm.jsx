@@ -36,9 +36,12 @@ export default class SignupForm extends Component {
     });
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+  handleSubmit = () => {
     this.refs.form.validateAll((errors, values) => {
+      if (errors) {
+        console.log('errors', errors, 'values', values);
+        return;
+      }
       fetch(CommonUtils.BACKEND_URL + '/login/', {
         method: 'POST',
         headers: {
@@ -83,7 +86,7 @@ export default class SignupForm extends Component {
                     style={styles.inputIcon}
                   />
                   <IceFormBinder name="account" required message="Required">
-                    <Input maxLength={20} placeholder="username" />
+                    <Input maxLength={20} placeholder="username" onPressEnter={this.handleSubmit}/>
                   </IceFormBinder>
                 </Col>
                 <Col>
@@ -95,7 +98,7 @@ export default class SignupForm extends Component {
                 <Col>
                   <IceIcon type="lock" size="small" style={styles.inputIcon} />
                   <IceFormBinder name="password">
-                    <Input htmlType="password" placeholder="password" />
+                    <Input htmlType="password" placeholder="password" onPressEnter={this.handleSubmit}/>
                   </IceFormBinder>
                 </Col>
                 <Col>
