@@ -13,6 +13,7 @@ from django.db.models import Q
 import operator
 from operator import itemgetter
 from functools import reduce
+import time
 
 from user.models import User, Host
 from item.models import Item
@@ -383,19 +384,21 @@ def save_image(file, user_id, item_id):
     path = '{}/static/album/{}/{}/'.format(__CURRENT_DIR, user_id, item_id)
     if not os.path.exists(path):
         os.makedirs(path)
-    file_name = file.split('\\')[-1]
+#    file_name = file.split('\\')[-1]
+#    print(file)
+#    print(file_name)
     num_pictures = 0
     for f in os.listdir(path):
         n = int(f.split('.')[0])
         if n >= num_pictures:
             num_pictures = n + 1
     file_path = os.path.join(path,
-                             str(num_pictures) + '.' + file_name.split('.')[1])
+                             str(num_pictures) + '.' + file.split('.')[1])
     tmp_path = os.path.join(__CURRENT_DIR, file)
     shutil.move(tmp_path, file_path)
     return 'static/album/{}/{}/{}.{}'.format(user_id, item_id,
                                              str(num_pictures),
-                                             file_name.split('.')[1])
+                                             file.split('.')[1])
 
 
 def delete_image(file, album, user_id, item_id):
@@ -465,6 +468,8 @@ def update_item(request, item_id):
 
     return Response(result, status=result['code'])
 
+def current_milli_time():
+    return int(round(time.time() * 1000))
 
 @api_view(['POST'])
 def upload_image(request):
@@ -477,12 +482,13 @@ def upload_image(request):
             os.makedirs(path)
         tmp_urls = []
         for file in files:
-            file_path = os.path.join(path, file.name)
+            filename = str(current_milli_time()) + '.' + file.name.split('.')[-1]
+            file_path = os.path.join(path, filename)
             f = open(file_path, mode='wb')
             for i in file.chunks():
                 f.write(i)
             f.close()
-            tmp_urls.append('static/album/tmp/' + file.name)
+            tmp_urls.append('static/album/tmp/' + filename)
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'images saved',

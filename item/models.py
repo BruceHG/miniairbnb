@@ -75,6 +75,8 @@ class Item(models.Model):
         choices = status_type,
         default = Active,
         )
+    
+    rating = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
 
 
 

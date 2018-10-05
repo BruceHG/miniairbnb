@@ -4,7 +4,7 @@ from item.models import Item
 class itemDetailSerializers(serializers.ModelSerializer):
     username = serializers.CharField(source='owner.user.username')
     avatar = serializers.CharField(source='owner.user.avatar')
-    rating = serializers.IntegerField(source='owner.rating')
+#    rating = serializers.IntegerField(source='owner.rating')
     class Meta:
         model = Item
         fields = ('i_id', 'username', 'avatar', 'title', 'desc', 'i_type', 'price_per_day', 'guest_num', 'bedroom_num', 'bed_num',
@@ -12,7 +12,7 @@ class itemDetailSerializers(serializers.ModelSerializer):
 
 class searchResultSerializers(serializers.ModelSerializer):
     username = serializers.CharField(source='owner.user.username')
-    rating = serializers.IntegerField(source='owner.rating')
+#    rating = serializers.IntegerField(source='owner.rating')
     class Meta:
         model = Item
         fields = ('i_id', 'username', 'title', 'i_type', 'price_per_day', 'rating', 'album_first', 'address', 'latitude', 'longitude',)
