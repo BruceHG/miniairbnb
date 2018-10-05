@@ -311,16 +311,20 @@ def search(request):
         #                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
         #            if 'max_distance' in data:
         #                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
-        #        if 'sortby' in data:
-        #            if not data['sortby'] == '':
-        #                order = data['sortby']
-        #                if order == 'rating':
-        #                    all_results = sorted(
-        #                        all_results, key=itemgetter(order), reverse=True)
-        #                elif order == 'price_per_day':
-        #                    all_results = sorted(all_results, key=itemgetter(order))
-        #                elif order == 'distance' and valid_address == 1:
-        #                    all_results = sorted(all_results, key=itemgetter(order))
+        if 'sortby' in data:
+            if not data['sortby'] == '':
+                if data['sortby'] == '0':
+                    order = 'price_per_day'
+                    all_results = sorted(all_results, key=itemgetter(order))
+                elif data['sortby'] == '1':
+                    order = 'price_per_day'
+                    all_results = sorted(all_results, key=itemgetter(order), reverse=True)
+                elif data['sortby'] == '2':
+                    order = 'rating'
+                    all_results = sorted(all_results, key=itemgetter(order))
+                elif data['sortby'] == '3':
+                    order = 'rating'
+                    all_results = sorted(all_results, key=itemgetter(order), reverse=True)
         #        if valid_address == 1:
         #            for r in all_results:
         #                r.pop('distance')
