@@ -36,4 +36,4 @@ class hostDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Host
         fields = ('username', 'email', 'status', 'avatar','firstname', 'lastname', 'birthday', 'guest_c_time',
-                  'phone', 'rating', 'host_c_time',)
+                  'phone', 'host_c_time',)

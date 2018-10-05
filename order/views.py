@@ -223,9 +223,8 @@ def rating(request, order_id):
         for o in orders:
             s += o.rating
             count += 1
-        order.item.owner.rating = round(s / count, 1)
-        order.item.owner.save()
-        print(order.item.owner.rating)
+        order.item.rating = round(s / count, 1)
+        order.item.save()
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'rating successful',

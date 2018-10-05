@@ -11,6 +11,10 @@ from rest_framework import status
 
 from item.serializers import adsSerializers
 from item.models import Item
+import os
+import shutil
+
+__CURRENT_DIR = os.path.dirname(__file__)
 
 @api_view(['PUT'])
 def becomeHost(request):
@@ -171,6 +175,42 @@ def ad_delete(request, item_id):
         result = {
                 'code': status.HTTP_400_BAD_REQUEST,
                 'msg': 'host not found',
+                }
+    except User.DoesNotExist:
+        result = {
+                'code': status.HTTP_400_BAD_REQUEST,
+                'msg': 'user not found',
+                }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def update_profile(request):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username = username)
+        data = request.data
+        user.firstname = data['firstname']
+        user.lastname = data['lastname']
+        user.birthday = data['birthday']
+        if 'avatar' in data:
+            tmp_path = os.path.join(os.path.dirname(__CURRENT_DIR), 'item/' + data['avatar'])
+            avatar_path = os.path.join(__CURRENT_DIR, 'static/avatar/' + str(user.u_id))
+            if not os.path.exists(avatar_path):
+                os.makedirs(avatar_path)
+            extension = data['avatar'].split('.')[-1]
+            user_path = os.path.join(avatar_path, 'avatar.' + extension)
+#            print(user_path)
+            shutil.move(tmp_path, user_path)
+            user.avatar = 'static/avatar/' + str(user.u_id) + '/avatar.' + extension
+        user.save()
+        result = {
+                'code': status.HTTP_200_OK,
+                'msg': 'update successful',
                 }
     except User.DoesNotExist:
         result = {
