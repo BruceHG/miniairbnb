@@ -236,10 +236,12 @@ export default class Orders extends Component {
                       CommonUtils.OrderStatus.Rated == record.status ?
                         <div className='order-item-rated'>
                           Your rating is
-                          <Rating
-                            value={record.rating}
-                            size='large'
-                            disabled />
+                          <div>
+                            <Rating
+                              value={record.rating}
+                              size='large'
+                              disabled />
+                          </div>
                         </div>
                         :
                         null
@@ -281,10 +283,12 @@ export default class Orders extends Component {
                           return (
                             <div className='order-item-rating'>
                               How do you feel?
-                              <Rating
-                                size='large'
-                                disabled={this.state.disableRating}
-                                onChange={value => this.rating(record, value)} />
+                              <div>
+                                <Rating
+                                  size='large'
+                                  disabled={this.state.disableRating}
+                                  onChange={value => this.rating(record, value)} />
+                              </div>
                             </div>
                           );
                         default:
