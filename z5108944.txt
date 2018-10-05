@@ -63,3 +63,7 @@ Fix bugs and robust test.
 Optimise system UI.
 add 'suburb', 'city' for address.
 Optimise detail page UI.
+Refactor database initialse process, adding 2 super users: 'admin' and 'host'.
+Modify crawled data import, import all data underneath 'host'
+Add 'profile' page.
+Finish 'rating/review' function.
