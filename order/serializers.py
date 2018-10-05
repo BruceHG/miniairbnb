@@ -15,4 +15,4 @@ class ordersSerializers(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('title', 'album_first', 'o_id', 'item', 'checkin', 'checkout', 'guest_num', 'price_per_day',
-                  'comment', 'status', 'rules')
+                  'comment', 'status', 'rules', 'rating')
