@@ -227,14 +227,10 @@ def search(request):
                 q_list.append(Q(price_per_day__lte=data['max_price']))
         if 'min_rating' in data:
             if not data['min_rating'] == '':
-                hosts = Host.objects.filter(
-                    rating__gte=int(data['min_rating']))
-            q_list.append(Q(owner__in=hosts))
+                q_list.append(Q(rating__gte=int(data['min_rating'])))
         if 'max_rating' in data:
             if not data['max_rating'] == '':
-                hosts = Host.objects.filter(
-                    rating__lte=int(data['max_rating']))
-                q_list.append(Q(owner__in=hosts))
+                q_list.append(Q(rating__lte=int(data['max_rating'])))
         if 'types' in data:
             if not data['types'] == '':
                 item_types = data['types'].split(',')
