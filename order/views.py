@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
+from django.db.models import Avg
 
 from order.models import Order
 from item.models import Item
@@ -184,6 +185,55 @@ def reject(request, order_id):
         result = {
             'code': status.HTTP_400_BAD_REQUEST,
             'msg': 'host not found',
+        }
+    except Order.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'order not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def rating(request, order_id):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username=username)
+        order = Order.objects.get(o_id=order_id)
+        if not order.user == user:
+            raise Exception('order and user do not match')
+        if order.status != Order.Completed:
+            raise Exception('uncompleted order')
+        if order.rating is not None:
+            raise Exception('rated order')
+        data = request.data
+        if int(data['rating']) < 0 or int(data['rating']) > 5:
+            raise Exception('rating must between 0 - 5')
+        order.rating = int(data['rating'])
+        order.status = Order.Completed_and_rated
+        order.save()
+        
+        orders = Order.objects.filter(item=order.item, rating__isnull=False)
+        s = 0
+        count = 0
+        for o in orders:
+            s += o.rating
+            count += 1
+        order.item.owner.rating = round(s / count, 1)
+        order.item.owner.save()
+        print(order.item.owner.rating)
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'rating successful',
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
         }
     except Order.DoesNotExist:
         result = {
