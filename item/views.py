@@ -590,20 +590,6 @@ def create_item(request):
     return Response(result, status=result['code'])
 
 
-<<<<<<< HEAD
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-=======
 #@api_view(['GET'])
 #def view_items(request):
 #    try:
@@ -638,4 +624,3 @@ def create_item(request):
 #            'msg': str(e),
 #        }
 #    return Response(result, status=result['code'])
->>>>>>> 347b96f62884839155c0fd6e0cf96d95bf349042
