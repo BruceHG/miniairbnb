@@ -70,8 +70,9 @@ export default class DetailEdit extends Component {
                   addr_room: addrs[0],
                   addr_unit_no: addrs[1],
                   addr_street: addrs[2],
-                  addr_region: addrs[3],
-                  addr_state: addrs[4],
+                  addr_suburb: addrs[3],
+                  addr_city: addrs[4],
+                  addr_state: addrs[5],
                 }
               })
 
@@ -129,8 +130,8 @@ export default class DetailEdit extends Component {
   splitAddress(address) {
     let array = address.split(', ')
     if (array.length <= 3) {
-      return [, , , array[0], array[1]];
-    } else if (array.length == 5) {
+      return [, , , , array[0], array[1]];
+    } else if (array.length == 6) {
       return array;
     } else {
       return [];
@@ -166,7 +167,7 @@ export default class DetailEdit extends Component {
           avaliable: this.flatDatePairs(this.dateEnums2Pairs(this.selected_dates)).join(','),
           album: this.state.data.album ? this.state.data.album.join(',') : '',
           features: this.state.data.features ? this.state.data.features.join(',') : '',
-          address: this.joinAddrs(this.state.data.addr_room, this.state.data.addr_unit_no, this.state.data.addr_street, this.state.data.addr_region, this.state.data.addr_state)
+          address: this.joinAddrs(this.state.data.addr_room, this.state.data.addr_unit_no, this.state.data.addr_street, this.state.data.addr_suburb, this.state.data.addr_city, this.state.data.addr_state)
         },
         {
           headers: {
@@ -446,15 +447,30 @@ export default class DetailEdit extends Component {
                   </Row>
                   <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
                     <Col className='address-title' fixedSpan={4}>
-                      Region
+                      Suburb
               </Col>
                     <Col>
-                      <IceFormBinder name='addr_region' required>
+                      <IceFormBinder name='addr_suburb' required>
                         <Input
                           size='large'
                           trim
                           style={{ width: '70%' }}
                           placeholder='E.g. Kensington'
+                        />
+                      </IceFormBinder>
+                    </Col>
+                  </Row>
+                  <Row align='center' style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <Col className='address-title' fixedSpan={4}>
+                      City
+              </Col>
+                    <Col>
+                      <IceFormBinder name='addr_city' required>
+                        <Input
+                          size='large'
+                          trim
+                          style={{ width: '70%' }}
+                          placeholder='E.g. Sydney'
                         />
                       </IceFormBinder>
                     </Col>
