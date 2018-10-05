@@ -46,3 +46,9 @@ debug fix the search result pages
 
 2/Oct:
     connect with database, and test it, and debug.
+    Find detail page bug, but fixed.
+    Find search result bug && Adv delete, but fixed. 
+
+3/Oct - 4/Oct:
+    advance search filter(sort options; price range; rating range)
+    No result remindering
