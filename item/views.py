@@ -310,16 +310,20 @@ def search(request):
 #                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
 #            if 'max_distance' in data:
 #                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
-#        if 'sortby' in data:
-#            if not data['sortby'] == '':
-#                order = data['sortby']
-#                if order == 'rating':
-#                    all_results = sorted(
-#                        all_results, key=itemgetter(order), reverse=True)
-#                elif order == 'price_per_day':
-#                    all_results = sorted(all_results, key=itemgetter(order))
-#                elif order == 'distance' and valid_address == 1:
-#                    all_results = sorted(all_results, key=itemgetter(order))
+        if 'sortby' in data:
+            if not data['sortby'] == '':
+                if data['sortby'] == '0':
+                    order = 'price_per_day'
+                    all_results = sorted(all_results, key=itemgetter(order))
+                elif data['sortby'] == '1':
+                    order = 'price_per_day'
+                    all_results = sorted(all_results, key=itemgetter(order), reverse=True)
+                elif data['sortby'] == '2':
+                    order = 'rating'
+                    all_results = sorted(all_results, key=itemgetter(order))
+                elif data['sortby'] == '3':
+                    order = 'rating'
+                    all_results = sorted(all_results, key=itemgetter(order), reverse=True)
 #        if valid_address == 1:
 #            for r in all_results:
 #                r.pop('distance')
@@ -574,40 +578,7 @@ def create_item(request):
     
     return Response(result, status=result['code'])
 
-#@api_view(['GET'])
-#def view_items(request):
-#    try:
-#        username = request.META.get("HTTP_USERNAME")
-#        user = User.objects.get(username=username)
-#        host = Host.objects.get(user=user)
-#        items = Item.objects.filter(owner=host)
-#        orders = ordersSerializers(Order.objects.filter(item__in=items), many=True).data
-#        result = {
-#            'code': status.HTTP_200_OK,
-#            'msg': 'orders',
-#            'data': orders,
-#        }
-#    except Item.DoesNotExist:
-#        result = {
-#            'code': status.HTTP_400_BAD_REQUEST,
-#            'msg': 'item not found',
-#        }
-#    except Host.DoesNotExist:
-#        result = {
-#            'code': status.HTTP_400_BAD_REQUEST,
-#            'msg': 'host not found',
-#        }
-#    except User.DoesNotExist:
-#        result = {
-#            'code': status.HTTP_400_BAD_REQUEST,
-#            'msg': 'user not found',
-#        }
-#    except Exception as e:
-#        result = {
-#            'code': status.HTTP_400_BAD_REQUEST,
-#            'msg': str(e),
-#        }
-#    return Response(result, status=result['code'])
+
     
 
     
