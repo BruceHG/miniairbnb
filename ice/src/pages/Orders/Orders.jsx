@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Orders.scss';
 import axios from 'axios';
-import { Table, Feedback, Button, Dialog } from '@icedesign/base';
+import { Table, Feedback, Button, Dialog, Rating } from '@icedesign/base';
 import * as CommonUtils from '../../lib/commonUtils';
 import Header from '../../components/Header';
 
@@ -15,6 +15,7 @@ export default class Orders extends Component {
       isLoading: true,
       cancelDialogVisible: false,
       toCancelRecord: null,
+      disableRating: false,
     };
   }
 
@@ -110,6 +111,46 @@ export default class Orders extends Component {
     }
   }
 
+  rating = (record, value) => {
+    this.setState({
+      disableRating: true,
+    })
+    console.log(record);
+    axios.post(CommonUtils.BACKEND_URL + `/order/rating/${record.o_id}/`,
+      {
+        rating: value
+      },
+      {
+        headers: {
+          username: CommonUtils.getUserInfo2Cookie()['username'],
+        },
+      })
+      .then((response) => {
+        return response.data;
+      }).then((json) => {
+        if (json['code'] == 200) {
+          this.dimissDialog();
+          Feedback.toast.success('Successfully rated order: ' + record.o_id);
+          this.fetchOrders();
+        } else {
+          this.setState({
+            disableRating: false,
+          })
+          Feedback.toast.error(json['msg']);
+        }
+      }).catch((e) => {
+        this.setState({
+          disableRating: false,
+        })
+        if (e.response && e.response.data) {
+          Feedback.toast.error(e.response.data['msg']);
+        } else {
+          console.error(e);
+          Feedback.toast.error('Opps! Unknow error happens...');
+        }
+      });
+  }
+
   render() {
     return (
       <div>
@@ -133,29 +174,36 @@ export default class Orders extends Component {
               }}
             />
             <Table.Column
-              className='order-item-left'
               title='Accommodation'
-              width={300}
+              width={250}
               cell={(value, index, record) => {
                 return (
-                  <div>
+                  <div className='order-item-left'>
                     <img src={`${CommonUtils.BACKEND_URL}/${record.album_first}`} />
                     <span>
                       <div className='order-item-title'>
                         {record.title}
                       </div>
+                      <div className='order-item-dates'>
+                        {record.checkin + '-' + record.checkin}
+                      </div>
                       <div className='order-item-guest-num'>
-                        {record.guest_num +
+                        {
+                          record.guest_num +
                           (record.guest_num > 1 ?
-                            ' Guests' :
+                            ' Guests'
+                            :
                             ' Guest')
                         }
                       </div>
-                      {record.comment ?
-                        <div className='order-item-comment'>
-                          "{record.comment}"
-                    </div> :
-                        null}
+                      {
+                        record.comment ?
+                          <div className='order-item-comment'>
+                            "{record.comment}"
+                          </div>
+                          :
+                          null
+                      }
                     </span>
                   </div>
                 );
@@ -180,10 +228,22 @@ export default class Orders extends Component {
             />
             <Table.Column
               title='Status'
-              width={50}
+              width={70}
               cell={(value, index, record) => {
                 return (
                   <div className='order-item-right'>
+                    {
+                      CommonUtils.OrderStatus.Rated == record.status ?
+                        <div className='order-item-rated'>
+                          Your rating is
+                          <Rating
+                            value={record.rating}
+                            size='large'
+                            disabled />
+                        </div>
+                        :
+                        null
+                    }
                     <div style={{
                       fontSize: '12pt',
                       color: (() => {
@@ -193,6 +253,7 @@ export default class Orders extends Component {
                           case CommonUtils.OrderStatus.Accepted:
                             return 'lime';
                           case CommonUtils.OrderStatus.Completed:
+                          case CommonUtils.OrderStatus.Rated:
                             return 'green';
                           case CommonUtils.OrderStatus.Declined:
                             return 'grey';
@@ -201,18 +262,35 @@ export default class Orders extends Component {
                         }
                       })(),
                     }}>
-                      {CommonUtils.getOrderStatus(record.status)}
+                      {CommonUtils.getOrderDisplayStatus(record.status)}
                     </div>
-                    {(record.status == CommonUtils.OrderStatus.Pending ||
-                      record.status == CommonUtils.OrderStatus.Accepted) ?
-                      <Button
-                        type='primary'
-                        shape='warning'
-                        onClick={() => this.onCancelOrder(record)}
-                      >
-                        <b>Cancel</b>
-                      </Button>
-                      : null}
+                    {(() => {
+                      switch (record.status) {
+                        case CommonUtils.OrderStatus.Pending:
+                        case CommonUtils.OrderStatus.Accepted:
+                          return (
+                            <Button
+                              type='primary'
+                              shape='warning'
+                              onClick={() => this.onCancelOrder(record)}
+                            >
+                              <b>Cancel</b>
+                            </Button>
+                          );
+                        case CommonUtils.OrderStatus.Completed:
+                          return (
+                            <div className='order-item-rating'>
+                              How do you feel?
+                              <Rating
+                                size='large'
+                                disabled={this.state.disableRating}
+                                onChange={value => this.rating(record, value)} />
+                            </div>
+                          );
+                        default:
+                          return null;
+                      }
+                    })()}
                   </div>
                 );
               }}
