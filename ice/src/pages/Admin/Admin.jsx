@@ -24,7 +24,7 @@ export default class Admin extends Component {
                 shape='circle'
                 width={26}
                 height={26}
-                src={record['avatar'] ? record['avatar'] : CommonUtils.DEFAULT_AVATAR} />
+                src={record['avatar'] ? `${CommonUtils.BACKEND_URL}/${record['avatar']}` : CommonUtils.DEFAULT_AVATAR} />
               {record['username']}
             </span>
           );

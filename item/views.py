@@ -471,7 +471,7 @@ def current_milli_time():
 def upload_image(request):
     try:
         username = request.META.get("HTTP_USERNAME")
-        Host.objects.get(user=User.objects.get(username=username))
+        User.objects.get(username=username)
         files = request.FILES.getlist('image')
         path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
         if not os.path.exists(path):

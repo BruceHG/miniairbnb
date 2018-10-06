@@ -14,6 +14,7 @@ import Placeorder from './pages/Placeorder';
 import DetailEdit from './pages/DetailEdit';
 import Orders from './pages/Orders';
 import MyAds from './pages/MyAds';
+import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -61,6 +62,11 @@ const routerConfig = [
     path: '/MyAds',
     layout: BlankLayout,
     component: MyAds,
+  },
+  {
+    path: '/profile',
+    layout: BlankLayout,
+    component: Profile,
   },
   {
     path: '*',
