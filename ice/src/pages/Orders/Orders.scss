@@ -3,12 +3,14 @@
     background: pink;
     padding: 20px;
     margin: 20px;
+    min-width: 880px;
 
     .order-item-header-txt {
         font-size: 13pt;
         color: darkgoldenrod;
     }
     .order-item-left {
+        min-width: 470px;
         img {
             width: 160px;
             height: 120px;
@@ -19,6 +21,11 @@
         .order-item-title {
             font-size: 15pt;
             color: grey;
+        }
+        .order-item-dates {
+            margin-top: 10px;
+            font-size: 11pt;
+            color: orange;
         }
         .order-item-guest-num {
             margin-top: 10px;
@@ -45,8 +52,16 @@
     }
     .order-item-right {
         text-align:center;
+        .order-item-rated {
+            font-size: 9pt;
+            color: peru;
+        }
         Button {
             margin: 5px;
+        }
+        .order-item-rating {
+            font-size: 9pt;
+            color: lime;
         }
     }
 }
