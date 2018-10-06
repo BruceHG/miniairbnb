@@ -169,7 +169,7 @@ export default class Detail extends Component {
                     <div className="detail-type">{CommonUtils.AccomType[this.state.data['i_type']]}</div>
                     <div className="detail-title">{this.state.data['title']}</div>
                     <div className="detail-user">
-                      <Img className="detail-avatar" shape='circle' width={65} height={65} src={this.state.data['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR} />
+                      <Img className="detail-avatar" shape='circle' width={65} height={65} src={this.state.data['avatar'] ? `${CommonUtils.BACKEND_URL}/${this.state.data['avatar']}` : CommonUtils.DEFAULT_AVATAR} />
                       <div className="detail-username">{this.state.data['username']}</div>
                     </div>
                     <div className="detail-rooms" >

@@ -197,7 +197,7 @@ def update_profile(request):
         user.firstname = data['firstname']
         user.lastname = data['lastname']
         user.birthday = data['birthday']
-        if 'avatar' in data:
+        if 'avatar' in data and data['avatar'] != user.avatar:
             tmp_path = os.path.join(os.path.dirname(__CURRENT_DIR), 'item/' + data['avatar'])
             avatar_path = os.path.join(__CURRENT_DIR, 'static/avatar/' + str(user.u_id))
             if not os.path.exists(avatar_path):
