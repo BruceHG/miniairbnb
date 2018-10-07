@@ -115,7 +115,6 @@ export default class Orders extends Component {
     this.setState({
       disableRating: true,
     })
-    console.log(record);
     axios.post(CommonUtils.BACKEND_URL + `/order/rating/${record.o_id}/`,
       {
         rating: value

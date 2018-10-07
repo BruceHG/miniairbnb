@@ -10,6 +10,7 @@ import ScrollListener from 'react-scroll-listen';
 // import { withRouter } from 'react-router-dom';
 
 const { RangePicker } = DatePicker;
+const A_DAY_MS = 24 * 60 * 60 * 1000;
 
 // @withRouter
 export default class Detail extends Component {
@@ -79,23 +80,30 @@ export default class Detail extends Component {
     this.state.availableInfo['available_date'].some(period => {
       let begin = new Date(period['begin']);
       begin.setHours(0, 0, 0, 0);
-      let end = new Date(period['end']);
-      end.setHours(0, 0, 0, 0);
-      if (begin <= thisDay && end >= thisDay) {
-        // date in period
+      if (begin <= thisDay) {
+        let end = new Date(period['end']);
+        end.setHours(0, 0, 0, 0);
         if (this.state.bookingInfo.check_in) {
+          end.setTime(end.getTime() + A_DAY_MS);
           let check_in = new Date(this.state.bookingInfo.check_in);
           check_in.setHours(0, 0, 0, 0);
-          if (begin <= check_in && end >= check_in) {
+          if (thisDay <= end &&
+            begin <= check_in && end >= check_in) {
             // check_in in period
             enable = thisDay > check_in;
+            return true;//break;
           } else {
             enable = false;
+            return false;//break;
           }
-          return true;//break;
         } else {
-          enable = true;
-          return true;//break;
+          if (thisDay <= end) {
+            enable = true;
+            return true;//break;
+          } else {
+            enable = false;
+            return false;//continue;
+          }
         }
       } else {
         enable = false;
@@ -298,7 +306,7 @@ export default class Detail extends Component {
                                 this.setState({ bookingInfo: { ...this.state.bookingInfo, check_in: formatDate[0], check_out: formatDate[1] } });
                               }}
                               onStartChange={(date, formatDate) => {
-                                this.setState({ bookingInfo: { ...this.state.bookingInfo, check_in: formatDate } });
+                                this.setState({ bookingInfo: { ...this.state.bookingInfo, check_in: formatDate, check_out: null } });
                               }}
                             />
                             <div ><b>Guests</b></div>
