@@ -114,12 +114,12 @@ export default class Requests extends Component {
   }
 
   checkPermission() {
-    // let current_user = CommonUtils.getUserInfo2Cookie();
-    // if (current_user == null
-    //   || CommonUtils.UserStatus.HOST != current_user['status']) {
-    //   window.location = ''
-    //   return false;
-    // }
+    let current_user = CommonUtils.getUserInfo2Cookie();
+    if (current_user == null
+      || CommonUtils.UserStatus.HOST != current_user['status']) {
+      window.location = ''
+      return false;
+    }
     return true;
   }
 
