@@ -15,6 +15,7 @@ import DetailEdit from './pages/DetailEdit';
 import Orders from './pages/Orders';
 import MyAds from './pages/MyAds';
 import Profile from './pages/Profile';
+import Requests from './pages/Requests';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -32,6 +33,11 @@ const routerConfig = [
     path: '/admin',
     layout: BlankLayout,
     component: Admin,
+  },
+  {
+    path: '/Requests',
+    layout: BlankLayout,
+    component: Requests,
   },
   {
     path: '/accoms/:keyword?',
