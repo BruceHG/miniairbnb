@@ -22,10 +22,12 @@ export default class Requests extends Component {
             <span>
               <Img
                 shape='circle'
-                width={26}
-                height={26}
-                src={record['album_first']} />
-              {record['title']}
+                width={100}
+                height={100}
+                src={`${CommonUtils.BACKEND_URL}/${record['album_first']}`} />
+              <br />
+              <br />
+              &nbsp;&nbsp;{record['title']}
             </span>
           );
         },
