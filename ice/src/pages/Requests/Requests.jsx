@@ -117,7 +117,7 @@ export default class Requests extends Component {
     let current_user = CommonUtils.getUserInfo2Cookie();
     if (current_user == null
       || CommonUtils.UserStatus.HOST != current_user['status']) {
-      window.location = ''
+      this.props.history.goBack();
       return false;
     }
     return true;
