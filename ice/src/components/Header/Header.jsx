@@ -63,7 +63,7 @@ export default class Header extends Component {
         this.props.history.push('/MyAds');
         break;
       case MENU.REQUESTS:
-        console.log('Requests');
+        this.props.history.push('/Requests');
         break;
       case MENU.ORDER_HISTORY:
         this.props.history.push('/orders');
