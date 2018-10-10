@@ -180,8 +180,7 @@ export default class OrderList extends Component {
           <Table
             dataSource={tableData}
             getRowClassName={this.getRowClassName}
-            rowSelection={rowSelection}
-            hasBorder={false}
+            hasBorder={true}
             language='en-us'
           >
             <Table.GroupHeader cell={this.renderOrderNumber} />
@@ -211,7 +210,7 @@ export default class OrderList extends Component {
 }
 
 const styles = {
-  
+
   orderImg: {
     width: '60px',
     height: '60px',

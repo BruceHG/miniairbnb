@@ -17,6 +17,14 @@ export default class MyAds extends Component {
 
   }
 
+  checkPermission() {
+    if (!CommonUtils.getUserInfo2Cookie()) {
+      this.props.history.goBack();
+      return false;
+    }
+    return true;
+  }
+
   render() {
     this.current_user = CommonUtils.getUserInfo2Cookie();
     if(this.current_user == null){
@@ -28,7 +36,11 @@ export default class MyAds extends Component {
     return (
       <div>
         <div>
-        <Header {...this.props} style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
+        <Header 
+        {...this.props} 
+        style={{ position: 'relative', background: CommonUtils.THEME_COLOR }}
+        onAccountStateChange={() => this.checkPermission()} 
+        />
         <br/>
         <br/>
         </div>
