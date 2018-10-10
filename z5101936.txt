@@ -52,3 +52,9 @@ debug fix the search result pages
 3/Oct - 4/Oct:
     advance search filter(sort options; price range; rating range)
     No result remindering
+
+
+Bug:
+    when push new Ads,the search result retune one more page.
+    10/Oct/2019 fixed it 
+    10/Oct/2019 change some performance style.
