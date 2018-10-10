@@ -195,7 +195,7 @@ def search(request):
     try:
         data = request.query_params
         page_size = 16
-        page = 0
+        page = 1
         #        valid_address = 0
         #        args = ['keyword', 'page_size', 'page', 'check_in', 'check_out', 'guest_num', 'sortby', 'min_price',
         #                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
@@ -327,7 +327,7 @@ def search(request):
         #                r.pop('distance')
 
         total_page = math.ceil(len(all_results) / page_size)
-        search_result = all_results[page_size * page:page_size * (page + 1)]
+        search_result = all_results[page_size * (page - 1):page_size * page]
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'search results',
