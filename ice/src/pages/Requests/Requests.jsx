@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Button, Feedback } from '@icedesign/base';
 import Img from '@icedesign/img';
 import Header from '../../components/Header';
-import CustomTable from './components/CustomTable';
+import RequestsTable from './components/RequestsTable';
 import * as CommonUtils from '../../lib/commonUtils';
 
-export default class Admin extends Component {
-  static displayName = 'Admin';
+export default class Requests extends Component {
+  static displayName = 'Requests';
 
   constructor(props) {
     super(props);
@@ -15,25 +15,77 @@ export default class Admin extends Component {
     };
     this.columns = [
       {
-        title: 'User',
-        key: 'User',
+        title: 'house',
+        key: 'house',
         render: (value, index, record) => {
           return (
             <span>
               <Img
                 shape='circle'
-                width={26}
-                height={26}
-                src={record['avatar'] ? `${CommonUtils.BACKEND_URL}/${record['avatar']}` : CommonUtils.DEFAULT_AVATAR} />
-              {record['username']}
+                width={100}
+                height={100}
+                src={`${CommonUtils.BACKEND_URL}/${record['album_first']}`} />
+              <br />
+              <br />
+              &nbsp;&nbsp;{record['title']}
             </span>
           );
         },
       },
       {
-        title: 'Mobile number',
-        key: 'mobile',
-        dataIndex: 'phone',
+        title: 'customer name',
+        key: 'customer name',
+        render: (value, index, record) => {
+          return (
+            <span>
+              {record['user']}
+            </span>
+          );
+        },
+      },
+      {
+        title: 'guest number',
+        key: 'guest number',
+        render: (value, index, record) => {
+          return (
+            <span>
+              {record['guest_num']}
+            </span>
+          );
+        },
+      },
+      {
+        title: 'check in date',
+        key: 'check in date',
+        render: (value, index, record) => {
+          return (
+            <span>
+              {record['checkin']}
+            </span>
+          );
+        },
+      },
+      {
+        title: 'check out date',
+        key: 'check out date',
+        render: (value, index, record) => {
+          return (
+            <span>
+              {record['checkout']}
+            </span>
+          );
+        },
+      },
+      {
+        title: 'comments',
+        key: 'comments',
+        render: (value, index, record) => {
+          return (
+            <span>
+              {record['comment']}
+            </span>
+          );
+        },
       },
       {
         title: 'Option',
@@ -45,7 +97,7 @@ export default class Admin extends Component {
                 size="small"
                 type="primary"
                 style={{ 'marginRight': '5px' }}
-                onClick={() => this.onAccept(record['username'])}>
+                onClick={() => this.onAccept(record)}>
                 Approve
               </Button>
               <Button
@@ -53,8 +105,8 @@ export default class Admin extends Component {
                 type="primary"
                 style={{ 'marginLeft': '5px' }}
                 shape="warning"
-                onClick={() => this.onDecline(record['username'])}>
-                Decline
+                onClick={() => this.onDecline(record)}>
+                Reject
               </Button>
             </span>
           );
@@ -66,15 +118,15 @@ export default class Admin extends Component {
   checkPermission() {
     let current_user = CommonUtils.getUserInfo2Cookie();
     if (current_user == null
-      || CommonUtils.UserStatus.ADMIN != current_user['status']) {
-      window.location = ''
+      || CommonUtils.UserStatus.HOST != current_user['status']) {
+      this.props.history.goBack();
       return false;
     }
     return true;
   }
 
-  fetchHostRequests() {
-    fetch(CommonUtils.BACKEND_URL + '/hostadmin/requests/', {
+  fetchRequests() {
+    fetch(CommonUtils.BACKEND_URL + '/order/requests/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -95,25 +147,25 @@ export default class Admin extends Component {
   }
 
   componentDidMount() {
-    this.fetchHostRequests();
+    this.fetchRequests();
   }
 
-  onAccept(username) {
-    fetch(CommonUtils.BACKEND_URL + '/hostadmin/approve/', {
+  onAccept(record) {
+    fetch(CommonUtils.BACKEND_URL + `/order/approve/${record.o_id}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'username': CommonUtils.getUserInfo2Cookie()['username'],
       },
-      body: JSON.stringify({
-        'username': username,
-      }),
+      // body: JSON.stringify({
+      //   'username': username,
+      // }),
     }).then((response) => {
       return response.json();
     }).then((json) => {
       if (json['code'] == 200) {
         Feedback.toast.success(json['msg']);
-        this.fetchHostRequests();
+        this.fetchRequests();
       } else {
         Feedback.toast.error(json['msg']);
       }
@@ -123,22 +175,22 @@ export default class Admin extends Component {
     });
   }
 
-  onDecline(username) {
-    fetch(CommonUtils.BACKEND_URL + '/hostadmin/decline/', {
+  onDecline(record) {
+    fetch(CommonUtils.BACKEND_URL + `/order/reject/${record.o_id}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'username': CommonUtils.getUserInfo2Cookie()['username'],
       },
-      body: JSON.stringify({
-        'username': username,
-      }),
+      // body: JSON.stringify({
+      //   'username': username,
+      // }),
     }).then((response) => {
       return response.json();
     }).then((json) => {
       if (json['code'] == 200) {
         Feedback.toast.success(json['msg']);
-        this.fetchHostRequests();
+        this.fetchRequests();
       } else {
         Feedback.toast.error(json['msg']);
       }
@@ -152,13 +204,13 @@ export default class Admin extends Component {
     const { dataSource } = this.state;
     if (this.checkPermission()) {
       return (
-        <div className="admin-page">
+        <div className="requests-page">
           <Header
             style={{ background: CommonUtils.THEME_COLOR }}
             {...this.props}
             searchBox={false}
             onAccountStateChange={() => this.checkPermission()} />
-          <CustomTable
+          <RequestsTable
             dataSource={dataSource}
             columns={this.columns}
             hasBorder={false}

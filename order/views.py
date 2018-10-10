@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
+import datetime as dt
 
 from order.models import Order
 from item.models import Item
@@ -166,13 +167,126 @@ def reject(request, order_id):
         order = Order.objects.get(o_id=order_id)
         if not order.item.owner == host:
             raise Exception('order and host do not match')
-        if order.status == Order.Completed or order.status == Order.Rejected or order.status == Order.Accepted:
+        if order.status == Order.Completed or order.status == Order.Rejected or order.status == Order.Accepted or order.status == Order.Completed_and_rated:
             raise Exception('reject failed, accepted, completed or rejected order')
         order.status = Order.Rejected
         order.save()
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'reject successful',
+        }
+        
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Host.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'host not found',
+        }
+    except Order.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'order not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def rating(request, order_id):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username=username)
+        order = Order.objects.get(o_id=order_id)
+        if not order.user == user:
+            raise Exception('order and user do not match')
+        if order.status != Order.Completed:
+            raise Exception('uncompleted order')
+        if order.rating is not None:
+            raise Exception('rated order')
+        data = request.data
+        if int(data['rating']) < 0 or int(data['rating']) > 5:
+            raise Exception('rating must between 0 - 5')
+        order.rating = int(data['rating'])
+        order.status = Order.Completed_and_rated
+        order.save()
+        
+        orders = Order.objects.filter(item=order.item, rating__isnull=False)
+        s = 0
+        count = 0
+        for o in orders:
+            s += o.rating
+            count += 1
+        order.item.rating = round(s / count, 1)
+        order.item.save()
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'rating successful',
+        }
+    except User.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'user not found',
+        }
+    except Order.DoesNotExist:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': 'order not found',
+        }
+    except Exception as e:
+        result = {
+            'code': status.HTTP_400_BAD_REQUEST,
+            'msg': str(e),
+        }
+    return Response(result, status=result['code'])
+
+@api_view(['POST'])
+def approve(request, order_id):
+    try:
+        username = request.META.get("HTTP_USERNAME")
+        user = User.objects.get(username=username)
+        host = Host.objects.get(user=user)
+        order = Order.objects.get(o_id=order_id)
+        if not order.item.owner == host:
+            raise Exception('order and host do not match')
+        if order.status == Order.Completed or order.status == Order.Rejected or order.status == Order.Accepted or order.status == Order.Completed_and_rated:
+            raise Exception('approve failed, accepted, completed or rejected order')
+        item = order.item
+        print(item.avaliable)
+        order_in = datetime.strptime(str(order.checkin), '%Y-%m-%d')
+        order_out = datetime.strptime(str(order.checkout), '%Y-%m-%d')
+        avaliable = item.avaliable.split(',')
+        new_avaliable = []
+        one_day = dt.timedelta(days = 1)
+        for i in range(0, len(avaliable), 2):
+            valid_in = datetime.strptime(avaliable[i], '%Y-%m-%d')
+            valid_out = datetime.strptime(avaliable[i+1], '%Y-%m-%d')
+            if valid_in <= order_in < order_out <= valid_out:
+                order_in = order_in - one_day
+                order_out = order_out + one_day
+                if not order_in < valid_in:
+                    new_avaliable.append(avaliable[i])
+                    new_avaliable.append(order_in.strftime('%Y-%m-%d'))
+                if not order_out > valid_out:
+                    new_avaliable.append(order_out.strftime('%Y-%m-%d'))
+                    new_avaliable.append(avaliable[i+1])
+            else:
+                new_avaliable.append(avaliable[i])
+                new_avaliable.append(avaliable[i+1])
+        order.status = Order.Accepted
+        order.save()
+        item.avaliable = ','.join(new_avaliable)
+        item.guest_num = item.guest_num - order.guest_num
+        item.save()
+        result = {
+            'code': status.HTTP_200_OK,
+            'msg': 'approve successful',
         }
         
     except User.DoesNotExist:

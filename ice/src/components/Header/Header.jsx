@@ -60,11 +60,10 @@ export default class Header extends Component {
         Feedback.toast.success("We're assessing your request...");
         break;
       case MENU.MANAGE_ADS:
-        console.log('Manage Ads');
         this.props.history.push('/MyAds');
         break;
       case MENU.REQUESTS:
-        console.log('Requests');
+        this.props.history.push('/Requests');
         break;
       case MENU.ORDER_HISTORY:
         this.props.history.push('/orders');
@@ -73,7 +72,7 @@ export default class Header extends Component {
         this.props.history.push('/edit');
         break;
       case MENU.PROFILE:
-        console.log('Profile');
+        this.props.history.push('/profile');
         this.setState({
           menu_balloon_visible: false,
         });
@@ -114,7 +113,7 @@ export default class Header extends Component {
                 shape='circle'
                 style={{ verticalAlign: 'middle' }}
                 width={25} height={25}
-                src={this.current_user['avatar'] ? this.current_user['avatar'] : CommonUtils.DEFAULT_AVATAR}
+                src={this.current_user['avatar'] ? `${CommonUtils.BACKEND_URL}/${this.current_user['avatar']}` : CommonUtils.DEFAULT_AVATAR}
               />
               <span style={{
                 fontSize: '10pt',

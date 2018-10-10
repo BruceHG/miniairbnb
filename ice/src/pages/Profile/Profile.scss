@@ -1,0 +1,26 @@
+.profile-page {
+    border-radius: 25px;
+    background: pink;
+    padding: 20px;
+    margin: 20px;
+    font-size: 15pt;
+    color: grey;
+    display: flex;
+
+    .left {
+        width: 70%;
+        .profile-title {
+            font-size: 12pt;
+        }
+    }
+
+    .right {
+        Button {
+            float: right;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 50px;
+        }
+    }
+    
+}

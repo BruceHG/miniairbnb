@@ -19,13 +19,17 @@ class Order(models.Model):
     Accepted = 1
     Completed = 2
     Rejected = 3
+    Completed_and_rated = 4
     status_type = (
         (Pending, 'Pending'),
         (Accepted, 'Accepted'),
         (Completed, 'Completed'),
         (Rejected, 'Rejected'),
+        (Completed_and_rated, 'Completed_and_rated'),
     )
     status = models.IntegerField(
         choices = status_type,
         default = Pending,
         )
+
+    rating =  models.IntegerField(default = None, null=True)

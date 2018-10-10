@@ -13,6 +13,7 @@ from django.db.models import Q
 import operator
 from operator import itemgetter
 from functools import reduce
+import time
 
 from user.models import User, Host
 from item.models import Item
@@ -226,14 +227,10 @@ def search(request):
                 q_list.append(Q(price_per_day__lte=data['max_price']))
         if 'min_rating' in data:
             if not data['min_rating'] == '':
-                hosts = Host.objects.filter(
-                    rating__gte=int(data['min_rating']))
-            q_list.append(Q(owner__in=hosts))
+                q_list.append(Q(rating__gte=int(data['min_rating'])))
         if 'max_rating' in data:
             if not data['max_rating'] == '':
-                hosts = Host.objects.filter(
-                    rating__lte=int(data['max_rating']))
-                q_list.append(Q(owner__in=hosts))
+                q_list.append(Q(rating__lte=int(data['max_rating'])))
         if 'types' in data:
             if not data['types'] == '':
                 item_types = data['types'].split(',')
@@ -311,16 +308,20 @@ def search(request):
         #                all_results = [r for r in all_results if r['distance'] >= float(data['min_distance'])]
         #            if 'max_distance' in data:
         #                all_results = [r for r in all_results if r['distance'] <= float(data['max_distance'])]
-        #        if 'sortby' in data:
-        #            if not data['sortby'] == '':
-        #                order = data['sortby']
-        #                if order == 'rating':
-        #                    all_results = sorted(
-        #                        all_results, key=itemgetter(order), reverse=True)
-        #                elif order == 'price_per_day':
-        #                    all_results = sorted(all_results, key=itemgetter(order))
-        #                elif order == 'distance' and valid_address == 1:
-        #                    all_results = sorted(all_results, key=itemgetter(order))
+        if 'sortby' in data:
+            if not data['sortby'] == '':
+                if data['sortby'] == '0':
+                    order = 'price_per_day'
+                    all_results = sorted(all_results, key=itemgetter(order))
+                elif data['sortby'] == '1':
+                    order = 'price_per_day'
+                    all_results = sorted(all_results, key=itemgetter(order), reverse=True)
+                elif data['sortby'] == '2':
+                    order = 'rating'
+                    all_results = sorted(all_results, key=itemgetter(order))
+                elif data['sortby'] == '3':
+                    order = 'rating'
+                    all_results = sorted(all_results, key=itemgetter(order), reverse=True)
         #        if valid_address == 1:
         #            for r in all_results:
         #                r.pop('distance')
@@ -379,19 +380,21 @@ def save_image(file, user_id, item_id):
     path = '{}/static/album/{}/{}/'.format(__CURRENT_DIR, user_id, item_id)
     if not os.path.exists(path):
         os.makedirs(path)
-    file_name = file.split('\\')[-1]
+#    file_name = file.split('\\')[-1]
+#    print(file)
+#    print(file_name)
     num_pictures = 0
     for f in os.listdir(path):
         n = int(f.split('.')[0])
         if n >= num_pictures:
             num_pictures = n + 1
     file_path = os.path.join(path,
-                             str(num_pictures) + '.' + file_name.split('.')[1])
+                             str(num_pictures) + '.' + file.split('.')[1])
     tmp_path = os.path.join(__CURRENT_DIR, file)
     shutil.move(tmp_path, file_path)
     return 'static/album/{}/{}/{}.{}'.format(user_id, item_id,
                                              str(num_pictures),
-                                             file_name.split('.')[1])
+                                             file.split('.')[1])
 
 
 def delete_image(file, album, user_id, item_id):
@@ -461,24 +464,27 @@ def update_item(request, item_id):
 
     return Response(result, status=result['code'])
 
+def current_milli_time():
+    return int(round(time.time() * 1000))
 
 @api_view(['POST'])
 def upload_image(request):
     try:
         username = request.META.get("HTTP_USERNAME")
-        Host.objects.get(user=User.objects.get(username=username))
+        User.objects.get(username=username)
         files = request.FILES.getlist('image')
         path = '{}/static/album/tmp/'.format(__CURRENT_DIR)
         if not os.path.exists(path):
             os.makedirs(path)
         tmp_urls = []
         for file in files:
-            file_path = os.path.join(path, file.name)
+            filename = str(current_milli_time()) + '.' + file.name.split('.')[-1]
+            file_path = os.path.join(path, filename)
             f = open(file_path, mode='wb')
             for i in file.chunks():
                 f.write(i)
             f.close()
-            tmp_urls.append('static/album/tmp/' + file.name)
+            tmp_urls.append('static/album/tmp/' + filename)
         result = {
             'code': status.HTTP_200_OK,
             'msg': 'images saved',

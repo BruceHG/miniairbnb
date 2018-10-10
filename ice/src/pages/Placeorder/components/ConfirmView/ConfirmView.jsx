@@ -45,6 +45,7 @@ export default class ConfirmView extends Component {
   }
 
   render() {
+    let nights;
     return (
       <div className='confirm-view'>
         <div className='tip1'>You gonna book:</div>
@@ -56,7 +57,7 @@ export default class ConfirmView extends Component {
             let end = this.props.dataSource['check_out'];
             let startD = new Date(start);
             let endD = new Date(end);
-            let nights = endD.getDate() - startD.getDate();
+            nights = endD.getDate() - startD.getDate();
             let guests = this.props.dataSource['guest_num'];
             return (
               <div className='date-guest'>
@@ -68,7 +69,7 @@ export default class ConfirmView extends Component {
           })()
         }
         <div className='price-area'>
-          Total price is <span className='price'>${this.props.dataSource['price']}</span>
+          Total price is <span className='price'>${this.props.dataSource['price'] * nights}</span><span className='price-gst'> (GST. included)</span>
         </div>
         <div>Please notice, this accommodation is: <span className='rules'>{Common.CancelRule[this.props.dataSource['rules']]}</span></div>
         <div className='tip3'>Also, you can leave some message here to the host to have a better experience:</div>
