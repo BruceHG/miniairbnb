@@ -29,6 +29,7 @@ export default class SingleItem extends Component {
         style={{
           ...style,
           height: '230px',
+          width: '230px',
           cursor: 'pointer',
           borderRadius: '4px',
           backgroundColor: active ? '#f4f4f4' : undefined,
@@ -99,6 +100,7 @@ export default class SingleItem extends Component {
           />
           {rating}
         </div>
+        <br/>
       </div>
     );
   }

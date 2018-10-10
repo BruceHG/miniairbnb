@@ -27,7 +27,7 @@ export default class FilterList extends Component {
         endTime: '',
         number_of_guest:'',
         rating:[0, 5],
-        price:[0,300],
+        price:[0,2000],
         type_list : [],
         other_list : [],
       }
@@ -217,7 +217,7 @@ const styles = {
     margin: '0 10px 10px 10px',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'left',
   },
   filterListHeaderWrapper: {
     padding: '20px 20px 5px 20px',

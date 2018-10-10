@@ -10,7 +10,7 @@ import {
   FormBinder as IceFormBinder,
 } from '@icedesign/form-binder';
 
-const MAX_PRICE = 300;
+const MAX_PRICE = 2000;
 const Max_Start = 5;
 const { Row, Col } = Grid;
 const { Option } = Select;
