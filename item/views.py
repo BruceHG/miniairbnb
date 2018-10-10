@@ -201,7 +201,7 @@ def search(request):
         #                'max_price', 'min_distance', 'max_distance', 'min_rating', 'max_rating', 'types', 'features']
         if 'page_size' in data:
             if not data['page_size'] == '':
-                page_size = data['page_size']
+                page_size = int(data['page_size'])
         if 'page' in data:
             if not data['page'] == '':
                 page = int(data['page'])
