@@ -14,15 +14,23 @@ def booking(request):
     try:
         username = request.META.get("HTTP_USERNAME")
         data = request.data
+        user = User.objects.get(username = username)
         item = Item.objects.get(i_id = data['item_id'])
         checkin = datetime.strptime(data['check_in'], '%Y-%m-%d')
         checkout = datetime.strptime(data['check_out'], '%Y-%m-%d')
+        previous_orders = Order.objects.filter(item = item, user = user)
+        for o in previous_orders:
+            previous_in = datetime.strptime(str(o.checkin), '%Y-%m-%d')
+            previous_out = datetime.strptime(str(o.checkout), '%Y-%m-%d')
+            if not (previous_in > checkout or previous_out < checkin):
+                if not o.status == Order.Rejected:
+                    raise Exception('conflict with previous order(s)')
         available = item.avaliable.split(',')
         valid_date = 0
         for i in range(0, len(available), 2):
             valid_in = datetime.strptime(available[i], '%Y-%m-%d')
             valid_out = datetime.strptime(available[i+1], '%Y-%m-%d')
-            if valid_in <= checkin < checkout <= valid_out:
+            if valid_in <= checkin <= checkout <= valid_out:
                 valid_date = 1
         if valid_date == 0:
             raise Exception('check_in/check_out date error')
@@ -35,7 +43,7 @@ def booking(request):
             comment = ''
         new_order = Order(
                         item = item,
-                        user = User.objects.get(username = username),
+                        user = user,
                         checkin = data['check_in'],
                         checkout = data['check_out'],
                         guest_num = int(data['guest_num']),
@@ -258,7 +266,6 @@ def approve(request, order_id):
         if order.status == Order.Completed or order.status == Order.Rejected or order.status == Order.Accepted or order.status == Order.Completed_and_rated:
             raise Exception('approve failed, accepted, completed or rejected order')
         item = order.item
-        print(item.avaliable)
         order_in = datetime.strptime(str(order.checkin), '%Y-%m-%d')
         order_out = datetime.strptime(str(order.checkout), '%Y-%m-%d')
         avaliable = item.avaliable.split(',')
@@ -267,7 +274,7 @@ def approve(request, order_id):
         for i in range(0, len(avaliable), 2):
             valid_in = datetime.strptime(avaliable[i], '%Y-%m-%d')
             valid_out = datetime.strptime(avaliable[i+1], '%Y-%m-%d')
-            if valid_in <= order_in < order_out <= valid_out:
+            if valid_in <= order_in <= order_out <= valid_out:
                 order_in = order_in - one_day
                 order_out = order_out + one_day
                 if not order_in < valid_in:
@@ -279,10 +286,24 @@ def approve(request, order_id):
             else:
                 new_avaliable.append(avaliable[i])
                 new_avaliable.append(avaliable[i+1])
+        
+        other_orders = Order.objects.filter(item=item)
+        for o in other_orders:
+            if o.status == Order.Pending:
+                order_in = datetime.strptime(str(o.checkin), '%Y-%m-%d')
+                order_out = datetime.strptime(str(o.checkout), '%Y-%m-%d')
+                valid = 0
+                for i in range(0, len(new_avaliable), 2):
+                    valid_in = datetime.strptime(new_avaliable[i], '%Y-%m-%d')
+                    valid_out = datetime.strptime(new_avaliable[i+1], '%Y-%m-%d')
+                    if valid_in <= order_in <= order_out <= valid_out:
+                        valid = 1
+                if valid == 0:
+                    o.status = Order.Rejected
+                    o.save()
         order.status = Order.Accepted
         order.save()
         item.avaliable = ','.join(new_avaliable)
-        item.guest_num = item.guest_num - order.guest_num
         item.save()
         result = {
             'code': status.HTTP_200_OK,
