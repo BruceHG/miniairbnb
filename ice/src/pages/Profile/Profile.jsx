@@ -215,57 +215,61 @@ export default class Profile extends Component {
             </IceFormBinderWrapper>
           </div>
           <div className='right'>
-            <ImageUpload
-              language='en-us'
-              action={CommonUtils.BACKEND_URL + '/item/upload_image/'}
-              listType='picture-card'
-              name='image'
-              style={{ float: 'right' }}
-              limit={1}
-              headers={{ username: CommonUtils.getUserInfo2Cookie()['username'] }}
-              accept='image/png, image/jpg, image/jpeg, image/gif, image/bmp'
-              formatter={(res) => {
-                if (res.code == 200) {
-                  return {
-                    code: 0,
-                    imgURL: `${CommonUtils.BACKEND_URL}/${res.data.url}`,
-                  };
-                } else {
-                  console.error(res);
-                  return {
-                    code: 1,
-                  };
+            <div>
+              <ImageUpload
+                language='en-us'
+                action={CommonUtils.BACKEND_URL + '/item/upload_image/'}
+                listType='picture-card'
+                name='image'
+                style={{ float: 'right' }}
+                limit={1}
+                headers={{ username: CommonUtils.getUserInfo2Cookie()['username'] }}
+                accept='image/png, image/jpg, image/jpeg, image/gif, image/bmp'
+                formatter={(res) => {
+                  if (res.code == 200) {
+                    return {
+                      code: 0,
+                      imgURL: `${CommonUtils.BACKEND_URL}/${res.data.url}`,
+                    };
+                  } else {
+                    console.error(res);
+                    return {
+                      code: 1,
+                    };
+                  }
+                }}
+                fileList={
+                  this.state.data.avatar ?
+                    [
+                      {
+                        status: 'done',
+                        imgURL: `${CommonUtils.BACKEND_URL}/${this.state.data.avatar}`,
+                      }
+                    ]
+                    :
+                    []
                 }
-              }}
-              fileList={
-                this.state.data.avatar ?
-                  [
-                    {
-                      status: 'done',
-                      imgURL: `${CommonUtils.BACKEND_URL}/${this.state.data.avatar}`,
-                    }
-                  ]
-                  :
-                  []
-              }
-              onSuccess={(info) => {
-                let url_suffix = info.imgURL.substring(CommonUtils.BACKEND_URL.length + 1);
-                this.state.data.avatar = url_suffix;
-              }}
-              onRemove={(info) => {
-                if (info.imgURL) {
-                  Feedback.toast.prompt("We keep the avatar you're using");
-                  this.state.data.avatar = CommonUtils.getUserInfo2Cookie()['avatar'];
-                  this.forceUpdate();
-                }
-              }}
-            />
-            <Button
-              type='primary'
-              size='large'
-              onClick={this.handleSubmit}>
-              <span>Update Profile</span>
-            </Button>
+                onSuccess={(info) => {
+                  let url_suffix = info.imgURL.substring(CommonUtils.BACKEND_URL.length + 1);
+                  this.state.data.avatar = url_suffix;
+                }}
+                onRemove={(info) => {
+                  if (info.imgURL) {
+                    Feedback.toast.prompt("We keep the avatar you're using");
+                    this.state.data.avatar = CommonUtils.getUserInfo2Cookie()['avatar'];
+                    this.forceUpdate();
+                  }
+                }}
+              />
+            </div>
+            <div>
+              <Button
+                type='primary'
+                size='large'
+                onClick={this.handleSubmit}>
+                <span>Update Profile</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

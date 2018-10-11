@@ -50,7 +50,7 @@ export default class Accoms extends Component {
 
       return (
         <div>
-          <Header {...this.props} style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
+          <Header {...this.props} style={{ background: CommonUtils.THEME_COLOR }} />
         <br/>
         <br/>
         <div className="accoms-page">
