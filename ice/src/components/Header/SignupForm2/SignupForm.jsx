@@ -129,9 +129,9 @@ export default class SignupForm extends Component {
                   Register
                 </a>
                 <span style={styles.line}>|</span>
-                <a href="/" style={styles.link}>
+                {/* <a href="/" style={styles.link}>
                   Forgot password
-                </a>
+                </a> */}
               </Row>
             </div>
           </IceFormBinderWrapper>

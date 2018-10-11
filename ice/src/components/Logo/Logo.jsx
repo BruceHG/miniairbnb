@@ -12,7 +12,7 @@ export default class Logo extends Component {
         }}
       >
         <a href="/" style={{ display: 'block', position: 'relative' }}>
-          <img src={require('../../../public/logo.png')}  height="35" alt="logo" />
+          <img src={require('../../../public/favicon.png')}  height="35" alt="logo" />
         </a>
       </div>
     );
