@@ -3,6 +3,7 @@
     background: pink;
     padding: 20px;
     margin: 20px;
+    
     font-size: 15pt;
     color: grey;
     display: flex;
@@ -15,8 +16,10 @@
     }
 
     .right {
+        position: absolute;
+        right: 0;
+        margin-right: 40px;
         Button {
-            float: right;
             font-size: 14pt;
             font-weight: bold;
             margin-top: 50px;

@@ -10,7 +10,7 @@ import {
   FormBinder as IceFormBinder,
 } from '@icedesign/form-binder';
 
-const MAX_PRICE = 300;
+const MAX_PRICE = 2000;
 const Max_Start = 5;
 const { Row, Col } = Grid;
 const { Option } = Select;
@@ -228,7 +228,6 @@ export default class Filter extends Component {
                   <Option value="2">2</Option>
                   <Option value="3">3</Option>
                   <Option value="4">4</Option>
-                  {/* note the value for > 4......... */}
                   <Option value="5">More than 4</Option>
                 </Select>
               </IceFormBinder>

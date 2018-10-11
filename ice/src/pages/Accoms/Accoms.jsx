@@ -45,10 +45,12 @@ export default class Accoms extends Component {
   }
 
   render() {
-    console.log(this.state.data['accommodations']); 
+    console.log(this.state.data['accommodations']);
+    console.log(this.state.data['total_page']); 
+
       return (
         <div>
-          <Header {...this.props} style={{ background: 'rgba(0, 0, 0, 0.1)' }} />
+          <Header {...this.props} style={{ background: CommonUtils.THEME_COLOR }} />
         <br/>
         <br/>
         <div className="accoms-page">

@@ -57,7 +57,6 @@ export default class EnhanceTable extends Component {
 
   editItem = (record, e) => {
     e.preventDefault();
-    // TODO: record 为该行所对应的数据，可自定义操作行为
   };
 
   renderOperations = (value, index, record) => {
